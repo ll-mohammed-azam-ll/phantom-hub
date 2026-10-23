@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Phantom Hub - Global Users Restoration Utility</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #f4f5f7;
+      color: #172b4d;
+      margin: 0;
+      padding: 30px;
+    }
+    .card {
+      max-width: 950px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+    h1 { margin-top: 0; font-size: 24px; color: #091e42; }
+    p { color: #5e6c84; font-size: 14px; line-height: 1.5; }
+    .btn-group { margin: 20px 0; display: flex; gap: 10px; flex-wrap: wrap; }
+    .btn {
+      background-color: #0052cc;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn:hover { background-color: #0065ff; }
+    .btn:disabled { background-color: #a5adba; cursor: not-allowed; }
+    .btn-upload { background-color: #6554c0; display: none; }
+    .btn-upload:hover { background-color: #8777d9; }
+    .btn-download { background-color: #36b37e; display: none; }
+    .btn-download:hover { background-color: #2b825c; }
+    
+    #status {
+      margin: 15px 0;
+      padding: 14px;
+      border-radius: 6px;
+      background-color: #deebff;
+      color: #0747a6;
+      font-weight: 600;
+      font-size: 14px;
+    }
+    
+    .table-container {
+      max-height: 400px;
+      overflow-y: auto;
+      border: 1px solid #dfe1e6;
+      border-radius: 6px;
+      margin-top: 15px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 13px;
+    }
+    th, td {
+      padding: 10px 14px;
+      border-bottom: 1px solid #dfe1e6;
+    }
+    th {
+      background-color: #fafbfc;
+      position: sticky;
+      top: 0;
+      color: #5e6c84;
+    }
+    code {
+      font-family: monospace;
+      background: #f4f5f7;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <h1>Phantom Hub — Global Users Builder</h1>
+  <p>This utility fetches user data from Firestore, converts the <code>createdAt</code> timestamp to milliseconds, and creates/restores the <code>global_users</code> node in your Realtime Database.</p>
+
+  <div class="btn-group">
+    <button class="btn" id="btnFetch">1. Fetch Users from Firestore</button>
+    <button class="btn btn-upload" id="btnUpload">2. Push to RTDB (global_users)</button>
+    <button class="btn btn-download" id="btnDownload">3. Save JSON Backup</button>
+  </div>
+
+  <div id="status">Status: Ready to fetch user data.</div>
+
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>UID</th>
+          <th>Username</th>
+          <th>Email</th>
+          <th>DOB</th>
+          <th>createdAt (ms)</th>
+        </tr>
+      </thead>
+      <tbody id="userTableBody">
+        <tr>
+          <td colspan="6" style="text-align:center; color:#8993a4; padding:20px;">
+            No data fetched yet. Click "1. Fetch Users from Firestore" above.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+  import { getDatabase, ref, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+  // ⚠️ STEP A: PASTE YOUR FIREBASE CONFIG HERE
+  const firebaseConfig = {
+
+
+  apiKey: "AIzaSyBWA-zRkPFH4svRjkMUO80TUdI9zIm5ICc",
+
+
+  authDomain: "phantom-messaging-a5bf0.firebaseapp.com",
+
+
+  databaseURL: "https://phantom-messaging-a5bf0-default-rtdb.firebaseio.com",
+
+
+  projectId: "phantom-messaging-a5bf0",
+
+
+  storageBucket: "phantom-messaging-a5bf0.firebasestorage.app",
+
+
+  messagingSenderId: "475147330421",
+
+
+  appId: "1:475147330421:web:6fe73f781a9dbf443ca93c",
+
+
+  measurementId: "G-1974SDM4VW"
+
+
+};
+
+
+
+
+
+  // Initialize Firebase Apps
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const rtdb = getDatabase(app);
+
+  let fetchedUsers = [];
+
+  const btnFetch = document.getElementById("btnFetch");
+  const btnUpload = document.getElementById("btnUpload");
+  const btnDownload = document.getElementById("btnDownload");
+  const statusDiv = document.getElementById("status");
+  const tableBody = document.getElementById("userTableBody");
+
+  // Helper function to safely extract or convert createdAt to Milliseconds
+  function parseToMillis(createdAtField) {
+    if (!createdAtField) return Date.now();
+    if (typeof createdAtField === 'object' && createdAtField.seconds) {
+      return createdAtField.seconds * 1000;
+    }
+    if (typeof createdAtField === 'number') {
+      return createdAtField;
+    }
+    return Date.now();
+  }
+
+  // 1. FETCH FROM FIRESTORE
+  btnFetch.addEventListener("click", async () => {
+    try {
+      statusDiv.innerText = "Status: Querying Firestore users collection...";
+      btnFetch.disabled = true;
+      tableBody.innerHTML = "";
+
+      // Ensure "users" matches your exact collection name in Firestore
+      const querySnapshot = await getDocs(collection(db, "users"));
+      
+      fetchedUsers = [];
+      let index = 1;
+
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        
+        const uid = doc.id || data.uid;
+        const createdMs = parseToMillis(data.createdAt);
+
+        const userObj = {
+          uid: uid,
+          username: data.username || data.displayName || "",
+          email: data.email || data.userEmail || "",
+          dob: data.dob || data.dateOfBirth || "",
+          createdAt: createdMs
+        };
+
+        fetchedUsers.push(userObj);
+
+        // Add row to table
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${index++}</td>
+          <td><code>${userObj.uid}</code></td>
+          <td><strong>${userObj.username}</strong></td>
+          <td>${userObj.email}</td>
+          <td>${userObj.dob}</td>
+          <td><code>${userObj.createdAt}</code></td>
+        `;
+        tableBody.appendChild(row);
+      });
+
+      if (fetchedUsers.length === 0) {
+        statusDiv.innerText = "Status: Completed, but 0 user documents were found.";
+        tableBody.innerHTML = `<tr><td colspan="6" style="text-align:center;">No records found.</td></tr>`;
+      } else {
+        statusDiv.innerText = `Status: Success! Loaded ${fetchedUsers.length} user records. Ready to push to RTDB.`;
+        btnUpload.style.display = "inline-block";
+        btnDownload.style.display = "inline-block";
+      }
+
+    } catch (error) {
+      console.error("Fetch Error:", error);
+      statusDiv.innerText = `Error fetching data: ${error.message}`;
+    } finally {
+      btnFetch.disabled = false;
+    }
+  });
+
+  // 2. PUSH TO REALTIME DATABASE (global_users)
+  btnUpload.addEventListener("click", async () => {
+    if (!fetchedUsers || fetchedUsers.length === 0) return;
+
+    const confirmAction = confirm(`Are you sure you want to write ${fetchedUsers.length} users into 'global_users' in Realtime Database?`);
+    if (!confirmAction) return;
+
+    try {
+      statusDiv.innerText = "Status: Writing nodes to Realtime Database...";
+      btnUpload.disabled = true;
+
+      const updates = {};
+
+      // Map users array to global_users/{uid}
+      fetchedUsers.forEach((user) => {
+        updates[`/global_users/${user.uid}`] = {
+          createdAt: user.createdAt,
+          dob: user.dob,
+          email: user.email,
+          username: user.username
+        };
+      });
+
+      // Execute bulk update
+      await update(ref(rtdb), updates);
+
+      statusDiv.style.backgroundColor = "#e3fcef";
+      statusDiv.style.color = "#006644";
+      statusDiv.innerText = `🎉 Success! Successfully restored ${fetchedUsers.length} users into '/global_users' in Realtime Database!`;
+      alert("Success! 'global_users' database node has been completely restored.");
+
+    } catch (error) {
+      console.error("RTDB Upload Error:", error);
+      statusDiv.style.backgroundColor = "#ffebe6";
+      statusDiv.style.color = "#bf2600";
+      statusDiv.innerText = `Upload Failed: ${error.message}`;
+    } finally {
+      btnUpload.disabled = false;
+    }
+  });
+
+  // 3. DOWNLOAD BACKUP JSON
+  btnDownload.addEventListener("click", () => {
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(fetchedUsers, null, 2));
+    const downloadAnchor = document.createElement('a');
+    downloadAnchor.setAttribute("href", dataStr);
+    downloadAnchor.setAttribute("download", `phantom_global_users_${Date.now()}.json`);
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    downloadAnchor.remove();
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,473 @@
+
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Phantom Hub — Enterprise Admin Portal</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    body { background-color: #0b0f19; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+    .glass-card { background: rgba(17, 24, 39, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: #111827; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #374151; border-radius: 4px; }
+  </style>
+</head>
+<body class="text-slate-200 min-h-screen custom-scrollbar">
+
+  <!-- ================= AUTH overlay (If Not Logged In) ================= -->
+  <div id="authOverlay" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/90 backdrop-blur-md p-4">
+    <div class="glass-card w-full max-w-md p-8 rounded-2xl shadow-2xl border border-slate-800 text-center">
+      <div class="w-16 h-16 bg-blue-600/20 text-blue-500 rounded-2xl flex items-center justify-center mx-auto mb-4 text-2xl border border-blue-500/30">
+        <i class="fa-solid fa-shield-halved"></i>
+      </div>
+      <h2 class="text-2xl font-bold text-white mb-2">Admin Portal Login</h2>
+      <p class="text-slate-400 text-sm mb-6">Authenticate with an authorized administrator account to access core infrastructure settings.</p>
+
+      <!-- Google Sign-In Button -->
+      <button id="btnGoogleLogin" class="w-full flex items-center justify-center gap-3 bg-white text-slate-900 font-semibold py-3 px-4 rounded-xl hover:bg-slate-100 transition shadow-lg mb-4">
+        <svg class="w-5 h-5" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/></svg>
+        Sign in with Google
+      </button>
+
+      <div class="relative my-4 flex items-center justify-center">
+        <div class="border-t border-slate-800 w-full"></div>
+        <span class="bg-slate-900 px-3 text-xs text-slate-500 font-mono uppercase absolute">Or Email</span>
+      </div>
+
+      <!-- Email / Pass Form -->
+      <form id="emailLoginForm" class="space-y-3 text-left">
+        <div>
+          <label class="block text-xs font-medium text-slate-400 mb-1">Email</label>
+          <input type="email" id="loginEmail" required class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500">
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-slate-400 mb-1">Password</label>
+          <input type="password" id="loginPass" required class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500">
+        </div>
+        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2.5 rounded-lg text-sm transition">Log In with Password</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= MAIN ADMIN DASHBOARD ================= -->
+  <div id="adminApp" class="hidden min-h-screen flex flex-col">
+
+    <!-- TOP NAVIGATION BAR -->
+    <header class="glass-card border-b border-slate-800 sticky top-0 z-40 px-6 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 bg-gradient-to-tr from-blue-600 to-indigo-500 rounded-xl flex items-center justify-center text-white font-black text-lg shadow-lg">P</div>
+        <div>
+          <h1 class="font-bold text-white leading-none">Phantom Hub <span class="text-xs bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2 py-0.5 rounded-full font-mono ml-2">Console v2.5</span></h1>
+          <p class="text-xs text-slate-500 mt-1">Enterprise Operations & Infrastructure Control</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <div class="flex items-center gap-3 px-3 py-1.5 glass-card rounded-full border border-slate-800">
+          <img id="adminAvatar" class="w-7 h-7 rounded-full bg-slate-700" src="https://ui-avatars.com/api/?name=Admin&background=0D8ABC&color=fff" alt="Admin">
+          <span id="adminUserDisplay" class="text-xs font-semibold text-slate-300">admin@phantom.com</span>
+        </div>
+        <button id="btnLogout" class="text-xs bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 px-3 py-2 rounded-lg font-medium transition">
+          <i class="fa-solid fa-right-from-bracket mr-1"></i> Logout
+        </button>
+      </div>
+    </header>
+
+    <!-- CONTENT BODY -->
+    <main class="flex-1 p-6 max-w-7xl w-full mx-auto space-y-6">
+
+      <!-- SYSTEM METRICS OVERVIEW CARDS -->
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div class="glass-card p-5 rounded-2xl border border-slate-800/80">
+          <div class="flex items-center justify-between text-slate-400 text-xs font-medium uppercase tracking-wider mb-2">
+            <span>Total Registered Users</span>
+            <i class="fa-solid fa-users text-blue-400"></i>
+          </div>
+          <div id="statTotalUsers" class="text-3xl font-black text-white">--</div>
+          <p class="text-xs text-slate-500 mt-2"><span class="text-emerald-400 font-semibold"><i class="fa-solid fa-check mr-1"></i>Verified</span> in Firestore</p>
+        </div>
+
+        <div class="glass-card p-5 rounded-2xl border border-slate-800/80">
+          <div class="flex items-center justify-between text-slate-400 text-xs font-medium uppercase tracking-wider mb-2">
+            <span>Global Users (RTDB)</span>
+            <i class="fa-solid fa-network-wired text-indigo-400"></i>
+          </div>
+          <div id="statGlobalUsers" class="text-3xl font-black text-white">--</div>
+          <p class="text-xs text-slate-500 mt-2" id="statSyncStatus"><span class="text-amber-400 font-semibold">Pending Check</span></p>
+        </div>
+
+        <div class="glass-card p-5 rounded-2xl border border-slate-800/80">
+          <div class="flex items-center justify-between text-slate-400 text-xs font-medium uppercase tracking-wider mb-2">
+            <span>System Health</span>
+            <i class="fa-solid fa-heart-pulse text-emerald-400"></i>
+          </div>
+          <div class="text-3xl font-black text-emerald-400 flex items-center gap-2">
+            <span>99.9%</span>
+            <span class="flex h-3 w-3 relative">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+            </span>
+          </div>
+          <p class="text-xs text-slate-500 mt-2">All Database nodes responsive</p>
+        </div>
+
+        <div class="glass-card p-5 rounded-2xl border border-slate-800/80">
+          <div class="flex items-center justify-between text-slate-400 text-xs font-medium uppercase tracking-wider mb-2">
+            <span>Active Admin Session</span>
+            <i class="fa-solid fa-shield-cat text-purple-400"></i>
+          </div>
+          <div id="authProviderBadge" class="text-lg font-bold text-purple-300">OAuth / Firebase</div>
+          <p class="text-xs text-slate-500 mt-2">Role: <span class="text-blue-400 font-semibold">Super Administrator</span></p>
+        </div>
+      </div>
+
+      <!-- SYSTEM CONTROLS & UTILITIES TOOLBAR -->
+      <div class="glass-card p-5 rounded-2xl flex flex-wrap items-center justify-between gap-4 border border-slate-800">
+        <div>
+          <h3 class="font-bold text-white text-base">Infrastructure Operations</h3>
+          <p class="text-xs text-slate-400">Execute global state repairs, synchronize databases, and generate backups.</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <button id="btnTriggerSync" class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs px-4 py-2.5 rounded-xl transition flex items-center gap-2 shadow-lg shadow-indigo-600/20">
+            <i class="fa-solid fa-arrows-rotate"></i> Reconstruct Realtime `global_users`
+          </button>
+          <button id="btnDownloadBackup" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-semibold text-xs px-4 py-2.5 rounded-xl transition flex items-center gap-2">
+            <i class="fa-solid fa-download"></i> Export JSON Backup
+          </button>
+        </div>
+      </div>
+
+      <!-- MAIN USER MANAGEMENT TABLE -->
+      <div class="glass-card rounded-2xl border border-slate-800 overflow-hidden">
+        
+        <!-- Table Toolbar -->
+        <div class="p-5 border-b border-slate-800/80 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <h2 class="text-lg font-bold text-white">Global User Directory</h2>
+            <p class="text-xs text-slate-400">Search and manage all user accounts across Firestore and Realtime Database.</p>
+          </div>
+          <div class="relative w-full md:w-72">
+            <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-xs"></i>
+            <input type="text" id="searchInput" placeholder="Search by Username, Email, UID..." class="w-full bg-slate-900 border border-slate-800 rounded-xl pl-9 pr-4 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500">
+          </div>
+        </div>
+
+        <!-- Table Container -->
+        <div class="overflow-x-auto custom-scrollbar">
+          <table class="w-full text-left text-xs text-slate-300">
+            <thead class="bg-slate-900/80 text-slate-400 font-semibold uppercase tracking-wider border-b border-slate-800">
+              <tr>
+                <th class="px-6 py-4">User</th>
+                <th class="px-6 py-4">Firebase UID</th>
+                <th class="px-6 py-4">Date of Birth</th>
+                <th class="px-6 py-4">Registered (createdAt)</th>
+                <th class="px-6 py-4">Status</th>
+                <th class="px-6 py-4 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="userTableBody" class="divide-y divide-slate-800/60 font-mono">
+              <tr>
+                <td colspan="6" class="px-6 py-8 text-center text-slate-500 font-sans">
+                  <i class="fa-solid fa-spinner fa-spin text-lg mb-2"></i>
+                  <p>Loading user registry...</p>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- REAL-TIME AUDIT TRAIL LOGS -->
+      <div class="glass-card p-5 rounded-2xl border border-slate-800">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="font-bold text-white text-sm flex items-center gap-2">
+            <i class="fa-solid fa-terminal text-blue-400"></i> Admin Activity & Security Audit Log
+          </h3>
+          <span class="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded font-mono">Live Stream</span>
+        </div>
+        <div id="auditLog" class="bg-slate-950 p-4 rounded-xl border border-slate-900 font-mono text-[11px] text-slate-400 h-36 overflow-y-auto space-y-1 custom-scrollbar">
+          <div>[<span class="text-blue-400">SYSTEM</span>] Admin Console Loaded. Initialization complete.</div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- FIREBASE MODULES -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { 
+      getAuth, 
+      signInWithEmailAndPassword, 
+      signInWithPopup, 
+      GoogleAuthProvider, 
+      signOut, 
+      onAuthStateChanged 
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { 
+      getFirestore, 
+      collection, 
+      getDocs, 
+      doc, 
+      updateDoc 
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { 
+      getDatabase, 
+      ref, 
+      get, 
+      update 
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+    // ⚠️ REPLACE WITH YOUR EXACT FIREBASE PROJECT CONFIG
+    const firebaseConfig = {
+
+
+  apiKey: "AIzaSyBWA-zRkPFH4svRjkMUO80TUdI9zIm5ICc",
+
+
+  authDomain: "phantom-messaging-a5bf0.firebaseapp.com",
+
+
+  databaseURL: "https://phantom-messaging-a5bf0-default-rtdb.firebaseio.com",
+
+
+  projectId: "phantom-messaging-a5bf0",
+
+
+  storageBucket: "phantom-messaging-a5bf0.firebasestorage.app",
+
+
+  messagingSenderId: "475147330421",
+
+
+  appId: "1:475147330421:web:6fe73f781a9dbf443ca93c",
+
+
+  measurementId: "G-1974SDM4VW"
+
+
+};
+
+    // Initialize Services
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const rtdb = getDatabase(app);
+    const googleProvider = new GoogleAuthProvider();
+
+    let loadedUsers = [];
+
+    // DOM References
+    const authOverlay = document.getElementById("authOverlay");
+    const adminApp = document.getElementById("adminApp");
+    const emailLoginForm = document.getElementById("emailLoginForm");
+    const btnGoogleLogin = document.getElementById("btnGoogleLogin");
+    const btnLogout = document.getElementById("btnLogout");
+    const adminUserDisplay = document.getElementById("adminUserDisplay");
+    const adminAvatar = document.getElementById("adminAvatar");
+    const userTableBody = document.getElementById("userTableBody");
+    const searchInput = document.getElementById("searchInput");
+    const auditLog = document.getElementById("auditLog");
+
+    // Logging helper
+    function logAudit(msg, type = "INFO") {
+      const time = new Date().toISOString().split("T")[1].slice(0, 8);
+      const color = type === "ERROR" ? "text-red-400" : type === "SUCCESS" ? "text-emerald-400" : "text-blue-400";
+      const div = document.createElement("div");
+      div.innerHTML = `[<span class="${color}">${type}</span>] <span class="text-slate-500">${time}</span> ${msg}`;
+      auditLog.appendChild(div);
+      auditLog.scrollTop = auditLog.scrollHeight;
+    }
+
+    // AUTH STATE LISTENER
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        authOverlay.classList.add("hidden");
+        adminApp.classList.remove("hidden");
+        adminUserDisplay.innerText = user.email || user.displayName;
+        adminAvatar.src = user.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.email)}&background=0D8ABC&color=fff`;
+        document.getElementById("authProviderBadge").innerText = user.providerData[0]?.providerId === "google.com" ? "Google OAuth 2.0" : "Password Auth";
+
+        logAudit(`Authenticated successfully as ${user.email}`, "SUCCESS");
+        loadDashboardData();
+      } else {
+        authOverlay.classList.remove("hidden");
+        adminApp.classList.add("hidden");
+        logAudit("Awaiting user login credentials...", "INFO");
+      }
+    });
+
+    // GOOGLE SIGN-IN
+    btnGoogleLogin.addEventListener("click", async () => {
+      try {
+        await signInWithPopup(auth, googleProvider);
+      } catch (err) {
+        alert("Google Sign-In failed: " + err.message);
+        logAudit(`Google Sign-In failed: ${err.message}`, "ERROR");
+      }
+    });
+
+    // EMAIL/PASSWORD SIGN-IN
+    emailLoginForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = document.getElementById("loginEmail").value;
+      const pass = document.getElementById("loginPass").value;
+      try {
+        await signInWithEmailAndPassword(auth, email, pass);
+      } catch (err) {
+        alert("Login failed: " + err.message);
+        logAudit(`Password Login failed: ${err.message}`, "ERROR");
+      }
+    });
+
+    // LOGOUT
+    btnLogout.addEventListener("click", () => signOut(auth));
+
+    // FETCH & RENDER DASHBOARD DATA
+    async function loadDashboardData() {
+      try {
+        logAudit("Querying Firestore 'users' collection...", "INFO");
+        const querySnap = await getDocs(collection(db, "users"));
+        
+        loadedUsers = [];
+        querySnap.forEach((docSnap) => {
+          const data = docSnap.data();
+          
+          // Parse timestamp
+          let createdMs = Date.now();
+          if (data.createdAt?.seconds) createdMs = data.createdAt.seconds * 1000;
+          else if (typeof data.createdAt === "number") createdMs = data.createdAt;
+
+          loadedUsers.push({
+            uid: docSnap.id || data.uid,
+            username: data.username || data.displayName || "N/A",
+            email: data.email || "N/A",
+            dob: data.dob || "N/A",
+            createdAt: createdMs,
+            status: data.status || "Active"
+          });
+        });
+
+        // Update Stat Cards
+        document.getElementById("statTotalUsers").innerText = loadedUsers.length;
+
+        // Check Realtime Database Sync
+        const rtdbSnap = await get(ref(rtdb, "global_users"));
+        const rtdbCount = rtdbSnap.exists() ? Object.keys(rtdbSnap.val()).length : 0;
+        document.getElementById("statGlobalUsers").innerText = rtdbCount;
+
+        const statSyncStatus = document.getElementById("statSyncStatus");
+        if (rtdbCount >= loadedUsers.length) {
+          statSyncStatus.innerHTML = `<span class="text-emerald-400 font-semibold"><i class="fa-solid fa-circle-check mr-1"></i>100% Synced</span> with RTDB`;
+        } else {
+          statSyncStatus.innerHTML = `<span class="text-amber-400 font-semibold"><i class="fa-solid fa-triangle-exclamation mr-1"></i>${loadedUsers.length - rtdbCount} Out of Sync</span>`;
+        }
+
+        renderTable(loadedUsers);
+        logAudit(`Loaded ${loadedUsers.length} total user records into management table.`, "SUCCESS");
+
+      } catch (err) {
+        console.error(err);
+        logAudit(`Data Load Error: ${err.message}`, "ERROR");
+      }
+    }
+
+    // RENDER TABLE ROWS
+    function renderTable(users) {
+      if (users.length === 0) {
+        userTableBody.innerHTML = `<tr><td colspan="6" class="px-6 py-8 text-center text-slate-500 font-sans">No user records found.</td></tr>`;
+        return;
+      }
+
+      userTableBody.innerHTML = users.map((u) => `
+        <tr class="hover:bg-slate-900/50 transition">
+          <td class="px-6 py-4 font-sans">
+            <div class="font-bold text-white">${u.username}</div>
+            <div class="text-xs text-slate-500 font-mono">${u.email}</div>
+          </td>
+          <td class="px-6 py-4"><code>${u.uid}</code></td>
+          <td class="px-6 py-4 font-sans text-slate-400">${u.dob}</td>
+          <td class="px-6 py-4 text-slate-400">${new Date(u.createdAt).toLocaleDateString()}</td>
+          <td class="px-6 py-4 font-sans">
+            <span class="px-2 py-1 text-[10px] font-bold rounded-full ${u.status === 'Suspended' ? 'bg-red-500/10 text-red-400 border border-red-500/20' : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'}">
+              ${u.status}
+            </span>
+          </td>
+          <td class="px-6 py-4 text-right font-sans">
+            <button onclick="toggleUserStatus('${u.uid}', '${u.status}')" class="text-xs ${u.status === 'Suspended' ? 'text-emerald-400 hover:text-emerald-300' : 'text-red-400 hover:text-red-300'} font-semibold mr-2">
+              ${u.status === 'Suspended' ? 'Unsuspend' : 'Suspend'}
+            </button>
+          </td>
+        </tr>
+      `).join("");
+    }
+
+    // SEARCH FILTER
+    searchInput.addEventListener("input", (e) => {
+      const q = e.target.value.toLowerCase();
+      const filtered = loadedUsers.filter(u => 
+        u.username.toLowerCase().includes(q) || 
+        u.email.toLowerCase().includes(q) || 
+        u.uid.toLowerCase().includes(q)
+      );
+      renderTable(filtered);
+    });
+
+    // TRIGGER RECONSTRUCTION OF GLOBAL USERS
+    document.getElementById("btnTriggerSync").addEventListener("click", async () => {
+      if (!loadedUsers.length) return alert("No users loaded to sync!");
+      if (!confirm(`Reconstruct 'global_users' in Realtime Database with ${loadedUsers.length} entries?`)) return;
+
+      try {
+        logAudit("Executing bulk update on Realtime Database /global_users...", "INFO");
+        const updates = {};
+        loadedUsers.forEach(u => {
+          updates[`/global_users/${u.uid}`] = {
+            username: u.username,
+            email: u.email,
+            dob: u.dob,
+            createdAt: u.createdAt
+          };
+        });
+
+        await update(ref(rtdb), updates);
+        logAudit(`Successfully reconstructed ${loadedUsers.length} user nodes in Realtime Database!`, "SUCCESS");
+        alert("Success! Global Users reconstructed successfully.");
+        loadDashboardData();
+      } catch (err) {
+        logAudit(`Sync Failed: ${err.message}`, "ERROR");
+        alert("Sync error: " + err.message);
+      }
+    });
+
+    // EXPORT BACKUP
+    document.getElementById("btnDownloadBackup").addEventListener("click", () => {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(loadedUsers, null, 2));
+      const a = document.createElement('a');
+      a.href = dataStr;
+      a.download = `enterprise_backup_${Date.now()}.json`;
+      a.click();
+      logAudit("Exported local JSON backup snapshot.", "INFO");
+    });
+
+    // USER SUSPENSION TOGGLE
+    window.toggleUserStatus = async (uid, currentStatus) => {
+      const newStatus = currentStatus === "Suspended" ? "Active" : "Suspended";
+      if (!confirm(`Change user ${uid} status to ${newStatus}?`)) return;
+
+      try {
+        await updateDoc(doc(db, "users", uid), { status: newStatus });
+        logAudit(`Updated status for user ${uid} to '${newStatus}'`, "SUCCESS");
+        loadDashboardData();
+      } catch (err) {
+        logAudit(`Failed to update user status: ${err.message}`, "ERROR");
+      }
+    };
+  </script>
+</body>
+</html>

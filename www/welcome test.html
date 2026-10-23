@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phantom Hub | Pro</title>
+    <style>
+        /* Modern Pro Typography - Inter */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        :root {
+            --accent: #D4AF37;
+            --accent-glow: rgba(212, 175, 55, 0.2);
+            --bg: #000000;
+            --card-bg: rgba(28, 28, 30, 0.5);
+            --border: rgba(255, 255, 255, 0.1);
+            --text-main: #f5f5f7;
+            --text-dim: #86868b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            font-family: 'Inter', -apple-system, sans-serif;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* --- Apple-style Dynamic Light Shadows --- */
+        .ambient-light {
+            position: fixed;
+            width: 100vw;
+            height: 100vh;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .light-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.3;
+            mix-blend-mode: screen;
+            animation: moveLight 25s infinite alternate ease-in-out;
+        }
+
+        .orb-1 {
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+            top: -200px;
+            right: -100px;
+        }
+
+        .orb-2 {
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(255,255,255,0.03) 0%, transparent 70%);
+            bottom: -300px;
+            left: -200px;
+            animation-delay: -5s;
+        }
+
+        @keyframes moveLight {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(-10%, 15%) scale(1.1); }
+            100% { transform: translate(5%, -10%) scale(0.9); }
+        }
+
+        /* --- Navigation --- */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: saturate(180%) blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo {
+            font-weight: 600;
+            font-size: 1.2rem;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-mark {
+            width: 24px;
+            height: 24px;
+            background: var(--accent);
+            border-radius: 6px;
+        }
+
+        /* --- Hero Section --- */
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 20px;
+        }
+
+        .hero h1 {
+            font-size: clamp(3rem, 8vw, 5.5rem);
+            font-weight: 700;
+            letter-spacing: -3px;
+            margin-bottom: 15px;
+            background: linear-gradient(180deg, #fff 40%, #a1a1a6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.5rem;
+            color: var(--text-dim);
+            max-width: 700px;
+            margin-bottom: 40px;
+            font-weight: 400;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border-radius: 30px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn-primary {
+            background: #fff;
+            color: #000;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent);
+            transform: scale(1.03);
+        }
+
+        .btn-link {
+        background: #fff;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-link:hover {
+            text-decoration: underline;
+        }
+
+        /* --- Layout Grid --- */
+        .section-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 100px 20px;
+        }
+
+        .pro-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 28px;
+            padding: 60px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: center;
+            margin-bottom: 40px;
+            transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        .pro-card:hover {
+            border-color: rgba(255,255,255,0.2);
+            transform: translateY(-5px);
+        }
+
+        .pro-card h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .pro-card p {
+            color: var(--text-dim);
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        /* --- Minimal Interactive Animations --- */
+        .viz-box {
+            width: 100%;
+            height: 300px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .viz-circle {
+            width: 180px;
+            height: 180px;
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: rotateViz 10s infinite linear;
+        }
+
+        .viz-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--accent);
+            border-radius: 50%;
+            box-shadow: 0 0 15px var(--accent);
+        }
+
+        @keyframes rotateViz {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* --- Professional Install Panel --- */
+        .install-panel {
+            background: #111111;
+            border: 1px solid var(--border);
+            border-radius: 32px;
+            padding: 80px 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            margin-top: 50px;
+        }
+
+        .install-panel::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+        }
+
+        .app-icon-wrap {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #2c2c2e 0%, #000 100%);
+            margin: 0 auto 30px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .security-row {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin: 40px 0;
+            color: var(--text-dim);
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .security-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .security-item svg {
+            color: #34c759; /* Apple Success Green */
+        }
+
+        /* --- Footer --- */
+        footer {
+            padding: 80px 40px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--text-dim);
+            font-size: 0.9rem;
+        }
+
+        footer a {
+            color: var(--text-dim);
+            text-decoration: none;
+            margin-left: 25px;
+            transition: color 0.3s;
+        }
+
+        footer a:hover { color: #fff; }
+
+        @media (max-width: 850px) {
+            .pro-card { grid-template-columns: 1fr; padding: 40px; text-align: center; }
+            .viz-box { order: -1; }
+            nav { padding: 20px; }
+            .hero h1 { font-size: 3.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="ambient-light">
+        <div class="light-orb orb-1"></div>
+        <div class="light-orb orb-2"></div>
+    </div>
+
+    <nav>
+        <div class="logo">
+            <div class="logo-mark"></div>
+            Phantom Hub
+        </div>
+        <div class="nav-actions">
+            <a href="#install" class="btn btn-primary" style="padding: 8px 20px; font-size: 0.85rem;">Install App</a>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <h1>Powerful. Minimal.</h1>
+        <p>The high-performance dashboard for Phantom Messaging. Engineered for those who value speed and aesthetic precision.</p>
+        <div class="btn-group">
+            <a href="#" class="btn btn-primary">Enter Dashboard</a>
+            <a href="#install" class="btn btn-link">Download App <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg></a>
+        </div>
+    </section>
+
+    <div class="section-container">
+        <!-- Panel 1 -->
+        <div class="pro-card">
+            <div class="card-content">
+                <h2>The Phantom Hub</h2>
+                <p>Manage your entire ecosystem from a single, unified interface. Built on a foundation of zero-latency architecture and titanium-grade security.</p>
+            </div>
+            <div class="viz-box">
+                <div class="viz-circle">
+                    <div class="viz-dot" style="position: absolute; top: -4px;"></div>
+                </div>
+                <div class="viz-circle" style="width: 100px; height: 100px; opacity: 0.5; animation-direction: reverse;"></div>
+            </div>
+        </div>
+
+        <!-- Panel 2 -->
+        <div class="pro-card">
+            <div class="viz-box">
+                <div style="display: flex; gap: 8px; align-items: flex-end; height: 60px;">
+                    <div style="width: 4px; height: 40%; background: var(--accent); border-radius: 2px;"></div>
+                    <div style="width: 4px; height: 80%; background: var(--accent); border-radius: 2px;"></div>
+                    <div style="width: 4px; height: 60%; background: var(--accent); border-radius: 2px;"></div>
+                    <div style="width: 4px; height: 100%; background: var(--accent); border-radius: 2px;"></div>
+                </div>
+            </div>
+            <div class="card-content">
+                <h2>Secure Messaging</h2>
+                <p>Communication without compromise. Phantom uses end-to-end signal protocols to ensure your data remains your data. Always.</p>
+            </div>
+        </div>
+
+        <!-- Install Panel -->
+        <div id="install" class="install-panel">
+            <div class="app-icon-wrap">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+            </div>
+            <h2 style="font-size: 3rem; font-weight: 700;">Get the Pro App.</h2>
+            <p style="color: var(--text-dim); margin-top: 10px;">Experience the full power of Phantom on your desktop or mobile device.</p>
+            
+            <div class="security-row">
+                <div class="security-item">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    48.5 MB Package
+                </div>
+                <div class="security-item">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    SHA-256 Secure
+                </div>
+                <div class="security-item">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    Malware Free
+                </div>
+            </div>
+
+            <a href="#" class="btn btn-primary" style="padding: 18px 60px; font-size: 1.1rem; display: inline-block;">Download for Desktop</a>
+            
+            <p style="margin-top: 30px; font-size: 0.8rem; color: #444;">Supports macOS, Windows, and Linux. Android & iOS coming soon.</p>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-left">
+            &copy; 2024 Phantom Hub. All rights reserved.
+        </div>
+        <div class="footer-right">
+            <a href="#">Privacy</a>
+            <a href="#">Terms</a>
+            <a href="#">Security</a>
+        </div>
+    </footer>
+
+    <script>
+        // Scroll Reveal logic for Pro-feel transitions
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.15 });
+
+        document.querySelectorAll('.pro-card, .install-panel').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'all 0.8s cubic-bezier(0.2, 0, 0.2, 1)';
+            observer.observe(el);
+        });
+
+        // Interactive mouse movement for ambient light
+        document.addEventListener('mousemove', (e) => {
+            const orb = document.querySelector('.orb-1');
+            const moveX = (e.clientX - window.innerWidth / 2) * 0.05;
+            const moveY = (e.clientY - window.innerHeight / 2) * 0.05;
+            orb.style.transform = `translate(${moveX}px, ${moveY}px)`;
+        });
+    </script>
+</body>
+</html>
+

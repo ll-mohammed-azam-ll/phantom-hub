@@ -1,0 +1,1237 @@
+<!DOCTYPE html><html lang="en"><head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"> <link rel="manifest" href="/manifest.json" />
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="MyPWA"><link rel="apple-touch-icon" href="/logo192.png">
+<meta name="theme-color" content="#000000" />
+
+
+
+<title>phantom Hub Messenger Pro</title> <script> // Check if the user has already seen the UI announcementif (!localStorage.getItem('ui_announcement_seen_23')) { // The standard browser alert alert( "23. -- We just launched a new UI element and Easter eggs for your best experience, " + "and we are waiting for your feedback!\n\n" + "Please send your feedback to: venta.corporation.team@gmail.com" ); // Set a flag so this specific user doesn't see it again localStorage.setItem('ui_announcement_seen_23', 'true');}
+</script> <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script><script src="https://unpkg.com/html5-qrcode"></script>
+
+
+<script src="https://cdn.tailwindcss.com"></script><link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script> <!-- Keep your original script --><script type="module" src="mess-script (1).js"></script>
+<script type="module" src="./youtube.js"></script>
+<!-- Add the new dedicated calling script --><script type="module" src="call-system.js"></script>
+<script src="ai.js"></script> <script type="module" src="profile.js"></script> <script type="module" src="global-setting.js"></script> <script> if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('/sw.js') .then((registration) => { console.log('SW registered with scope:', registration.scope); }) .catch((error) => { console.error('SW registration failed:', error); }); });}
+
+window.addEventListener('beforeinstallprompt', (e) => { console.log('Install prompt is ready!'); alert('Success! Your PWA is installable.');});
+// This checks if the Service Worker is actually workingnavigator.serviceWorker.ready.then(registration => { if (!registration.active) { alert('Service Worker is registered but NOT active.'); }});
+</script> <script> window.onload = function() { setTimeout(function() { // Check if the user has already seen the welcome message if (!localStorage.getItem("phantom_hub_welcomed")) { // The professional message content var message = "Welcome to Phantom Hub.\n\n" + "The platform you are visiting is known as Phantom Hub, a messaging platform powered by Venta. " + "Phantom is an ecosystem designed for seamless communication, currently integrated within the Venta infrastructure.\n\n" + "IMPORTANT: This platform is currently in the testing and development phase. " + "Because of this, you may encounter glitches, technical errors, or unexpected behavior. " + "We are working hard to stabilize the environment and we are waiting for your feedback on Phantom Hub.\n\n" + "If you have experienced any issues or wish to share your experience, please click 'OK' to send us a report.";
+// Show the native browser 'Confirm' dialog if (confirm(message)) { // If the user clicks "OK", open the email client var email = "venta.corporation.team@gmail.com"; // Replace with your email var subject = "Phantom Hub Feedback"; var body = "I encountered a glitch/error on Phantom Messaging: "; window.location.href = "mailto:" + email + "?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body); }
+// Set the flag in localStorage so it doesn't show again on reload localStorage.setItem("phantom_hub_welcomed", "true"); } }, 5000); // 5000 milliseconds = 5 seconds };</script>
+<style> :root { --gold: #D4AF37; --bg-dark: #050505; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+background-color: var(--bg-dark); color: white; height: 100dvh; margin: 0; overflow: hidden; }
+
+.bg-white\/5 { background: rgba(255,255,255,0.05); }.bg-white\/10 { background: rgba(255,255,255,0.10); }.bg-white\/20 { background: rgba(255,255,255,0.20); }
+.border-white\/10 { border-color: rgba(255,255,255,0.10); }
+.shadow-gold-soft { box-shadow: 0 10px 30px rgba(212,175,55,0.2); }
+
+
+/* Background opacity utilities */.bg-white\/5 { background: rgba(255,255,255,0.05); }.bg-white\/10 { background: rgba(255,255,255,0.10); }.bg-white\/20 { background: rgba(255,255,255,0.20); }.bg-white\/30 { background: rgba(255,255,255,0.30); }
+.bg-black\/10 { background: rgba(0,0,0,0.10); }.bg-black\/20 { background: rgba(0,0,0,0.20); }.bg-black\/30 { background: rgba(0,0,0,0.30); }
+.bg-gray-900\/50 { background: rgba(17,24,39,0.5); }.bg-gray-800\/50 { background: rgba(31,41,55,0.5); }
+
+/* Border opacity utilities */.border-white\/5 { border-color: rgba(255,255,255,0.05); }.border-white\/10 { border-color: rgba(255,255,255,0.10); }.border-white\/20 { border-color: rgba(255,255,255,0.20); }
+.border-black\/10 { border-color: rgba(0,0,0,0.10); }.border-black\/20 { border-color: rgba(0,0,0,0.20); }
+
+/* Text opacity utilities */.text-white\/60 { color: rgba(255,255,255,0.60); }.text-white\/70 { color: rgba(255,255,255,0.70); }.text-white\/80 { color: rgba(255,255,255,0.80); }
+
+/* Gold shadow utilities used in your UI */.shadow-gold-soft { box-shadow: 0 10px 30px rgba(212,175,55,0.25);}
+.shadow-gold-strong { box-shadow: 0 15px 40px rgba(212,175,55,0.35);}
+
+/* Glass effect backgrounds */.glass-light { background: rgba(255,255,255,0.08); backdrop-filter: blur(12px);}
+.glass-dark { background: rgba(0,0,0,0.35); backdrop-filter: blur(12px);}
+.rounded-3xl { border-radius: 1.5rem; }.rounded-4xl { border-radius: 2rem; }
+/* custom radius syntax from v3 */.rounded-\[20px\] { border-radius: 20px; }.rounded-\[24px\] { border-radius: 24px; }.rounded-\[30px\] { border-radius: 30px; }
+.font-\[500\] { font-weight: 500; }.font-\[600\] { font-weight: 600; }.font-\[700\] { font-weight: 700; }
+/* --- MAIN STACK CONTAINER --- */#hub-stack { position: fixed; bottom: 24px; right: 24px; display: flex; flex-direction: column; /* Stacks the Main + Hub above the Explore row */ align-items: flex-end; /* Keeps buttons aligned to the right */ gap: 12px; z-index: 999;}
+/* --- BOTTOM ROW (Explore Button + Bubble Bar) --- */.bottom-hub-row { display: flex; flex-direction: row; align-items: center; gap: 12px;}
+/* --- BUBBLE BAR STYLING --- */.bubble-bar { display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 30px; /* Border & Background */ border: 1px solid #D4AF37; background: rgba(212, 175, 55, 0.15); opacity: 0.9; /* Backdrop Blur */ backdrop-filter: blur(80px); -webkit-backdrop-filter: blur(80px); /* Shadow */ box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);}
+
+/* Individual Buttons inside the bar */.bubble-btn { width: 40px; height: 40px; border-radius: 50%; border: none; background: transparent; color: #D4AF37; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background-color 0.2s ease, transform 0.2s ease;}
+
+.bubble-btn:hover { background: rgba(0, 0, 0, 0.08); transform: scale(1.08);}
+.bubble-btn:active { transform: scale(0.92);}
+/* --- BLUR LAYERING LOGIC --- */#main-app-content, .hub-btn, .bubble-bar { transition: filter 0.4s ease, transform 0.4s ease, opacity 0.4s ease, width 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), height 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+/* Level 1: Hub Active (Blur background app) */body.hub-active #main-app-content { filter: blur(15px); pointer-events: none; transform: scale(0.97); }
+/* Level 2: Panel Active (Blur EVERYTHING behind panel) */body.panel-active #main-app-content { filter: blur(25px); pointer-events: none; }
+/* Apply smooth blur and fade to the HUB STACK when any panel is open */body.panel-active #hub-stack { filter: blur(10px); opacity: 0; pointer-events: none; transform: scale(0.9); transition: all 0.4s ease;}
+.main-hub-row{ display:flex; align-items:center; justify-content:flex-end; gap:12px;}
+.bubble-bar{ transition:all .35s ease;}
+/* --- to show the bar on the top of every panel it is implemented for video content --- */.bubble-bar-on-top { z-index: 2147483647 !important; position: relative !important;}
+.bubble-btn.active { background: rgba(0, 0, 0, 0.12); transform: scale(1.08);}
+
+
+/* --- end of hub stack CSS ---*/
+
+
+/* --- CONTENT PANEL --- */ .content-panel { position: fixed; bottom: -100%; left: 50%; transform: translateX(-50%); width: 92%; max-width: 420px; background: black;//rgba(15, 15, 15, 0.98); backdrop-filter: blur(40px); border: 1px solid rgba(212, 175, 55, 0.5); border-radius: 45px 45px 30px 30px; padding: 30px; z-index: 2000; transition: bottom 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.1); max-height: 85vh; overflow-y: auto; } .content-panel.active { bottom: 30px; }
+.panel-close-btn { position: absolute; top: 20px; right: 20px; width: 35px; height: 35px; background: rgba(255,255,255,0.05); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; } .swipe-handle { width: 50px; height: 6px; background: rgba(255,255,255,0.15); border-radius: 10px; margin: -15px auto 20px; cursor: grab; }
+/* --- APP LAYOUT --- */ .app-shell { display: flex; height: 100dvh; } .sidebar { width: 380px; border-right: 1px solid rgba(255,255,255,0.05); background: #050505; } .chat-view { flex: 1; display: flex; flex-direction: column; z-index: 100; /* Add your image link here */ background-image: linear-gradient(rgba(10, 10, 10, 0.85), rgba(10, 10, 10, 0.75)), url('chat-wallpapper.png'); /* Adjustments to make the background look perfect */ background-size: cover; background-position: center; background-repeat: no-repeat; background-attachment: fixed;}
+
+@media (max-width: 768px) { .sidebar { width: 100%; } .chat-view { position: fixed; inset: 0; transform: translateX(100%); transition: 0.3s; } .chat-view.active { transform: translateX(0); } }
+.msg-bubble { max-width: 80%; padding: 20px 20px; font-size: 14px; position: relative; } .msg-me { background: #927200; color: white; border-radius: 20px 20px 20px 20px; align-self: flex-end; } .msg-them { background: #1a1a1a; color: white; border-radius: 20px 20px 20px 20px; align-self: flex-start; }
+.unread-badge { background: var(--gold); color: black; font-size: 10px; font-weight: 800; min-width: 18px; height: 18px; border-radius: 9px; display: flex; align-items: center; justify-content: center; padding: 0 5px; }
+.icon-btn { color: white; transition: 0.2s; cursor: pointer; } .icon-btn:hover { color: var(--gold); }
+.attachment-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; padding: 20px 0; }
+.scroll-hide::-webkit-scrollbar { width: 0; } .info-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; padding: 15px; margin-bottom: 12px; } .stat-bar { height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden; margin-top: 8px; } .stat-fill { height: 100%; background: var(--gold); } /* --- HUB BUTTONS (Bottom Right Stack) --- */ .hub-stack { position: fixed; bottom: 25px; right: 25px; display: flex; flex-direction: column; gap: 15px; z-index: 50; align-items: flex-end; }
+.hub-btn { width: 60px; height: 60px; background: var(--gold); border-radius: 20px; box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3); cursor: pointer; transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.hub-btn.expanded { width: 320px; height: 360px; border-radius: 35px; background: rgba(20, 20, 20, 0.95); backdrop-filter: blur(25px); border: 1px solid rgba(212, 175, 55, 0.3); display: block; padding: 24px; z-index: 1001; }
+
+
+.hub-grid { display: none; grid-template-columns: repeat(3, 1fr); gap: 12px; width: 100%; height: 100%; } .hub-btn.expanded .hub-grid { display: grid; } .hub-btn.expanded .hub-icon { display: none; }
+.grid-item { display: flex; flex-direction: column; align-items: center; justify-content: center; color: #888; cursor: pointer; transition: all 0.2s ease; } .grid-item:hover { color: var(--gold); transform: translateY(-2px); } .grid-item span { font-size: 9px; margin-top: 8px; font-weight: 700; text-transform: uppercase; text-align: center; }
+
+/* --- Desktop Specific Adjustments --- */@media (min-width: 769px) { .hub-stack { left: 25px; /* Move to the left side */ right: auto; /* Clear the right alignment */ align-items: flex-start; /* Align buttons to the start of the stack */ z-index: 1002; /* Higher than .chat-view (100) and .hub-btn.expanded (1001) */ }
+/* Adjust the expansion animation to grow from the left */ .hub-btn.expanded { transform-origin: left bottom; }
+/* Ensure the grid items align nicely on the left */ .grid-item { align-items: center; }}
+
+
+
+/* ========================================== GOLD HUB PROFESSIONAL UNREAD SYSTEM ========================================== */
+/* 1. The Main Container for an Unread Chat */.contact-unread { background: rgba(212, 175, 55, 0.05); /* Very subtle gold tint for the row */ border-left: 3px solid var(--gold) !important; /* Gold indicator bar on the side */}
+/* 2. Unread Contact Name (Gold & Extra Bold) */.contact-unread .contact-name { color: #D4AF37 !important; font-weight: 800 !important; letter-spacing: 0.3px;}
+/* 3. Unread Message Preview (Bright White & Bold) */.contact-unread .contact-preview { color: #ffffff !important; font-weight: 700 !important; font-style: normal !important; /* Removes the "read" italics */ opacity: 1 !important;}
+/* 4. The Unread Counter Badge (The Gold Circle) */.unread-badge { background-color: #D4AF37; color: #000; font-size: 10px; font-weight: 900; min-width: 20px; height: 20px; padding: 0 6px; border-radius: 10px; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 15px rgba(212, 175, 55, 0.4); transition: transform 0.3s ease;}
+/* 5. Animation to make the dot pop when it arrives */.animate-pulse { animation: pulse-gold 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;}
+@keyframes pulse-gold { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .8; transform: scale(1.1); }}
+/* 6. Standard (Read) State Overrides - For Contrast */.contact-preview { color: #9ca3af; /* Gray-400 */ font-style: italic; transition: all 0.2s ease;}
+.contact-name { transition: all 0.2s ease;}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Base bubble */.msg-bubble { max-width: 85%; padding: 10px 12px; line-height: 1.4; word-break: break-word;}
+/* My messages */.msg-me { margin-left: auto; border-radius: 25px 25px 25px 25px;}
+/* Other messages */.msg-them { margin-right: auto; border-radius: 25px 25px 25px 25px;}
+/* Grouped middle (no tail) .group-middle.msg-me { border-radius: 4px 12px 4px 12px;}
+.group-middle.msg-them { border-radius: 12px 4px 12px 4px;}*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Status indicators */.status-icon { font-size: 10px; margin-left: 5px; transition: all 0.3s ease;}
+.msg-pending { opacity: 0.7; filter: grayscale(0.5);}
+.msg-failed { border: 1.5px solid #ff4d4d !important; background: rgba(255, 77, 77, 0.1) !important;}
+.error-text { color: #ff4d4d; font-size: 9px; font-weight: bold; margin-top: 4px; display: flex; align-items: center; gap: 4px;}
+@keyframes pulse-opacity { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; }}
+.animate-pulse-slow { animation: pulse-opacity 1.5s infinite;}
+
+
+
+/* Hide the actual radio but keep it functional */.theme-radio { position: absolute; opacity: 0; cursor: pointer; width: 22px; height: 22px; z-index: 2;}
+/* The Gold Outer Circle */.radio-btn { width: 22px; height: 22px; border: 1.5px solid #D4AF37; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: 0.3s;}
+/* The Inner Dot (Hidden by default) */.radio-btn::after { content: ""; width: 10px; height: 10px; background: #D4AF37; border-radius: 50%; transform: scale(0); transition: transform 0.2s ease;}
+/* 🟢 The "Magic" Selector: When input is checked, show the dot in the sibling span */.theme-radio:checked + .radio-btn::after { transform: scale(1);}
+
+
+
+
+/* ===== Message Action Panel (Glassmorphism) ===== */
+
+/* ===== Message Action Panel (Glassmorphism) ===== */
+.msg-action-panel { position: fixed; z-index: 9999; display: none;
+gap: 18px; padding: 10px 16px;
+background: rgba(18, 18, 22, 0.75); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+border-radius: 16px; border: 1px solid rgba(255,255,255,0.08);
+box-shadow: 0 8px 25px rgba(0,0,0,0.45);}
+
+/* Button with Icon + Text */.msg-action-btn { min-width: 60px;
+display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+padding: 6px 6px;
+border-radius: 10px; cursor: pointer;
+color: white; font-size: 11px; font-weight: 500;
+transition: all 0.2s ease;}
+
+.msg-action-btn:hover { background: rgba(255,255,255,0.15); transform: translateY(-1px);}
+.msg-action-btn:active { transform: scale(0.95);}
+.msg-action-btn svg { width: 18px; height: 18px;}
+
+/* Selected bubble */.msg-selected { background: rgba(212,175,55,0.15) !important; border: 1px solid rgba(212,175,55,0.4);}
+
+/* Disable text selection */.message-item { user-select: none; -webkit-user-select: none; -ms-user-select: none;}
+/* custom gold color used in your UI */.bg-\[\#D4AF37\] { background-color: #D4AF37;}
+.text-\[\#D4AF37\] { color: #D4AF37;}
+/* small custom text sizes */.text-\[10px\] { font-size: 10px;}
+.text-\[11px\] { font-size: 11px;}
+.text-\[12px\] { font-size: 12px;}
+/* extra tracking if needed */.tracking-wide { letter-spacing: 0.05em;}
+
+
+/* ===== Gradient colors (v3 syntax) ===== */
+.from-\[\#D4AF37\] { --tw-gradient-from: #D4AF37;}
+.to-\[\#AA8418\] { --tw-gradient-to: #AA8418;}
+
+/* ===== Gradient background helper ===== */
+.bg-gradient-to-br { background: linear-gradient(to bottom right, var(--tw-gradient-from), var(--tw-gradient-to));}
+.bg-gradient-to-tr { background: linear-gradient(to top right, var(--tw-gradient-from), var(--tw-gradient-to));}
+
+
+/* ===== Shadow color utilities ===== */
+.shadow-\[\#D4AF37\]\/20 { box-shadow: 0 10px 25px rgba(212,175,55,0.2);}
+
+
+/* ===== Height percentage utilities ===== */
+.h-\[30\%\] { height:30%; }.h-\[40\%\] { height:40%; }.h-\[55\%\] { height:55%; }.h-\[60\%\] { height:60%; }.h-\[90\%\] { height:90%; }
+
+
+/* ===== Max height utilities ===== */
+.max-h-\[50vh\] { max-height: 50vh;}
+
+
+/* ===== Radius utilities ===== */
+.rounded-\[2rem\] { border-radius: 2rem;}
+
+
+/* ===== Opacity text utilities ===== */
+.text-white\/20 { color: rgba(255,255,255,0.20); }.text-white\/30 { color: rgba(255,255,255,0.30); }.text-white\/40 { color: rgba(255,255,255,0.40); }.text-white\/50 { color: rgba(255,255,255,0.50); }.text-white\/80 { color: rgba(255,255,255,0.80); }
+
+
+/* ===== Background opacity utilities ===== */
+.bg-white\/5 { background: rgba(255,255,255,0.05); }.bg-white\/10 { background: rgba(255,255,255,0.10); }
+
+
+/* ===== Border opacity utilities ===== */
+.border-white\/5 { border-color: rgba(255,255,255,0.05); }.border-white\/10 { border-color: rgba(255,255,255,0.10); }.border-white\/20 { border-color: rgba(255,255,255,0.20); }
+
+
+/* ===== Red opacity utilities ===== */
+.bg-red-500\/10 { background: rgba(239,68,68,0.10); }.bg-red-500\/20 { background: rgba(239,68,68,0.20); }
+.border-red-500\/20 { border-color: rgba(239,68,68,0.20); }
+
+
+/* ===== Yellow opacity utilities ===== */
+.bg-yellow-500\/10 { background: rgba(234,179,8,0.10); }.border-yellow-500\/20 { border-color: rgba(234,179,8,0.20); }
+
+
+/* ===== Green opacity utilities ===== */
+.bg-green-500\/10 { background: rgba(34,197,94,0.10); }.border-green-500\/20 { border-color: rgba(34,197,94,0.20); }
+
+
+/* ===== Scrollbar hide (v3 utility replacement) ===== */
+.scroll-hide::-webkit-scrollbar { display: none;}
+.scroll-hide { -ms-overflow-style: none; scrollbar-width: none;}
+
+/* ===== PEER FIX FOR TAILWIND V2 ===== */
+/* toggle background when checked */.peer:checked + div { background: #D4AF37;}
+/* toggle circle movement */.peer:checked + div::after { transform: translateX(20px);}
+/* base circle */.peer + div::after { content: ''; position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; background: white; border-radius: 9999px; transition: all 0.3s ease;}
+/* ===== GROUP OPEN FIX (for arrow rotation) ===== */
+details[open] .group-open\:rotate-180 { transform: rotate(180deg);}
+/* ===== SR-ONLY FIX (if missing) ===== */
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0;}
+
+
+/* Remove blue tap highlight on mobile */* { -webkit-tap-highlight-color: transparent;}
+/* Remove focus outline from clickable elements */button,summary,a,input,textarea,select { outline: none;}
+/* Remove focus ring when clicking */button:focus,summary:focus,a:focus { outline: none;}
+/* Optional: prevent blue background flash on tap */summary:active,button:active { background: transparent;}
+
+/* background opacity */.bg-white\/5 { background: rgba(255,255,255,0.05);}
+/* border opacity */.border-white\/10 { border-color: rgba(255,255,255,0.10);}
+/* custom gold text color */.text-\[\#D4AF37\] { color: #D4AF37;}
+/* hide scrollbar */.scroll-hide::-webkit-scrollbar { display: none;}
+.scroll-hide { -ms-overflow-style: none; scrollbar-width: none;}
+
+.spinner { width: 18px; height: 18px; border: 3px solid rgba(0,0,0,0.2); border-top: 3px solid black; border-radius: 50%; animation: spin 0.7s linear infinite;}
+.hidden { display: none;}
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); }}
+.text-9px { font-size: 9px;}
+.rounded-\[2\.5rem\]{ border-radius:2.5rem;}
+.bg-\[\#D4AF37\]\/10{ background:rgba(212,175,55,0.10);}
+.border-\[\#D4AF37\]\/20{ border-color:rgba(212,175,55,0.20);}
+.hover\:bg-white\/5:hover{ background:rgba(255,255,255,0.05);}
+.border-white\/5{ border-color:rgba(255,255,255,0.05);}
+.text-10px{ font-size:10px;}
+
+.theme-radio{ appearance: none; width: 20px; height: 20px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.2); background: transparent; cursor: pointer; position: relative; transition: all 0.2s ease;}
+/* gold border when checked */.theme-radio:checked{ border-color: #D4AF37;}
+/* inner gold dot */.theme-radio:checked::after{ content: ""; position: absolute; width: 10px; height: 10px; background: #D4AF37; border-radius: 50%; top: 50%; left: 50%; transform: translate(-50%, -50%);}
+
+.explore-panel{ margin-top:15px; padding:12px 16px; border-radius:14px; backdrop-filter: blur(10px); background: rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); text-align:center; cursor:pointer; font-weight:500;}
+.sys-msg{ background:#111; padding:10px 14px; border-radius:12px; margin:6px 0; width:fit-content;}
+
+.explore-card{display:flex;align-items:center;gap:10px;padding:10px;margin-top:8px;background:#111;border-radius:12px;}
+.explore-avatar{width:36px;height:36px;border-radius:50%;background:#222;display:flex;align-items:center;justify-content:center;font-weight:bold;}
+.explore-actions button{margin-left:6px;padding:6px 10px;border-radius:8px;border:none;background:#D4AF37;color:black;font-size:12px;}
+
+
+
+
+
+.name-wrap{ display:inline-flex; align-items:center; gap:6px;}
+.official-badge svg{ display:block;}
+.verified-badge{margin-left:5px;display:inline-flex;align-items:center;}
+
+
+
+/* Card: Deep Black Glass */.explore-card { display: flex; align-items: center; gap: 16px; padding: 16px; margin: 12px 0; border-radius: 20px; /* Extra smooth corners */ /* Smooth Glass Effect */ background: rgba(15, 15, 15, 0.75); /* Rich Black */ backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border: 1px solid rgba(212, 175, 55, 0.2); /* Soft Gold border */ box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);}
+.explore-content { display: flex; flex-direction: column; gap: 12px; /* Clean spacing between name and buttons */ flex-grow: 1;}
+.explore-name { margin: 0; font-weight: 500; color: #D4AF37; /* Metallic Gold */ font-size: 1.05rem; letter-spacing: 0.3px;}
+/* Button Layout */.explore-actions { display: flex; gap: 10px;}
+/* Base Button Styling */.explore-actions button { padding: 8px 18px; border-radius: 12px; /* Matches card smoothness */ font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; border: none;}
+/* Follow Button: Solid Gold */.btn-primary { background: #D4AF37; color: #000;}
+.btn-primary:hover { background: #F4CF57; /* Brighter gold on hover */ transform: translateY(-2px); box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);}
+/* Message Button: Glass Gold */.btn-secondary { background: rgba(212, 175, 55, 0.1); color: #D4AF37; border: 1px solid rgba(212, 175, 55, 0.4) !important;}
+.btn-secondary:hover { background: rgba(212, 175, 55, 0.2); transform: translateY(-2px);}
+/* Avatar: Minimalist Circular */.explore-avatar { width: 48px; height: 48px; background: linear-gradient(135deg, #ff2b35, #000000); border: 1.5px solid #D4AF37; /* Gold Ring */ border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #D4AF37;}
+
+
+/* --- TYPING ANIMATIONS --- */
+/* --- PROFESSIONAL TYPING ANIMATIONS --- */.typing-dots { display: inline-flex; align-items: center; gap: 4px; padding: 12px 16px;}
+.typing-dots span { width: 6px; height: 6px; background-color: var(--gold); border-radius: 50%; animation: typing-bounce 1.4s infinite ease-in-out;}
+.typing-dots span:nth-child(2) { animation-delay: 0.2s; }.typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes typing-bounce { 0%, 80%, 100% { transform: translateY(0); opacity: 0.4; } 40% { transform: translateY(-5px); opacity: 1; }}
+.typing-text-gold { color: var(--gold) !important; font-weight: 800 !important; font-style: italic; animation: pulse-opacity 2s infinite;}
+@keyframes pulse-opacity { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; }}
+
+//delete system @keyframes zoom-in { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); }}
+.animate-in { animation: zoom-in 0.2s ease-out;}
+/* Ensure long press doesn't select text while holding */.contact-item { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none;}
+.animate-in { animation: modalShow 0.25s cubic-bezier(0.4, 0, 0.2, 1);}
+@keyframes modalShow { from { opacity: 0; transform: scale(0.9) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); }}
+/* Glassmorphism utility */.backdrop-blur-2xl { backdrop-filter: blur(60px); -webkit-backdrop-filter: blur(60px);}
+
+#chat-header { /* Adjust the 0.65 to change transparency (0.0 = invisible, 1.0 = solid color) */ background: rgba(25, 25, 25, 0.45);
+/* Adjust the pixel values below to make things more or less blurry */ -webkit-backdrop-filter: blur(19px); backdrop-filter: blur(19px);}
+
+
+
+
+</style>
+<script src="https://cdn.jsdelivr.net/npm/eruda"></script><script>eruda.init();</script> </head><body onclick="handleGlobalClick(event)">
+<div id="main-app-content" class="app-shell"> <aside class="sidebar flex flex-col"> <div class="p-8 pb-0"> <h1 class="text-2xl font-bold tracking-tighter">PHANTOM<span class="text-[#D4AF37]">HUB</span><span class="text-[#7b7b7b]" style="font-family: 'Brush Script MT', 'cursive', sans-serif; font-size: 24px;"> ( Beta )</span></h1> <div class="mt-6 flex items-center gap-3"> <!-- Search Bar --> <div class="bg-white/5 p-3 rounded-full border border-white/10 flex items-center gap-2 flex-1"> <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="2"> <circle cx="11" cy="11" r="8"/> <path d="m21 21-4.3-4.3"/> </svg> <input type="text" placeholder="Search" class="bg-transparent w-full focus:outline-none text-sm"> </div>
+<!-- Button --> <button onclick="openP2PPanel()" class="w-12 h-11 rounded-2xl bg-white/10 flex items-center justify-center border border-white/10 hover:bg-white/20 transition-all duration-300"> <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/> </svg>
+</button>
+</div> <div class="flex items-center gap-2 px-4 py-3 pb-2 overflow-x-auto scroll-hide no-scrollbar"> <button onclick="filterChats('all')" class="filter-bubble active-bubble"> All </button> <button onclick="openPhantomAI()" class="filter-bubble ai-btn-gold"> Phantom AI </button>
+<button class="filter-bubble plus-btn"> <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg> </button></div>
+
+
+</div> <div id="contacts-wrapper" class="relative flex-1 overflow-hidden">
+<!-- <div id="contacts-wrapper" class="relative flex-1 min-h-0"> --> <!-- Easter Egg Video --> <video id="easter-egg-video" muted playsinline preload="auto" class="absolute bottom-8 left-1/2 -translate-x-1/2 object-cover pointer-events-none opacity-0 z-0"></video>
+<!-- Contacts --> <div id="contacts-container" class="absolute inset-0 z-10 overflow-y-auto px-4 pb-44 pt-5 space-y-1 scroll-hide"></div>
+</div> </aside> <script>document.addEventListener("DOMContentLoaded", () => { const video = document.getElementById("easter-egg-video");
+if (!video) return;
+// Your 4 videos const videos = [ "easter-egg-video1.mp4", "easter-egg-video2.mp4", "easter-egg-video3.mp4", "easter-egg-video4.mp4", "easter-egg-video5.mp4", "easter-egg-video6.mp4", "easter-egg-video7.mp4" ];
+function getRandomDelay() { const minMs = 3 * 1000; // 30 sec const maxMs = 10 * 1000; // 5 min
+return Math.floor( Math.random() * (maxMs - minMs + 1) ) + minMs; }
+function getRandomVideo() { return videos[Math.floor(Math.random() * videos.length)]; }
+function playEasterEgg() { // Pick a random video video.src = getRandomVideo();
+// Show video video.style.opacity = "0.95"; video.currentTime = 0;
+video.play().catch(() => {});
+video.onended = () => { video.pause(); video.currentTime = 0; video.style.opacity = "0";
+// Next random appearance setTimeout(playEasterEgg, getRandomDelay()); }; }
+// First appearance setTimeout(playEasterEgg, getRandomDelay());});</script> <style>#easter-egg-video { transition: opacity 0.8s ease;}
+
+/* Clean wrapper with no masking overhead */#contacts-wrapper { position: relative; overflow-y: auto;}
+/* Smooth top fade that won't ruin child blur filters */#contacts-wrapper::before { content: ''; position: sticky; top: 0; left: 0; right: 0; height: 24px; /* Adjust fade height to taste */ background: linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 100%); pointer-events: none; /* Allows scrolling & clicks through the fade */ z-index: 10;}
+
+
+</style> <!-- GLOBAL CONTENT/SETTINGS CONTAINER --><div id="global-settings-panel" class="settings-panel-overlay hidden"> <!-- Dynamic Canvas Content Area --> <div id="settings-panel-content" class="settings-panel-canvas"> <!-- Dynamic HTML layout fully injected here --> </div>
+<!-- PANEL FLOATING BUBBLE BAR (Dedicated unique ID & Classes) --> <div class="panel-bubble-bar" id="panel-bubble-bar"> <!-- 1. Chat --> <button class="panel-bubble-btn" title="Chat" onclick="activateChatBubble();"> <svg width="22" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <rect width="19" height="17" x="3" y="4" rx="4"/> <path d="M7 8.5h10"/> <path d="M7 12.5h7"/> <path d="M9 22v3l4-3"/> </svg> </button>
+<!-- 2. Post --> <button class="panel-bubble-btn" title="Post" onclick="activatePostBubble();"> <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <rect width="18" height="18" x="3" y="3" rx="5"/> <path d="M12 8v8"/> <path d="M8 12h8"/> </svg> </button>
+<!-- 3. Video Search --> <button class="panel-bubble-btn" title="Video Search" onclick="activateVideoBubble();"> <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <circle cx="11" cy="11" r="8"/> <path d="m21 21-4.3-4.3"/> <polygon points="9.5,8 14,11 9.5,14" fill="currentColor" stroke="none"/> </svg> </button>
+<!-- 4. Profile --> <button class="panel-bubble-btn" title="Profile" onclick="activateProfileBubble();"> <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <circle cx="12" cy="8" r="4"/> <path d="M20 21a8 8 0 0 0-16 0"/> </svg> </button> </div>
+</div>
+
+
+<style>/* Full-screen overlay setup - stripped of all pre-declared padding or headers */.settings-panel-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: #121212; /* Canvas background color */ color: #ffffff; z-index: 999999; transition: opacity 0.25s ease-in-out, visibility 0.25s ease-in-out; opacity: 1; visibility: visible;}
+/* Hidden state */.settings-panel-overlay.hidden { opacity: 0; visibility: hidden; pointer-events: none;}
+/* Dynamic Canvas wrapper taking full height/width */.settings-panel-canvas { width: 100%; height: 100%; display: flex; flex-direction: column;}
+/* Dynamic structural styling defined for injected templates */.custom-panel-header { display: flex; align-items: center; padding: 16px 20px; background-color: #1e1e1e; border-bottom: 1px solid #2a2a2a; gap: 16px;}
+.panel-back-btn { background: transparent; border: none; color: #007aff; font-size: 16px; font-weight: 600; cursor: pointer; padding: 8px 12px; border-radius: 6px;}
+.panel-back-btn:hover { background-color: rgba(255, 255, 255, 0.08);}
+.custom-panel-body { flex: 1; overflow-y: auto; padding: 24px;}
+
+
+/* Styling for the panel's floating capsule bar */.panel-bubble-bar { position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%); z-index: 1000000; /* Sits above settings-panel-overlay (999999) */ display: flex; align-items: center; justify-content: space-around; gap: 12px; padding: 8px 16px; background: rgba(30, 30, 30, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 40px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4); transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s ease; opacity: 1; visibility: visible;}
+/* Hidden state for the panel's capsule bar */.panel-bubble-bar.hidden { opacity: 0; visibility: hidden; pointer-events: none; transform: translate(-50%, 20px); /* Smooth slide-down effect */}
+/* Base button styling inside the panel bubble bar */.panel-bubble-btn { background: transparent; border: none; color: #a1a1a1; cursor: pointer; padding: 8px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: color 0.2s ease, background-color 0.2s ease;}
+.panel-bubble-btn:hover { color: #ffffff; background-color: rgba(255, 255, 255, 0.1);}
+
+</style>
+<script> // 1. Dedicated state variable let isSettingsPanelOpen = false;
+/** * Opens settings panel, injects HTML, and automatically updates browser history */ function openSettingsPanel(targetKey) { // Inject the HTML content first switchTarget(targetKey); // Show the panel UI const panel = document.getElementById('global-settings-panel'); if (panel) { panel.classList.remove('hidden'); } // Set state tracking flag isSettingsPanelOpen = true;
+// Direct push history state so physical back button works instantly pushAppState({ view: 'settings' }); }
+/** * Closes the panel (pure UI operation) */ function closeSettingsPanel() { const panel = document.getElementById('global-settings-panel'); if (panel) { panel.classList.add('hidden'); } isSettingsPanelOpen = false; } // Function to hide the panel capsule barfunction hidePanelCapsuleBar() { const bar = document.getElementById('panel-bubble-bar'); if (bar) { bar.classList.add('hidden'); }}
+// Function to show the panel capsule barfunction showPanelCapsuleBar() { const bar = document.getElementById('panel-bubble-bar'); if (bar) { bar.classList.remove('hidden'); }}
+// Function to toggle the panel capsule bar visibilityfunction togglePanelCapsuleBar() { const bar = document.getElementById('panel-bubble-bar'); if (bar) { bar.classList.toggle('hidden'); }}
+</script>
+<!-- end of global global full screen panel -->
+
+
+
+
+
+
+<main id="chat-window" class="chat-view h-full w-full overflow-hidden flex flex-col"> <!-- 1. FIXED GLASS HEADER (Sits perfectly on top) --> <header id="chat-header" class="absolute top-0 left-0 right-0 h-20 px-6 border-b border-white/5 flex items-center justify-between z-50"> <div class="flex items-center gap-4"> <button class="md:hidden" onclick="toggleChat(false)"> <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg> </button> <div id="chat-avatar" class="w-10 h-10 rounded-xl bg-[#D4AF37] flex items-center justify-center overflow-hidden text-black font-bold"></div> <div> <h2 id="h-name" class="font-bold text-m text-white">Hello User 👋</h2> <p class="text-[10px] text-[#D4AF37] font-bold uppercase tracking-wide">Secured</p> </div> </div> <div class="flex items-center gap-5"> <!-- onclick="openCallPanel('audio', event)" trigger this function if you want to use panel --> <div class="icon-btn text-white" onclick="startCall('audio')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div> <!-- onclick="openCallPanel('video', event)" use this function if you want to use panel --> <div class="icon-btn text-white" onclick="startCall('video')"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m22 8-6 4 6 4V8Z"/><rect width="14" height="12" x="2" y="6" rx="2" ry="2"/></svg></div> <div class="icon-btn text-white" onclick="openPanel('menu', event)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg></div> </div> </header> 
+<div id="msg-action-panel" class="msg-action-panel">
+<div class="msg-action-btn" data-action="copy"> <svg viewBox="0 0 24 24" fill="none"> <rect x="9" y="9" width="13" height="13" rx="2" stroke="white" stroke-width="2"/> <rect x="2" y="2" width="13" height="13" rx="2" stroke="white" stroke-width="2"/> </svg> <span>Copy</span> </div>
+<div class="msg-action-btn" data-action="forward"> <svg viewBox="0 0 24 24" fill="none"> <path d="M14 5L21 12L14 19" stroke="white" stroke-width="2"/> <path d="M21 12H3" stroke="white" stroke-width="2"/> </svg> <span>Forward</span> </div>
+<div class="msg-action-btn" data-action="delete"> <svg viewBox="0 0 24 24" fill="none"> <path d="M3 6H21" stroke="white" stroke-width="2"/> <path d="M8 6V4H16V6" stroke="white" stroke-width="2"/> <rect x="6" y="6" width="12" height="14" rx="2" stroke="white" stroke-width="2"/> </svg> <span>Delete</span> </div>
+<div class="msg-action-btn" data-action="select"> <svg viewBox="0 0 24 24" fill="none"> <circle cx="12" cy="12" r="9" stroke="white" stroke-width="2"/> <path d="M8 12L11 15L16 9" stroke="white" stroke-width="2"/> </svg> <span>Select</span> </div>
+</div>
+<!-- 2. SCROLLABLE MESSAGE LIST (Pushed down by pt-24 so content starts below header) --> <div id="msg-list" class="flex-1 overflow-y-auto pt-24 px-6 pb-32 flex flex-col gap-1 scroll-hide w-full h-full"> <!-- Message Action Panel Context Menu --> </div>
+<style> /* Container height & padding transitions */ #main-input-wrapper { transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1); }
+/* Core Textarea Reset: Stops the ugly flash/white background on tap */ #chat-input { background-color: transparent !important; -webkit-tap-highlight-color: transparent; outline: none !important; box-shadow: none !important; } #chat-input:focus, #chat-input:active, #chat-input:hover { background-color: transparent !important; outline: none !important; box-shadow: none !important; }
+/* Fixed layout dimensions for the internal button switcher */ #action-button-track { position: relative; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; }
+/* Absolute layers inside the border container */ .inner-action-btn { position: absolute; width: 46px; height: 46px; border-radius: 9999px; display: flex; align-items: center; justify-content: center; transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1); }
+/* --- INITIAL IDLE STATE (No Text / Keyboard Closed) --- */ #mic-btn-node { bottom: 0; z-index: 20; background-color: #D4AF37; color: black; transform: scale(1); } #send-btn-node { bottom: 0; z-index: 10; background-color: #D4AF37; color: black; opacity: 0; transform: scale(0.5) translateY(10px); pointer-events: none; }
+/* --- TYPING STATE (Active Input / Keyboard Open) --- */ [data-chat-state="typing"] #main-input-wrapper { padding-top: 35px; padding-bottom: 35px; }
+/* Input area expands its viewable height when typing [data-chat-state="typing"] #chat-input { min-height: 60px; }*/
+/* Mic button moves further UP into its spacious top slot */ [data-chat-state="typing"] #mic-btn-node { transform: translateY(-25px); }
+/* Send button slides smoothly into its bottom slot */ [data-chat-state="typing"] #send-btn-node { opacity: 1; transform: scale(1) translateY(30px); pointer-events: auto; } #input-container { position: absolute; left: 0; right: 0; bottom: 0; z-index: 1000;
+background: transparent !important; padding: 0;}
+#main-input-wrapper { margin-left: 20px; margin-right: 20px; margin-bottom: 20px;
+/* 1. THE TRANSPARENT TINT COLOR */ background: rgba(25, 25, 25, 0.65);
+/* 2. THE BLUR INTENSITY */ backdrop-filter: blur(9px); -webkit-backdrop-filter: blur(8px); /* For Safari/iOS support */}
+border: 1px solid rgba(255,255,255,0.08);
+box-shadow: 0 8px 25px rgba(0,0,0,0.25);}
+
+
+#msg-list { padding-bottom: 120px !important;}
+</style>
+<!-- Main outer layout container --><div id="input-container" class="p-4" data-chat-state="idle"> <!-- items-end anchors all static tool icons safely to the bottom of the container --> <div id="main-input-wrapper" class="border border-white/10 p-2 rounded-4xl flex items-end gap-2 relative"> <!-- Plus Icon Button (Locked to the bottom) --> <button onclick="openPanel('attachments-gif', event)" class="w-9 h-9 flex items-center justify-center text-[#D4AF37] hover:scale-105 transition-transform shrink-0 self-end mb-1 pl-1"> <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"> <path d="M12 5v14M5 12h14"/> </svg> </button>
+<!-- Dynamic Message Text Input Field (Cleaned of all tap-highlights) --> <textarea id="chat-input" placeholder="Message..." rows="1" spellcheck="false" autocomplete="off" class="flex-1 bg-transparent px-3 py-2 focus:outline-none text-l resize-none overflow-y-auto max-h-32 mb-0.5 transition-all duration-300" onfocus="updateChatLayout(true)" onblur="updateChatLayout(false)"></textarea>
+<!-- Link Icon Button (Locked to the bottom) --> <button onclick="openPanel('attachments', event)" class="w-9 h-9 flex items-center justify-center text-[#D4AF37] hover:scale-105 transition-transform shrink-0 self-end mb-1"> <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"> <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/> <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/> </svg> </button>
+<!-- Contained Action Button Track (Locked to the bottom) --> <div id="action-button-track" class="shrink-0 self-end mb-0.5"> <!-- Send Button (FIXED: Added height and layout reset directly here) --> <button id="send-btn-node" onclick="sendMessage(); document.getElementById('chat-input').style.height = 'auto'; updateChatLayout(false);" class="inner-action-btn"> <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"> <path d="m22 2-7 20-4-9-9-4Z"/> <path d="M22 2 11 13"/> </svg> </button>
+<!-- Mic Button --> <button id="mic-btn-node" onclick="triggerMicFeature(event)" class="inner-action-btn"> <svg id="mic-vector" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"> <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/> <path d="M19 10v1a7 7 0 0 1-14 0v-1M12 19v3M8 22h8"/> </svg> </button>
+</div> </div></div><script>// 2. Tab Switcher Routine - Auto-resolves mismatched or missing HTML IDs dynamicallywindow.switchAttachmentTab = function(tabName) { // Dynamically look for the content sections (handles fallback IDs if 'tab-' prefix is omitted) const tabStickers = document.getElementById('tab-stickers') || document.getElementById('stickers'); const tabGifs = document.getElementById('tab-gifs') || document.getElementById('gifs'); // Dynamically look for the buttons (checks both 'btn-tab-X' and 'btn-X' style IDs) const btnStickers = document.getElementById('btn-tab-stickers') || document.getElementById('btn-stickers') || document.getElementById('btnStickers'); const btnGifs = document.getElementById('btn-tab-gifs') || document.getElementById('btn-gifs') || document.getElementById('btnGifs'); // Safety check framework constraint guard if (!tabStickers || !tabGifs) { console.warn("Tab view elements are missing from the DOM. Make sure openPanel('attachments') has rendered first."); return; }
+if (tabName === 'stickers') { // Toggle view states tabStickers.classList.remove('hidden'); tabGifs.classList.add('hidden'); // Safely apply class styles only if button elements were found in the DOM if (btnStickers) btnStickers.className = "text-xs font-bold uppercase tracking-wider pb-1 border-b-2 border-[#D4AF37] text-[#D4AF37]"; if (btnGifs) btnGifs.className = "text-xs font-bold uppercase tracking-wider pb-1 text-gray-400"; } else { // Toggle view states tabStickers.classList.add('hidden'); tabGifs.classList.remove('hidden'); // Safely apply class styles only if button elements were found in the DOM if (btnStickers) btnStickers.className = "text-xs font-bold uppercase tracking-wider pb-1 text-gray-400"; if (btnGifs) btnGifs.className = "text-xs font-bold uppercase tracking-wider pb-1 border-b-2 border-[#D4AF37] text-[#D4AF37]"; }};
+
+
+
+
+
+const NOTO_STICKERS = [ { name: "Laughing", id: "1f606" }, { name: "Wink", id: "1f609" }, { name: "Heart Eyes", id: "1f60d" }, { name: "Angry", id: "1f621" }, { name: "Waving Hand", id: "1f44b" }, { name: "Thumbs Up", id: "1f44d" }, { name: "Clapping", id: "1f44f" }, { name: "100", id: "1f4af" }, { name: "Rocket", id: "1f680" }, { name: "Fire", id: "1f525" }, { name: "Tada Party", id: "1f389" }, { name: "Collision", id: "1f4a5" }, { name: "Joy Tears", id: "1f602" }, { name: "Sweat Smile", id: "1f605" }, { name: "Mind Blown", id: "1f92f" }, { name: "Cool Sunglasses", id: "1f60e" }, { name: "Thinking", id: "1f914" }, { name: "Partying", id: "1f973" }, { name: "Crying", id: "1f622" }, { name: "Screaming Fear", id: "1f631" }, { name: "Shhh", id: "1f92b" }, { name: "Smirk", id: "1f60f" }, { name: "Star Eyes", id: "1f929" }, { name: "Zany Face", id: "1f92a" }, { name: "Praying", id: "1f64f" }, { name: "Peace Sign", id: "270c" }, { name: "Rock On", id: "1f918" }, { name: "Punch", id: "1f44a" }, { name: "Flexing", id: "1f4aa" }, { name: "Writing", id: "270d" }, { name: "Saluting", id: "1fae1" }, { name: "Check Mark", id: "2705" }, { name: "Red Heart", id: "2764" }, { name: "Broken Heart", id: "1f494" }, { name: "Sparkling Heart", id: "1f496" }, { name: "Sparkles", id: "2728" }, { name: "Glowing Star", id: "1f31f" }, { name: "Rainbow", id: "1f308" }, { name: "High Voltage", id: "1f50f" }, { name: "Warning", id: "26a0" }, { name: "Alien", id: "1f47d" }, { name: "Ghost", id: "1f47b" }, { name: "Unicorn", id: "1f984" }, { name: "Grinning Cat", id: "1f638" }, { name: "Penguin", id: "1f427" }, { name: "Dog Face", id: "1f436" }, { name: "Monkey Speak-No-Evil", id: "1f64a" }, { name: "Lion", id: "1f981" }, { name: "Trophy", id: "1f3c6" }, { name: "Crown", id: "1f451" }, { name: "Money Wings", id: "1f4b8" }, { name: "Gift Box", id: "1f381" }, { name: "Coffee", id: "2615" }, { name: "Cake", id: "1f382" }, { name: "Pizza", id: "1f355" }, { name: "Popcorn", id: "1f37f" }, { name: "Gamepad", id: "1f3ae" }, { name: "Music Notes", id: "1f3b6" }, { name: "Bullseye", id: "1f3af" }, { name: "Idea Bulb", id: "1f4a1" }, { name: "Blow Kiss", id: "1f618" }, { name: "Drooling", id: "1f924" }, { name: "Blush Smile", id: "1f60a" }, { name: "Hugging Face", id: "1f917" }, { name: "Tongue Out Wink", id: "1f61c" }, { name: "Nauseated", id: "1f922" }, { name: "Raised Eyebrow", id: "1f928" }, { name: "Neutral Face", id: "1f610" }, { name: "I Love You Hand", id: "1f91f" }, { name: "OK Hand", id: "1f44c" }, { name: "Left Fist", id: "1f91b" }, { name: "Right Fist", id: "1f91c" }, { name: "Crystal Ball", id: "1f52e" }, { name: "Bomb", id: "1f4a3" }, { name: "Speech Balloon", id: "1f4ac" }, { name: "Bookmark", id: "1f516" }, { name: "Custard", id: "1f36e" }, { name: "Candy", id: "1f36c" }, { name: "Lollipop", id: "1f36d" }, { name: "Cookie", id: "1f36a" }];
+
+
+function filterStickers(query) { const gridTarget = document.getElementById('sticker-grid-target'); if (!gridTarget) return;
+const cleanQuery = query.toLowerCase().trim(); // Filter the global array based on the typed search input text const filtered = NOTO_STICKERS.filter(sticker => sticker.name.toLowerCase().includes(cleanQuery) );
+// If no stickers match, display a helpful tip response text message if (filtered.length === 0) { gridTarget.innerHTML = `<div class="col-span-4 text-center text-gray-500 text-xs py-4">No matching stickers found.</div>`; return; }
+// Map over filtered entries using the high-performance flat PNG paths gridTarget.innerHTML = filtered.map(sticker => ` <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/${sticker.id}/512.png" alt="${sticker.name}" title="${sticker.name}" class="w-full aspect-square object-contain cursor-pointer hover:scale-110 transition-transform duration-200" onclick="sendCustomMedia('https://fonts.gstatic.com/s/e/notoemoji/latest/${sticker.id}/512.webp', 'sticker')"> `).join('');}
+</script>
+<script> let micActiveState = false; let initialVisualViewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+// Handles smooth container expansion and button offset shifts function updateChatLayout(focused) { const parentNode = document.getElementById('input-container'); if (!parentNode) return; // Fixed: Protects against TypeErrors if element references mismatch const textVal = document.getElementById('chat-input').value.trim(); if (focused || textVal.length > 0) { parentNode.setAttribute('data-chat-state', 'typing'); } else { parentNode.setAttribute('data-chat-state', 'idle'); } }
+// Monitor character inputs live document.getElementById('chat-input').addEventListener('input', function() { updateChatLayout(this.value.trim().length > 0 || document.activeElement === this); this.style.height = 'auto'; this.style.height = (this.scrollHeight) + 'px'; });
+// Smart Keyboard Closure Detection if (window.visualViewport) { window.visualViewport.addEventListener('resize', () => { const currentHeight = window.visualViewport.height; const textVal = document.getElementById('chat-input').value.trim(); if (currentHeight >= initialVisualViewportHeight - 60 && textVal.length === 0) { document.getElementById('chat-input').blur(); updateChatLayout(false); } }); }
+// Handles mic toggle states function triggerMicFeature(event) { event.stopPropagation(); const micBtn = document.getElementById('mic-btn-node'); const micSvg = document.getElementById('mic-vector'); micActiveState = !micActiveState; if (micActiveState) { micBtn.style.backgroundColor = '#ef4444'; micBtn.style.color = '#ffffff'; micSvg.innerHTML = ` <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" fill="currentColor"/> <path d="M19 10v1a7 7 0 0 1-14 0v-1M12 19v3M8 22h8"/> <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1" class="animate-ping" style="transform-origin: center; opacity: 0.3;"/> `; alert("Voice transcription feature is coming soon!"); } else { micBtn.style.backgroundColor = '#D4AF37'; micBtn.style.color = '#000000'; micSvg.innerHTML = ` <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/> <path d="M19 10v1a7 7 0 0 1-14 0v-1M12 19v3M8 22h8"/> `; } }</script>
+
+
+
+
+
+</main> </div>
+
+
+
+
+
+
+<!-- Hub Stack --><div class="hub-stack" id="hub-stack">
+<!-- Main Hub Row --> <div class="main-hub-row">
+<!-- Main Global Hub (+) --> <div id="main-hub" class="hub-btn" onclick="toggleHub('main', event)"> <div class="hub-icon"> <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="3"> <path d="M12 5v14M5 12h14"/> </svg> </div> <div class="hub-grid" id="main-grid-icons"></div> </div>
+</div>
+<!-- Bottom Bar Row (Explore Hub + Bubble Bar side by side) --> <div class="bottom-hub-row">
+<!-- Floating Bubble Bar --> <div class="bubble-bar" id="bubble-bar"> <!-- 1. Chat --> <button class="bubble-btn" title="Chat" onclick="activateChatBubble();"> <svg width="22" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <rect width="19" height="17" x="3" y="4" rx="4"/> <path d="M7 8.5h10"/> <path d="M7 12.5h7"/> <path d="M9 22v3l4-3"/> </svg></button>
+
+
+<!-- 2. Post --> <button class="bubble-btn" title="Post" onclick="activatePostBubble();"> <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <rect width="18" height="18" x="3" y="3" rx="5"/> <path d="M12 8v8"/> <path d="M8 12h8"/> </svg> </button>
+<!-- 3. Video Search (Search glass with integrated Play symbol) --> <button class="bubble-btn" title="Video Search" onclick="activateVideoBubble();"> <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <circle cx="11" cy="11" r="8"/> <path d="m21 21-4.3-4.3"/> <!-- Integrated Play Button in Search Ring --> <polygon points="9.5,8 14,11 9.5,14" fill="currentColor" stroke="none"/> </svg> </button>
+<!-- 4. Profile --> <button class="bubble-btn" title="Profile" onclick="activateProfileBubble();"> <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <circle cx="12" cy="8" r="4"/> <path d="M20 21a8 8 0 0 0-16 0"/> </svg> </button></div>
+
+
+<!-- Explore Hub --> <div id="explore-hub" class="hub-btn" onclick="toggleHub('explore', event)"> <div class="hub-icon"> <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2.5"> <circle cx="12" cy="12" r="10"/> <path d="m16.2 7.8-2 5.6-5.6 2 2-5.6 5.6-2z"/> </svg> </div> <div class="hub-grid" id="explore-grid-icons"></div> </div>
+</div>
+</div><script> const bubbleBar = document.getElementById("bubble-bar");const mainHubRow = document.querySelector(".main-hub-row");const bottomHubRow = document.querySelector(".bottom-hub-row");
+function moveBubbleBarToMain() { bubbleBar.style.opacity = "0"; bubbleBar.style.transform = "translateY(-15px)";
+setTimeout(() => { mainHubRow.insertBefore(bubbleBar, mainHubRow.firstChild);
+bubbleBar.style.opacity = "1"; bubbleBar.style.transform = "translateY(0)"; }, 180);}
+function moveBubbleBarToBottom() { bubbleBar.style.opacity = "0"; bubbleBar.style.transform = "translateY(15px)";
+setTimeout(() => { bottomHubRow.insertBefore(bubbleBar, bottomHubRow.firstChild);
+bubbleBar.style.opacity = "1"; bubbleBar.style.transform = "translateY(0)"; }, 180);}
+
+
+
+/* --- this functions are used to show the bubble bar on the top of every panel it is utilised to show the bubble bar on the video content and whenever it's necessary using this functions --- */
+const bubble_Bar = document.getElementById("bubble-bar");
+let bubbleOriginalParent = null;let bubbleOriginalNextSibling = null;
+
+
+
+
+
+
+
+
+const bubbleButtons = document.querySelectorAll("#bubble-bar .bubble-btn");
+function clearBubbleActive() { bubbleButtons.forEach(btn => btn.classList.remove("active") );}
+function activateChatBubble() { clearBubbleActive(); bubbleButtons[0].classList.add("active"); closeSettingsPanel(); /* openSettingsPanel('chat'); showPanelCapsuleBar(); */ }
+function activatePostBubble() { clearBubbleActive(); bubbleButtons[1].classList.add("active"); openSettingsPanel('socialmedia'); showPanelCapsuleBar(); }
+function activateVideoBubble() { clearBubbleActive(); bubbleButtons[2].classList.add("active"); openSettingsPanel('YouTube'); showPanelCapsuleBar(); if (window.loadEntertainmentFeed) {
+window.loadEntertainmentFeed();
+} else {
+console.error( "loadEntertainmentFeed not found" );
+} }
+function activateProfileBubble() {
+clearBubbleActive();
+bubbleButtons[3] .classList .add("active");
+openSettingsPanel( 'profile' );
+showPanelCapsuleBar();
+
+}
+/*-- trigger that function to clear active shades of buttons of bubble bar
+clearBubbleActive();
+--*/
+
+</script>
+
+
+
+
+
+
+
+
+<!-- The Universal Content Panel --> <div id="content-panel" class="content-panel scroll-hide"> <div class="swipe-handle" id="swipe-area"></div> <div class="panel-close-btn" onclick="closePanel(event)"> <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M18 6 6 18M6 6l12 12"/></svg> </div> <div id="panel-body"></div> </div> <!-- Message Action Panel --><!-- Message Action Panel -->
+
+<!-- Hidden File Input --><input id="file-picker" type="file" hidden onchange="handleFileSelect(event)">
+<div id="phantom-ai-system" class="fixed inset-0 z-[9999] bg-[#050505] translate-y-full transition-transform duration-500 ease-in-out flex flex-col hidden"> <div class="p-4 border-b border-white/10 flex items-center justify-between bg-black"> <div class="flex items-center gap-3"> <button onclick="closePhantomAI()" class="p-2 hover:bg-white/10 rounded-full"> <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m19 12-7 7-7-7"/></svg> </button> <span class="font-bold text-[#D4AF37] tracking-tight">PHANTOM NEURAL AI</span> </div> <div class="px-2 py-1 rounded border border-[#D4AF37]/30 text-[10px] text-[#D4AF37] font-bold">SYSTEM ACTIVE</div> </div>
+<div id="ai-viewport" class="flex-1 overflow-y-auto p-6 space-y-8 scroll-hide"> <div class="ai-text-node"> <p class="text-white/80 text-lg leading-relaxed">Neural Link Established. How can I assist your operations?</p> <div class="mt-2 h-[1px] w-12 bg-[#D4AF37]"></div> </div> </div> 
+
+
+<div class="p-4 bg-black border-t border-white/5 pb-8 lg:pb-4"> <div class="flex items-center gap-3 bg-white/5 border border-white/10 rounded-2xl p-2 pl-4"> <button class="text-white/30 hover:text-[#D4AF37] transition-colors"> <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg> </button> <input type="text" id="ai-query-input" placeholder="Enter command..." class="flex-1 bg-transparent outline-none text-sm py-2 text-white"> <button onclick="processAICommand()" class="w-10 h-10 bg-[#D4AF37] rounded-xl flex items-center justify-center text-black"> <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg> </button> </div> <div id="scrollDownBtn" class="scroll-down-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="black"><path d="M12 16l-6-6h12z"/></svg></div> </div></div>
+<!-- --------p2p system--------- -->
+<div id="p2p-panel" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4"> <div class="absolute inset-0 bg-black/80 backdrop-blur-xl" onclick="closeP2PPanel()"></div> <div id="p2p-content" class="relative w-full max-w-md bg-[#0a0a0a] border border-white/10 rounded-[40px] overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)] transition-all duration-500 scale-95 opacity-0"> <div class="p-8 pb-4 flex justify-between items-start"> <div> <p class="text-[10px] uppercase text-gray-500 font-black tracking-[0.3em] mb-1">Venta Corporation</p> <h2 class="text-[#D4AF37] text-2xl font-bold tracking-tight">Phantom Sync</h2> </div> <button onclick="closeP2PPanel()" class="w-10 h-10 bg-white/5 border border-white/10 rounded-full flex items-center justify-center text-gray-400 hover:text-[#D4AF37] transition-colors"> <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path></svg> </button> </div>
+<div class="px-8 pb-10 space-y-4 max-h-[70vh] overflow-y-auto custom-scrollbar"> <div id="p2p-notice" class="space-y-5 py-4"> <div class="bg-white/5 border border-white/10 p-6 rounded-[24px] relative overflow-hidden"> <div class="absolute top-0 right-0 w-24 h-24 bg-[#D4AF37]/5 blur-3xl rounded-full"></div> <p class="text-[9px] uppercase text-[#D4AF37] font-black tracking-widest mb-3">Research Protocol</p> <p class="text-xs text-gray-400 leading-relaxed italic"> "This technology is under active development. You are establishing a direct neural tunnel between two devices. For best results, ensure both devices are on the same network or hotspot." </p> </div> <button onclick="acknowledgeP2P()" class="w-full py-4 bg-gradient-to-r from-[#D4AF37] via-[#f3cf65] to-[#D4AF37] text-black rounded-2xl font-black text-[11px] uppercase tracking-[0.2em]"> Initialize Interface </button> </div>
+<div id="p2p-interface" class="hidden space-y-4 animate-in fade-in duration-700"> <div class="bg-white/5 border border-white/10 p-5 rounded-2xl relative"> <p class="text-[8px] uppercase text-gray-500 font-black mb-2 tracking-widest">Your Vault Key</p> <div class="flex items-center justify-between gap-2"> <span id="my-id" class="text-[11px] text-[#D4AF37] font-mono break-all">Initializing Link...</span> <div class="flex gap-1"> <button onclick="copyVaultKey()" class="p-2 bg-white/5 rounded-lg hover:bg-[#D4AF37]/10"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button> <button onclick="showMyQRCode()" class="p-2 bg-white/5 rounded-lg hover:bg-[#D4AF37]/10"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg></button> </div> </div> </div>
+<div class="bg-white/5 border border-white/10 p-5 rounded-2xl focus-within:border-[#D4AF37]/50 transition-colors relative"> <p class="text-[9px] uppercase text-gray-500 font-black mb-2 tracking-widest">Remote Node Alias</p> <input type="text" id="peer-id-input" placeholder="ENTER P2P ADDRESS..." class="w-full bg-transparent border-none text-white font-mono text-xs focus:ring-0 p-0 placeholder:text-white/10 uppercase tracking-widest pr-10"> <button onclick="startScanner()" class="absolute right-4 bottom-4"> <svg class="w-5 h-5 text-[#D4AF37]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 012-2h2m10 0h2a2 2 0 012 2v2m0 10v2a2 2 0 01-2 2h-2M7 21H5a2 2 0 01-2-2v-2M7 12h10" stroke-width="2" stroke-linecap="round"/></svg> </button> </div>
+<div id="sync-console" class="p-4 bg-black/40 border border-white/5 rounded-xl h-24 overflow-y-auto font-mono text-[9px] text-gray-500 custom-scrollbar"> <div class="text-[#D4AF37]/50">> System Ready...</div> </div>
+<div class="pt-4 flex gap-2"> <button onclick="connectToPeer()" class="flex-1 py-4 bg-gradient-to-r from-[#D4AF37] to-[#f3cf65] text-black rounded-2xl font-black text-[9px] uppercase tracking-widest active:scale-95 transition-all"> Sync Tunnel </button> <button id="btn-to-chat" disabled onclick="openP2PChat()" class="flex-1 py-4 bg-white/5 border border-white/10 text-gray-600 rounded-2xl font-black text-[9px] uppercase tracking-widest transition-all"> Launch Chat </button> </div> </div> </div> </div></div>
+<div id="qr-overlay" class="fixed inset-0 z-[120] hidden flex items-center justify-center p-6 bg-black/95 backdrop-blur-2xl"> <div class="w-full max-w-sm bg-[#0a0a0a] border border-[#D4AF37]/20 p-8 rounded-[40px] text-center"> <div id="qr-display-area"> <div id="qrcode" class="bg-white p-4 rounded-2xl inline-block mb-6"></div> <button onclick="closeOverlay()" class="w-full py-4 bg-white/5 text-white rounded-2xl font-bold uppercase text-[10px]">Close</button> </div> <div id="scanner-area" class="hidden"> <div id="reader" class="rounded-2xl overflow-hidden mb-6 border border-white/10"></div> <button onclick="stopScanner()" class="w-full py-4 bg-red-900/20 text-red-500 rounded-2xl font-bold uppercase text-[10px]">Cancel Scan</button> </div> </div></div>
+<div id="p2p-chat-panel" class="fixed inset-0 z-[110] hidden flex flex-col bg-[#050505]"> <div class="p-6 border-b border-white/10 flex items-center justify-between bg-black/50 backdrop-blur-xl"> <div class="flex items-center gap-4"> <button onclick="closeP2PChat()" class="text-gray-400 hover:text-[#D4AF37]"> <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path></svg> </button> <div> <h3 class="text-[#D4AF37] text-lg font-bold tracking-tight">Direct P2P Link</h3> <div class="flex items-center gap-1.5"> <span id="p2p-status-dot" class="w-1.5 h-1.5 bg-red-500 rounded-full"></span> <p id="p2p-status-text" class="text-[8px] text-gray-500 uppercase font-black tracking-[0.2em]">Connecting...</p> </div> </div> </div> </div>
+<div id="p2p-messages" class="flex-1 overflow-y-auto p-6 space-y-4 custom-scrollbar bg-[radial-gradient(circle_at_top,#111_0%,#050505_100%)]"></div>
+<div class="p-6 bg-black/80 backdrop-blur-xl border-t border-white/10"> <div class="flex items-center gap-3 bg-white/5 border border-white/10 p-2 rounded-[24px]"> <input type="text" id="p2p-input" placeholder="TYPE ENCRYPTED MESSAGE..." class="flex-1 bg-transparent border-none text-white text-xs px-4 focus:ring-0 uppercase tracking-wider"> <button onclick="handleP2PSend()" class="w-11 h-11 bg-[#D4AF37] rounded-full flex items-center justify-center text-black shadow-[0_0_15px_rgba(212,175,55,0.3)]"> <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path></svg> </button> </div> </div></div>
+<div id="p2p-request-popup" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[200] hidden"> <div class="bg-[#0a0a0a] border border-[#D4AF37]/20 rounded-2xl p-5 w-[300px] text-center shadow-xl"> <p class="text-xs text-gray-400 mb-3">Incoming Sync Request</p> <p id="incoming-peer-id" class="text-[#D4AF37] text-xs font-mono mb-4"></p>
+<div class="flex gap-2"> <button onclick="rejectConnection()" class="flex-1 py-2 bg-red-900/30 text-red-400 rounded-xl text-xs font-bold"> Reject </button> <button onclick="acceptConnection()" class="flex-1 py-2 bg-[#D4AF37] text-black rounded-xl text-xs font-bold"> Accept </button> </div> </div></div>
+
+<div id="delete-modal" class="fixed inset-0 bg-black/70 hidden items-center justify-center z-[9999]">
+<div class="bg-[#111] border border-[#D4AF37]/20 rounded-3xl p-5 w-[90%] max-w-sm">
+<h3 class="text-white text-lg font-bold mb-2"> Delete Messages </h3>
+<p id="delete-modal-text" class="text-gray-400 text-sm mb-5"> What would you like to do? </p>
+<div class="flex flex-col gap-3">
+<button id="btn-delete-me" class="py-3 rounded-xl bg-white/5 text-white font-semibold"> Delete For Me </button>
+<button id="btn-delete-everyone" class="py-3 rounded-xl bg-red-500/20 text-red-400 font-semibold"> Delete For Everyone </button>
+<button id="btn-delete-cancel" class="py-3 rounded-xl bg-[#D4AF37] text-black font-bold"> Cancel </button>
+</div>
+</div>
+</div>
+<script>let peer = null;let conn = null;let html5QrCode = null;let reconnectAttempts = 0;let maxReconnect = 3;let pendingConn = null;
+// --- PANEL NAVIGATION ---function openP2PPanel() { const panel = document.getElementById('p2p-panel'); const content = document.getElementById('p2p-content');
+panel.classList.remove('hidden');
+setTimeout(() => { content.classList.remove('scale-95', 'opacity-0'); content.classList.add('scale-100', 'opacity-100'); }, 10);
+if (localStorage.getItem('p2p-acknowledged') === 'true') { acknowledgeP2P(); }}
+function acknowledgeP2P() { localStorage.setItem('p2p-acknowledged', 'true');
+document.getElementById('p2p-notice').classList.add('hidden'); document.getElementById('p2p-interface').classList.remove('hidden');
+initPeer();}
+function closeP2PPanel() { const panel = document.getElementById('p2p-panel'); const content = document.getElementById('p2p-content');
+content.classList.add('scale-95', 'opacity-0'); setTimeout(() => panel.classList.add('hidden'), 400);}
+function openP2PChat() { closeP2PPanel(); document.getElementById('p2p-chat-panel').classList.remove('hidden');}
+function closeP2PChat() { document.getElementById('p2p-chat-panel').classList.add('hidden');}
+// --- CORE P2P LOGIC ---function initPeer() { if (peer) return;
+try { peer = new Peer(null, { debug: 2 });
+peer.on('open', (id) => { document.getElementById('my-id').innerText = id; logSync("Neural Link Established.", true); });
+// 🔥 Incoming request (NO AUTO CONNECT) peer.on('connection', (incoming) => { logSync("Incoming Sync Request...");
+pendingConn = incoming;
+document.getElementById('incoming-peer-id').innerText = incoming.peer.substring(0, 10);
+document.getElementById('p2p-request-popup').classList.remove('hidden'); });
+peer.on('error', (err) => { logSync("Peer Error: " + err.type); });
+peer.on('disconnected', () => { logSync("Disconnected. Attempting recovery..."); attemptReconnect(); });
+} catch { logSync("Initialization Failed."); }}
+// ✅ ACCEPTfunction acceptConnection() { if (!pendingConn) return;
+conn = pendingConn; pendingConn = null;
+// 🔥 SEND APPROVAL SIGNAL conn.send({ type: "accepted" });
+setupConnection();
+document.getElementById('p2p-request-popup').classList.add('hidden');
+logSync("Connection Accepted.", true);}
+// ❌ REJECTfunction rejectConnection() { if (pendingConn) { pendingConn.close(); pendingConn = null; }
+document.getElementById('p2p-request-popup').classList.add('hidden');
+logSync("Connection Rejected.");}
+// --- OUTGOING CONNECTION ---function connectToPeer() { const remoteId = document.getElementById('peer-id-input').value.trim(); const myId = document.getElementById('my-id').innerText;
+if (!remoteId) return logSync("Error: No Peer ID.");
+if (remoteId === myId) { logSync("Error: Cannot connect to your own Vault."); return; }
+if (!peer) return logSync("Peer not initialized.");
+logSync("Handshaking with " + remoteId.substring(0, 8));
+try { conn = peer.connect(remoteId, { reliable: true });
+conn.on('open', () => { logSync("Waiting for peer approval..."); });
+// 🔥 LISTEN FOR ACCEPT SIGNAL conn.on('data', (data) => { if (data?.type === "accepted") { logSync("Peer Accepted Connection.", true); setupConnection(); // ✅ NOW ACTIVATE } });
+conn.on('close', () => { logSync("Connection Closed."); updateStatus(false); });
+conn.on('error', () => { logSync("Connection Failed."); });
+} catch { logSync("Connection Failed."); }}// --- ACTUAL CONNECTION ACTIVATION ---function setupConnection() { if (!conn) return;
+// Avoid duplicate binding if (conn._phantomSetup) return; conn._phantomSetup = true;
+reconnectAttempts = 0;
+logSync("Tunnel Secured.", true);
+const btn = document.getElementById('btn-to-chat'); btn.disabled = false; btn.classList.replace('text-gray-600', 'text-[#D4AF37]');
+updateStatus(true);
+conn.on('data', (data) => { // Ignore system messages if (typeof data === "object" && data.type) return;
+appendP2PMsg("Peer", data, 'received'); });
+conn.on('close', () => { logSync("Connection Closed."); updateStatus(false); });
+conn.on('error', () => { logSync("Connection Error."); updateStatus(false); });}
+function attemptReconnect() { if (reconnectAttempts >= maxReconnect) { logSync("Reconnect Failed."); return; }
+reconnectAttempts++; logSync("Retry " + reconnectAttempts + "...");
+peer.reconnect();}
+function updateStatus(active) { const dot = document.getElementById('p2p-status-dot'); const text = document.getElementById('p2p-status-text');
+if (active) { dot.className = "w-1.5 h-1.5 bg-green-500 animate-pulse"; text.innerText = "Link Active"; } else { dot.className = "w-1.5 h-1.5 bg-red-500"; text.innerText = "Disconnected"; }}
+function handleP2PSend() { const input = document.getElementById('p2p-input'); const msg = input.value.trim();
+if (!msg) return;
+if (conn && conn.open) { conn.send(msg); appendP2PMsg("You", msg, 'sent'); input.value = ""; } else { logSync("No Active Connection."); }}
+function appendP2PMsg(sender, text, type) { const container = document.getElementById('p2p-messages');
+const div = document.createElement('div'); div.className = `flex ${type === 'sent' ? 'justify-end' : 'justify-start'}`;
+const time = new Date().toLocaleTimeString();
+div.innerHTML = ` <div class="max-w-[80%] p-4 rounded-2xl text-xs font-medium ${type === 'sent' ? 'bg-[#D4AF37] text-black rounded-tr-none' : 'bg-white/5 border border-white/10 text-white rounded-tl-none'}"> ${text} <div class="text-[8px] opacity-50 mt-1">${time}</div> </div> `;
+container.appendChild(div); container.scrollTop = container.scrollHeight;}
+function logSync(msg, gold = false) { const consoleBox = document.getElementById('sync-console');
+const div = document.createElement('div'); div.className = gold ? 'text-[#D4AF37]' : '';
+div.innerText = `> ${msg}`;
+consoleBox.prepend(div);}
+// --- QR & CLIPBOARD ---function copyVaultKey() { const id = document.getElementById('my-id').innerText;
+navigator.clipboard.writeText(id) .then(() => logSync("Key Copied.")) .catch(() => logSync("Copy Failed."));}
+function showMyQRCode() { const id = document.getElementById('my-id').innerText;
+if (id.includes("...")) return;
+document.getElementById('qrcode').innerHTML = "";
+try { new QRCode(document.getElementById('qrcode'), { text: id, width: 180, height: 180 }); } catch { logSync("QR Failed."); }
+document.getElementById('qr-overlay').classList.remove('hidden'); document.getElementById('qr-display-area').classList.remove('hidden'); document.getElementById('scanner-area').classList.add('hidden');}
+function startScanner() { document.getElementById('qr-overlay').classList.remove('hidden'); document.getElementById('qr-display-area').classList.add('hidden'); document.getElementById('scanner-area').classList.remove('hidden');
+try { if (!html5QrCode) html5QrCode = new Html5Qrcode("reader");
+html5QrCode.start( { facingMode: "environment" }, { fps: 10, qrbox: 200 }, (txt) => { document.getElementById('peer-id-input').value = txt; stopScanner(); connectToPeer(); } ); } catch { logSync("Scanner Failed."); }}
+function stopScanner() { if (html5QrCode) { html5QrCode.stop() .then(() => closeOverlay()) .catch(() => closeOverlay()); } else { closeOverlay(); }}
+function closeOverlay() { document.getElementById('qr-overlay').classList.add('hidden');}</script>
+<!-- end of p2p script -->
+
+<script> function openPhantomAI() { const aiPanel = document.getElementById('phantom-ai-system'); aiPanel.classList.remove('hidden'); // Use a small delay for the animation if you use the 'show-ai' class setTimeout(() => { aiPanel.classList.add('show-ai'); }, 10);
+// CRITICAL: Push a state so the back button knows something is open history.pushState({ action: "close-ai" }, ""); }
+
+function closePhantomAI() { const aiPanel = document.getElementById('phantom-ai-system'); aiPanel.classList.remove('show-ai'); setTimeout(() => { aiPanel.classList.add('hidden'); }, 500);}
+
+
+</script>
+<style> /* WhatsApp Style Filter Bubbles */.filter-bubble { background: rgba(255, 255, 255, 0.08); color: rgba(255, 255, 255, 0.6); padding: 6px 16px; border-radius: 20px; font-size: 13px; font-weight: 500; white-space: nowrap; transition: all 0.2s ease; border: 1px solid transparent;}
+.filter-bubble:hover { background: rgba(255, 255, 255, 0.15);}
+.active-bubble { background: rgba(212, 175, 55, 0.2) !important; color: #D4AF37 !important; border: 1px solid rgba(212, 175, 55, 0.3);}
+.ai-btn-gold:hover { background: #D4AF37; color: black;}
+/* Professional AI Message Logic */.ai-user-bubble { background: #D4AF37; color: black; padding: 10px 14px; border-radius: 15px 15px 2px 15px; max-width: 80%; margin-left: auto; font-size: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.2);}
+.ai-system-text { max-width: 90%; font-size: 15px; border-left: 2px solid #D4AF37; padding-left: 15px; margin: 20px 0;}
+.panel-show { transform: translateY(0) !important; display: flex !important;}
+
+/* Ensure the panel is absolutely on top of the user list */#phantom-ai-system.show-ai { display: flex !important; transform: translateY(0);}
+/* User Message: Chat Bubble style */.user-msg-bubble { background: #D4AF37; color: black; padding: 12px 18px; border-radius: 20px 20px 20px 20px; align-self: flex-end; max-width: 80%; margin-left: auto; font-weight: 600; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2); max-width: 75%; width: fit-content; word-wrap: break-word; padding: 10px 14px; border-radius: 16px;
+}
+
+
+
+
+
+
+
+
+/* Container for the code block */.ai-code-container { margin: 20px 0; background: rgba(15, 15, 15, 0.4); /* Dark translucent base */ backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(212, 175, 55, 0.15); /* Subtle gold border */ border-radius: 12px; overflow: hidden; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.05);}
+/* Header styling with window-like controls */.code-header { display: flex; justify-content: space-between; align-items: center; padding: 10px 1px; background: rgba(255, 255, 255, 0.03); border-bottom: 1px solid rgba(255, 255, 255, 0.05);}
+.code-meta { display: flex; align-items: center; gap: 6px;}
+/* Mac-style window dots */.code-dot { width: 10px; height: 10px; border-radius: 50%; opacity: 0.6;}.code-dot.red { background: #ff5f56; }.code-dot.amber { background: #ffbd2e; }.code-dot.green { background: #27c93f; }
+.code-lang { margin-left: 10px; font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; color: #D4AF37; /* Gold Accent */ letter-spacing: 1px; text-transform: uppercase;}
+/* Copy Button Styling */.copy-btn { background: rgba(212, 175, 55, 0.1); border: 1px solid rgba(212, 175, 55, 0.2); color: #D4AF37; padding: 6px; border-radius: 6px; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); display: flex; align-items: center;}
+.copy-btn:hover { background: rgba(212, 175, 55, 0.25); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(212, 175, 55, 0.2);}
+.copy-icon { width: 16px; height: 16px;}
+/* Code content styling */.ai-code-container pre { margin: 0; padding: 18px; overflow-x: auto; background: transparent;}
+.ai-code-container code { font-family: 'JetBrains Mono', 'Fira Code', monospace; font-size: 13.5px; line-height: 1.6; color: #e0e0e0; text-shadow: 0 1px 2px rgba(0,0,0,0.3);}
+/* Custom Scrollbar for Code */.ai-code-container pre::-webkit-scrollbar { height: 6px;}.ai-code-container pre::-webkit-scrollbar-thumb { background: rgba(212, 175, 55, 0.3); border-radius: 10px;}
+
+
+
+
+
+
+
+
+
+
+
+</style>
+<script type="module"> function viewFullMedia(url, type) {
+const body = document.getElementById("panel-body");
+if (!body) { console.error("panel-body not found"); return; }
+let previewHTML = "";
+
+/* Auto detect if type missing */ if (!type) {
+if (url.match(/\.(jpg|jpeg|png|gif|webp)$/i)) { type = "image"; } else if (url.match(/\.(mp4|webm|mov)$/i)) { type = "video"; } else if (url.match(/\.(mp3|wav|ogg)$/i)) { type = "audio"; } else { type = "file"; } }
+
+/* Image */ if (type === "image") {
+previewHTML = ` <img src="${url}" class="rounded-xl max-w-full max-h-72 mx-auto shadow-xl"> `; }
+
+/* Video */ else if (type === "video") {
+previewHTML = ` <video src="${url}" controls autoplay class="rounded-xl max-w-full max-h-72 mx-auto"></video> `; }
+
+/* Audio */ else if (type === "audio") {
+previewHTML = ` <audio src="${url}" controls autoplay class="w-full"></audio> `; }
+
+/* File */ else {
+previewHTML = ` <div class="p-6 bg-white/5 rounded-xl text-center"> <p class="font-bold">File</p>
+<a href="${url}" target="_blank" class="text-[#D4AF37] underline text-sm">
+Download File
+</a> </div> `; }
+
+
+/* Inject panel */ body.innerHTML = `
+<h3 class="text-[#D4AF37] text-2xl font-bold mb-4"> Media Preview </h3>
+<div class="mb-4"> ${previewHTML} </div>
+<a href="${url}" target="_blank" class="block w-full py-3 mb-3 bg-white/10 text-center rounded-xl text-sm">
+Download Original
+</a>
+<button onclick="closePanel();" // Close main panel" class="w-full py-4 bg-red-500/80 text-white font-bold rounded-2xl">
+Close
+</button> `;
+
+panelOpen = true; document.getElementById("content-panel") .classList.add("active");
+pushAppState({ preview: true }); }
+// Add this at the bottom of the script tag in goooo2.htmlwindow.viewFullMedia = viewFullMedia;window.pushAppState = pushAppState;
+
+// Add these at the end of mess-script.jswindow.handleGlobalClick = handleGlobalClick;window.toggleHub = toggleHub;window.openPanel = openPanel;window.closePanel = closePanel;window.toggleChat = toggleChat;window.openCallPanel = openCallPanel;window.showPreview = showPreview;window.closeAttachment = closeAttachment;
+
+const MAIN_ICONS = [ { id: 'profile', label: 'User', svg: '<circle cx="12" cy="7" r="4"/><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>' }, { id: 'vault', label: 'Vault', svg: '<rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>' }, { id: 'stats', label: 'Stats', svg: '<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>' }, { id: 'docs', label: 'Docs', svg: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>' }, { id: 'shield', label: 'Guard', svg: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>' }, { id: 'cloud', label: 'Cloud', svg: '<path d="M17.5 19c2.5 0 4.5-2 4.5-4.5 0-2.4-1.9-4.3-4.3-4.5C17.1 6.5 13.9 4 10 4 6.1 4 3 7.1 3 11c0 .1 0 .2.1.4C1.3 12.3 0 14 0 16c0 2.2 1.8 4 4 4h13.5"/>' }, { id: 'setting', label: 'Setting', svg: '<path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.1a2 2 0 0 1-1-1.72v-.51a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>' }, { id: 'media', label: 'Media', svg: '<rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>' }, { id: 'wallet', label: 'Bank', svg: '<path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4"/><path d="M4 6v12c0 1.1.9 2 2 2h14v-4"/><path d="M18 12a2 2 0 0 0-2 2c0 1.1.9 2 2 2h4v-4h-4z"/>' }, ];
+const EXPLORE_ICONS = [ { id: 'social', label: 'Social', svg: '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>' }, { id: 'updates', label: 'Updates', svg: '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M12 7v5l3 3"/>' }, { id: 'history', label: 'Calls', svg: '<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>' }, ];
+const ATTACH_ICONS = [ { id: 'files', label: 'Files', svg: '<path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/>' }, { id: 'image', label: 'Image', svg: '<rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>' }, { id: 'link', label: 'Link', svg: '<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>' }, { id: 'ai', label: 'AI', svg: '<path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z"/><circle cx="12" cy="12" r="3"/>' }, { id: 'audio', label: 'Audio', svg: '<path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/>' }, { id: 'video', label: 'Video', svg: '<polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>' }, { id: 'settings', label: 'Settings', svg: '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>' }, { id: 'capsule', label: 'Capsule', svg: '<path d="M6 18A6 6 0 0 1 6 6l12 0a6 6 0 0 1 0 12Z" transform="rotate(-45 12 12)" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="12" y1="6" x2="12" y2="18" transform="rotate(-45 12 12)" stroke="currentColor" stroke-width="2"/>' }];
+
+
+let activeId = 1, panelOpen = false, currentOpenHub = null, touchY = 0, hubOpen = false;
+function init() { // Render Main Hub document.getElementById('main-grid-icons').innerHTML = MAIN_ICONS.map(i => ` <div class="grid-item" onclick="openPanel('${i.id}', event)"> <div class="w-12 h-12 rounded-2xl bg-white/5 border border-white/5 flex items-center justify-center mb-1"> <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">${i.svg}</svg> </div> <span>${i.label}</span> </div> `).join(''); // Render Explore Hub document.getElementById('explore-grid-icons').innerHTML = EXPLORE_ICONS.map(i => ` <div class="grid-item" onclick="openPanel('${i.id}', event)"> <div class="w-12 h-12 rounded-2xl bg-white/5 border border-white/5 flex items-center justify-center mb-1"> <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">${i.svg}</svg> </div> <span>${i.label}</span> </div> `).join(''); pushAppState({ home: true }); }
+function toggleHub(type, e) { if(e) e.stopPropagation();
+const hubs = { main: 'main-hub', explore: 'explore-hub' };
+const target = hubs[type];
+if (currentOpenHub === type) {
+document.getElementById(target).classList.remove('expanded');
+// Move bubble bar back when Explore closes if (type === "explore") { moveBubbleBarToBottom(); }
+pushAppState({ hub: type }); currentOpenHub = null; hubOpen = false; document.body.classList.remove('hub-active');
+} else {
+Object.values(hubs).forEach(h => document.getElementById(h).classList.remove('expanded') );
+document.getElementById(target).classList.add('expanded');
+if (type === "explore") { moveBubbleBarToMain(); } else { moveBubbleBarToBottom(); }
+currentOpenHub = type; hubOpen = true; document.body.classList.add('hub-active');}}
+function openPanel(id, e) { if(e) e.stopPropagation();
+pushAppState({ panel: true }); // ✅ ADD THIS
+panelOpen = true; document.body.classList.add('panel-active'); const body = document.getElementById('panel-body'); switch(id) { case 'profle': body.innerHTML = ` <h3 class="text-[#D4AF37] text-2xl font-bold mb-4 tracking-tight">Account Profile</h3> <div class="flex items-center gap-5 mb-8"> <div id="pfp-container" class="relative"> <div class="w-24 h-24 rounded-full bg-neutral-800 border-2 border-[#D4AF37] flex items-center justify-center text-3xl font-bold overflow-hidden shadow-[0_0_20px_rgba(212,175,55,0.15)]"> <img id="user-pfp" src="" class="hidden w-full h-full object-cover"> <span id="pfp-initials" class="text-gray-400">JD</span> </div> <label for="pfp-input" class="absolute bottom-0 right-0 w-8 h-8 bg-[#D4AF37] rounded-full flex items-center justify-center cursor-pointer border-2 border-[#050505] hover:scale-110 transition-transform shadow-lg"> <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-black" viewBox="0 0 20 20" fill="currentColor"> <path fill-rule="evenodd" d="M4 5a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V7a2 2 0 00-2-2h-1.586a1 1 0 01-.707-.293l-1.121-1.121A2 2 0 0011.172 3H8.828a2 2 0 00-1.414.586L6.293 4.707A1 1 0 015.586 5H4zm6 9a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" /> </svg> </label> <input type="file" id="pfp-input" class="hidden" accept="image/*"> </div>
+<div> <h4 id="user-display-name" class="font-bold text-xl tracking-tight">John Doe</h4> <div class="flex items-center gap-2 mt-1"> <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span> <p id="user-status" class="text-[10px] text-[#D4AF37] font-black uppercase tracking-widest">Verified Alpha</p> </div> </div> </div>
+<div class="space-y-3 max-h-[50vh] overflow-y-auto pr-2 custom-scrollbar"> <details class="group bg-white/5 border border-white/10 rounded-2xl overflow-hidden transition-all"> <summary class="flex justify-between items-center p-5 cursor-pointer list-none outline-none"> <div> <p class="text-[9px] uppercase text-gray-500 font-black tracking-widest mb-1">Electronic Mail</p> <p class="text-xs font-medium text-gray-300">Primary Contact Address</p> </div> <svg class="w-4 h-4 text-[#D4AF37] group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg> </summary> <div class="px-5 pb-5 animate-fadeIn"> <p id="info-email" class="text-sm font-mono text-[#D4AF37]">j.doe@phantom.net</p> </div> </details>
+<details class="group bg-white/5 border border-white/10 rounded-2xl overflow-hidden transition-all"> <summary class="flex justify-between items-center p-5 cursor-pointer list-none outline-none"> <div> <p class="text-[9px] uppercase text-gray-500 font-black tracking-widest mb-1">Master Passkey</p> <p class="text-xs font-medium text-gray-300">Secure Access Token</p> </div> <svg class="w-4 h-4 text-[#D4AF37] group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg> </summary> <div class="px-5 pb-5 animate-fadeIn"> <code class="text-[10px] bg-black/40 p-2 rounded block break-all text-gray-400 border border-white/5">PH-$(2026)-AX-99-TR</code> </div> </details>
+<details class="group bg-white/5 border border-white/10 rounded-2xl overflow-hidden transition-all"> <summary class="flex justify-between items-center p-5 cursor-pointer list-none outline-none"> <div> <p class="text-[9px] uppercase text-gray-500 font-black tracking-widest mb-1">Birth Protocol</p> <p class="text-xs font-medium text-gray-300">Genesis Date</p> </div> <svg class="w-4 h-4 text-[#D4AF37] group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg> </summary> <div class="px-5 pb-5 animate-fadeIn"> <p class="text-sm font-medium text-gray-200">January 01, 2000</p> </div> </details>
+<div class="bg-white/5 border border-white/10 p-5 rounded-2xl"> <p class="text-[9px] uppercase text-gray-500 font-black tracking-widest mb-3">Pattern Recovery (3x3)</p> <div class="grid grid-cols-3 gap-2 w-24 mx-auto"> ${Array(9).fill(0).map(() => `<div class="w-6 h-6 rounded-full border border-white/20 bg-white/5"></div>`).join('')} </div> </div>
+</div>
+<button id="edit-id-btn" class="w-full mt-6 py-4 bg-[#D4AF37] text-black rounded-2xl text-xs font-black uppercase tracking-[0.2em] shadow-[0_4px_15px_rgba(212,175,55,0.3)] hover:opacity-90 active:scale-[0.98] transition-all"> Edit Identification </button> `; break; case 'profile': body.innerHTML = ` <h3 class="text-[#D4AF37] text-2xl font-bold mb-4 tracking-tight">Account Profile</h3> <div class="flex flex-col mb-8"> <div class="flex items-center gap-5"> <div id="pfp-container" class="relative"> <div class="w-24 h-24 rounded-full bg-neutral-800 border-2 border-[#D4AF37] flex items-center justify-center text-3xl font-bold overflow-hidden shadow-[0_0_20px_rgba(212,175,55,0.15)]"> <img id="user-pfp" src="" class="hidden w-full h-full object-cover"> <span id="pfp-initials" class="text-gray-400">JD</span> </div> <div id="note-bubble-trigger" class="absolute -top-1 -right-2 bg-white/10 backdrop-blur-xl border border-white/20 px-3 py-1 rounded-2xl rounded-bl-none shadow-xl cursor-pointer active:scale-95 transition-transform"> <p id="current-note" class="text-[9px] text-[#D4AF37] font-medium italic">Set status...</p> </div> <label for="pfp-input" class="absolute bottom-0 right-0 w-8 h-8 bg-[#D4AF37] rounded-full flex items-center justify-center cursor-pointer border-2 border-[#050505] shadow-lg"> <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-black" viewBox="0 0 20 20" fill="currentColor"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" /></svg> </label> <input type="file" id="pfp-input" class="hidden" accept="image/*"> </div> <div> <h4 id="user-display-name" class="font-bold text-xl tracking-tight">John Doe</h4> <div class="flex items-center gap-2 mt-1"> <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span> <p id="user-status" class="text-[10px] text-[#D4AF37] font-black uppercase tracking-widest">Verified Alpha</p> </div> </div> </div>
+<button id="add-story-btn" class="mt-4 w-max flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-[#D4AF37] via-[#f3cf65] to-[#D4AF37] text-black rounded-full font-black text-[10px] uppercase tracking-widest shadow-[0_4px_15px_rgba(212,175,55,0.3)] hover:scale-105 active:scale-95 transition-all"> <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" /></svg> Post Story </button> </div>
+<div class="space-y-3 max-h-[45vh] overflow-y-auto pr-2 custom-scrollbar"> <details class="group bg-white/5 border border-white/10 rounded-2xl overflow-hidden transition-all"> <summary class="flex justify-between items-center p-5 cursor-pointer list-none outline-none"> <div> <p class="text-[9px] uppercase text-gray-500 font-black tracking-widest mb-1">Neural Biography</p> <p id="bio-preview" class="text-xs text-gray-300 truncate w-48">Tap to edit your story...</p> </div> <svg class="w-4 h-4 text-[#D4AF37] group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> </summary> <div class="px-5 pb-5 space-y-3"> <textarea id="bio-textarea" class="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-xs text-gray-300 focus:border-[#D4AF37] outline-none min-h-[80px] resize-none" placeholder="Describe your digital entity..."></textarea> <button id="save-bio-btn" class="bg-[#D4AF37] text-black px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-tighter shadow-lg active:scale-95 transition-transform">Update Bio</button> </div> </details>
+<details class="group bg-white/5 border border-white/10 rounded-2xl overflow-hidden transition-all"> <summary class="flex justify-between items-center p-5 cursor-pointer list-none outline-none"> <div> <p class="text-[9px] uppercase text-gray-500 font-black tracking-widest mb-1">Avatar Selection</p> <p class="text-xs text-gray-300">Choose a default identifier</p> </div> <svg class="w-4 h-4 text-[#D4AF37] group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> </summary> <div class="px-5 pb-5"> <div class="flex gap-3 overflow-x-auto pb-2 custom-scrollbar" id="avatar-list"> </div> </div> </details>
+<div class="bg-white/5 border border-white/10 p-5 rounded-2xl"> <p class="text-[9px] uppercase text-gray-500 font-black mb-1">Public Alias</p> <p id="info-username" class="text-sm font-bold text-[#D4AF37]">@phantom_user</p> </div>
+<details class="group bg-white/5 border border-white/10 rounded-2xl overflow-hidden transition-all"> <summary class="flex justify-between items-center p-5 cursor-pointer list-none outline-none"> <p class="text-[9px] uppercase text-gray-500 font-black tracking-widest">Birth Protocol</p> <svg class="w-4 h-4 text-[#D4AF37] group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> </summary> <div class="px-5 pb-5"> <p id="info-dob" class="text-sm font-medium text-gray-200">October 12, 2004</p> </div> </details> </div>
+<button id="edit-id-btn" class="w-full mt-6 py-4 bg-white/5 border border-white/10 rounded-2xl text-xs font-black uppercase tracking-[0.2em] text-gray-400"> Advanced Settings </button> `; // Initialize functions renderAvatars(); setupBioEditor(); setTimeout(()=>{ initProfileSystem();},100); 
+break;
+
+
+
+
+
+
+
+
+case 'vault': body.innerHTML = `<h3 class="text-[#D4AF37] text-2xl font-bold mb-4">Secure Vault</h3><div class="info-card"><div class="flex justify-between items-center mb-2"><span class="text-sm font-bold">Passwords Stored</span><span class="text-[#D4AF37] font-bold">142</span></div><div class="flex justify-between items-center"><span class="text-sm font-bold">Secret Notes</span><span class="text-[#D4AF37] font-bold">12</span></div></div><div class="bg-yellow-500/10 p-4 rounded-2xl border border-yellow-500/20 mb-4"><p class="text-xs text-yellow-500">Auto-lock is active. Vault will encrypt after 30 seconds of inactivity.</p></div><button class="w-full py-4 bg-[#D4AF37] text-black font-bold rounded-2xl">Access Credentials</button>`; break; case 'stats': body.innerHTML = `<h3 class="text-[#D4AF37] text-2xl font-bold mb-4">Traffic Insights</h3><div class="info-card"><span class="text-xs text-gray-500 uppercase font-bold">Weekly Activity</span><div class="flex items-end gap-2 h-20 mt-4"><div class="flex-1 bg-white/10 h-[40%] rounded-t-sm"></div><div class="flex-1 bg-white/10 h-[60%] rounded-t-sm"></div><div class="flex-1 bg-[#D4AF37] h-[90%] rounded-t-sm"></div><div class="flex-1 bg-white/10 h-[30%] rounded-t-sm"></div><div class="flex-1 bg-white/10 h-[55%] rounded-t-sm"></div></div></div><p class="text-[10px] text-gray-500 text-center">Data packets processed: 4.2GB this session</p>`; break; case 'capsule': // 1. Generate fully randomized, high-vibrancy warm color values for the flame layers const randomHue1 = Math.floor(Math.random() * 60); // 0-60: Red to Orange/Gold const randomHue2 = Math.floor(Math.random() * 60); const randomHue3 = Math.floor(Math.random() * 40) + 20; // 20-60: Warm Amber accents const randomHue4 = Math.floor(Math.random() * 30); // 0-30: Deeper Crimson/Red grounding
+// Convert keys to CSS HSL color strings const colorStart1 = `hsl(${randomHue1}, 95%, 55%)`; const colorVia1 = `hsl(${randomHue2}, 90%, 50%)`; const colorEnd1 = `hsl(${randomHue3}, 100%, 45%)`; const colorStart2 = `hsl(${randomHue4}, 90%, 40%)`; const colorVia2 = `hsl(${randomHue1}, 85%, 35%)`; const colorEnd2 = `hsl(${randomHue2}, 95%, 20%)`;
+// 2. Inject custom flame movement keyframes globally if they don't exist yet if (!document.getElementById('flame-glow-styles')) { const style = document.createElement('style'); style.id = 'flame-glow-styles'; style.innerHTML = ` @keyframes flameMorph { 0%, 100% { border-radius: 42% 58% 70% 30% / 45% 45% 55% 55%; transform: rotate(0deg) scale(1); } 33% { border-radius: 70% 30% 52% 48% / 60% 40% 60% 40%; transform: rotate(120deg) scale(1.05); } 66% { border-radius: 50% 50% 30% 70% / 40% 60% 30% 70%; transform: rotate(240deg) scale(0.95); } } @keyframes flameShift { 0%, 100% { transform: translate(0px, 0px) scale(1); filter: blur(40px); } 50% { transform: translate(4px, -6px) scale(1.08); filter: blur(50px); } } `; document.head.appendChild(style); }
+// 3. Render HTML structure injecting the unique, generated color variables body.innerHTML = ` <h3 class="text-[#D4AF37] text-2xl font-bold mb-4">Time Capsule</h3> <div class="flex flex-col gap-4"> <!-- OUTER WRAPPER WITH ABSOLUTE Z-INDEX CONTEXT --> <div class="relative group"> <!-- FIREBASE-STYLE FLAME GLOW LAYER (Always Moving Behind with Randomized Gradients) --> <div class="absolute -inset-1.5 opacity-75 blur-3xl transition duration-1000 group-hover:opacity-100 pointer-events-none z-0" style="animation: flameShift 7s ease-in-out infinite alternate;"> <!-- Randomized Flame Orb 1 (Dynamic Fluid Top Layer) --> <div class="absolute inset-0 opacity-60 mix-blend-screen" style="animation: flameMorph 9s linear infinite; border-radius: 40%; background: linear-gradient(to top right, ${colorStart1}, ${colorVia1}, ${colorEnd1});"></div> <!-- Randomized Flame Orb 2 (Dynamic Fluid Underbelly Layer) --> <div class="absolute inset-2 opacity-50 mix-blend-screen" style="animation: flameMorph 6s linear infinite reverse; border-radius: 40%; background: linear-gradient(to bottom left, ${colorStart2}, ${colorVia2}, ${colorEnd2});"></div> </div>
+<!-- PREMIUM TEXT AREA CONTAINER --> <div class="relative flex flex-col gap-4 p-5 bg-black border border-white/[0.08] rounded-4xl overflow-hidden transition-all duration-300 hover:border-white/[0.15] z-10"> <!-- Top-Right / Bottom-Left Subtle Inside Glow --> <div class="absolute inset-0 pointer-events-none shadow-[inset_4px_-4px_15px_rgba(255,255,255,0.02),inset_-4px_4px_15px_rgba(0,0,0,0.6)] rounded-4xl"></div> <textarea id="capsule-message" placeholder="Lock a deep message or memory in time..." rows="5" class="w-full bg-transparent text-white text-lg outline-none placeholder-gray-600 px-1 z-20 resize-none min-h-[140px] leading-relaxed tracking-wide scrollbar-thin scrollbar-thumb-white/10"></textarea> </div> </div> <!-- Interactive Date & Time Settings --> <div class="flex gap-3 mt-1"> <!-- Date Picker Component --> <div class="relative flex-1 bg-white/[0.03] hover:bg-white/[0.05] rounded-2xl p-3 border border-white/[0.05] transition-colors duration-200 cursor-pointer"> <span class="text-[10px] text-gray-500 uppercase block mb-1 font-bold tracking-wider">Unlock Date</span> <span id="date-display" class="text-xs text-gray-400 block pointer-events-none font-medium">Select Date</span> <input id="capsule-date" type="date" class="absolute inset-0 opacity-0 w-full h-full cursor-pointer [color-scheme:dark]" onchange="document.getElementById('date-display').innerText = this.value ? new Date(this.value).toLocaleDateString(undefined, {month: 'short', day: 'numeric', year: 'numeric'}) : 'Select Date'; document.getElementById('date-display').classList.toggle('text-white', !!this.value); document.getElementById('date-display').classList.toggle('text-gray-400', !this.value);" /> </div>
+<!-- Time Picker Component --> <div class="relative flex-1 bg-white/[0.03] hover:bg-white/[0.05] rounded-2xl p-3 border border-white/[0.05] transition-colors duration-200 cursor-pointer"> <span class="text-[10px] text-gray-500 uppercase block mb-1 font-bold tracking-wider">Unlock Time</span> <span id="time-display" class="text-xs text-gray-400 block pointer-events-none font-medium">Select Time</span> <input id="capsule-time" type="time" class="absolute inset-0 opacity-0 w-full h-full cursor-pointer [color-scheme:dark]" oninput="if(this.value) { const [h,m] = this.value.split(':'); const ampm = h >= 12 ? 'PM' : 'AM'; const displayHour = h % 12 || 12; document.getElementById('time-display').innerText = \`\${displayHour}:\${m} \${ampm}\`; } else { document.getElementById('time-display').innerText = 'Select Time'; } document.getElementById('time-display').classList.toggle('text-white', !!this.value); document.getElementById('time-display').classList.toggle('text-gray-400', !this.value);" /> </div> </div>
+<!-- Round Curved Send Button --> <button onclick="sendCapsule()" class="w-full bg-[#D4AF37] hover:bg-[#b8962f] text-black font-bold py-3.5 px-6 rounded-full text-sm tracking-wider uppercase transition-all duration-300 transform hover:scale-[1.01] active:scale-[0.99] mt-2"> Send Capsule</button>
+</div> `; break;
+
+
+
+
+case 'setting': body.innerHTML = ` <div class="flex items-center justify-between mb-8 px-4 pt-4"> <div class="flex items-center gap-4"> <div class="p-3 bg-gradient-to-br from-[#D4AF37] to-[#AA8418] rounded-2xl shadow-lg shadow-[#D4AF37]/20"> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.1a2 2 0 0 1-1-1.72v-.51a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg> </div> <div> <h class="text-[20px] font-bold tracking-tight text-white">General Settings</h> <p class="text-[10px] text-[#D4AF37] uppercase tracking-[0.2em] font-black">Control Center</p> </div> </div> </div>
+<div class="space-y-3 overflow-y-auto max-h-[50vh] pr-2 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+<details class="group bg-white/5 rounded-[2rem] border border-white/10 overflow-hidden" open> <summary class="flex items-center justify-between p-5 cursor-pointer list-none hover:bg-white/10 transition-all"> <span class="text-sm font-semibold flex items-center gap-3"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" stroke-width="2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Account Management </span> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="transition group-open:rotate-180 opacity-40"><path d="m6 9 6 6 6-6"/></svg> </summary> <div class="p-5 pt-2 space-y-4 border-t border-white/5 bg-white/[0.02]"> <div class="flex items-center gap-3 mb-2"> <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-gray-700 to-gray-500 border border-white/20 flex items-center justify-center text-xs font-bold text-white/50">JD</div> <div> <p class="text-sm font-bold text-white">John Doe</p> <p class="text-[10px] text-white/40">Premium Subscriber</p> </div> </div> <div class="flex gap-2"> <button class="flex-1 py-2.5 bg-white text-black text-xs font-bold rounded-full hover:bg-[#D4AF37] hover:text-white transition-all">Switch Account</button> <button class="flex-1 py-2.5 bg-white/5 text-white text-xs font-bold rounded-full border border-white/10 hover:bg-white/10 transition-all" onclick="handleLogout()">Logout</button> </div> </div> </details>
+<details class="group bg-white/5 rounded-[2rem] border border-white/10 overflow-hidden"> <summary class="flex items-center justify-between p-5 cursor-pointer list-none hover:bg-white/10 transition-all"> <span class="text-sm font-semibold flex items-center gap-3"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" stroke-width="2"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg> Notifications </span> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="transition group-open:rotate-180 opacity-40"><path d="m6 9 6 6 6-6"/></svg> </summary> <div class="p-6 pt-2 space-y-5 border-t border-white/5 bg-white/[0.02]"> <p class="text-[9px] font-black text-white/30 uppercase tracking-[0.2em]">Alert Preferences</p> <label class="flex items-center justify-between cursor-pointer group"> <span class="text-xs text-white/80">Push Notifications</span> <div class="relative"> <input type="checkbox" checked class="sr-only peer"> <div class="w-11 h-6 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#D4AF37]"></div> </div> </label>
+<label class="flex items-center justify-between cursor-pointer group"> <span class="text-xs text-white/80">Message Preview</span> <div class="relative"> <input type="checkbox" class="sr-only peer"> <div class="w-11 h-6 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#D4AF37]"></div> </div> </label> </div> </details>
+<details class="group bg-white/5 rounded-[2rem] border border-white/10 overflow-hidden"> <summary class="flex items-center justify-between p-5 cursor-pointer list-none hover:bg-white/10 transition-all"> <span class="text-sm font-semibold flex items-center gap-3"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Privacy & Safety </span> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="transition group-open:rotate-180 opacity-40"><path d="m6 9 6 6 6-6"/></svg> </summary> <div class="p-6 pt-2 space-y-5 border-t border-white/5 bg-white/[0.02]"> <label class="flex items-center justify-between cursor-pointer group"> <span class="text-xs text-white/80">Read Receipts</span> <div class="relative"> <input type="checkbox" checked class="sr-only peer"> <div class="w-11 h-6 bg-white/10 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#D4AF37]"></div> </div> </label>
+<label class="flex items-center justify-between cursor-pointer group"> <span class="text-xs text-white/80">Online Status</span> <div class="relative"> <input type="checkbox" checked class="sr-only peer"> <div class="w-11 h-6 bg-white/10 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#D4AF37]"></div> </div> </label> <label class="flex items-center justify-between cursor-pointer group"> <span class="text-xs text-white/80">HTML Rendering</span> <div class="relative"> <input type="checkbox" checked class="sr-only peer"> <div class="w-11 h-6 bg-white/10 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#D4AF37]"></div> </div> </label> </div> </details>
+<details class="group bg-white/5 rounded-[2rem] border border-white/10 overflow-hidden"> <summary class="flex items-center justify-between p-5 cursor-pointer list-none hover:bg-white/10 transition-all"> <span class="text-sm font-semibold flex items-center gap-3"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg> Media Auto-Download </span> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="transition group-open:rotate-180 opacity-40"><path d="m6 9 6 6 6-6"/></svg> </summary> <div class="p-6 pt-2 space-y-4 border-t border-white/5 bg-white/[0.02]"> <div class="flex flex-col gap-4"> <label class="flex items-center justify-between cursor-pointer"> <span class="text-xs">Images (Wi-Fi Only)</span> <div class="relative"><input type="checkbox" checked class="sr-only peer"><div class="w-11 h-6 bg-white/10 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#D4AF37]"></div></div> </label> <label class="flex items-center justify-between cursor-pointer"> <span class="text-xs">Videos (Disabled)</span> <div class="relative"><input type="checkbox" class="sr-only peer"><div class="w-11 h-6 bg-white/10 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#D4AF37]"></div></div> </label> </div> </div> </details>
+<details class="group bg-white/5 rounded-[2rem] border border-white/10 overflow-hidden"> <summary class="flex items-center justify-between p-5 cursor-pointer list-none hover:bg-white/10 transition-all"> <span class="text-sm font-semibold flex items-center gap-3"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20Z"/></svg> Themes </span> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="transition group-open:rotate-180 opacity-40"><path d="m6 9 6 6 6-6"/></svg> </summary> <div class="p-6 pt-2 space-y-4 border-t border-white/5 bg-white/[0.02]"> <label class="flex items-center justify-between cursor-pointer"> <span class="text-xs font-light text-white/70">Glassy Gold Theme</span> <div class="relative flex items-center"> <input type="radio" name="theme" value="dark" onchange="setTheme(this.value)" class="theme-radio"> <span class="radio-btn"></span> </div></label>
+<label class="flex items-center justify-between cursor-pointer"> <span class="text-xs font-light text-white/70">OLED Deep Black</span> <div class="relative flex items-center"> <input type="radio" name="theme" value="light" onchange="setTheme(this.value)" class="theme-radio"> <span class="radio-btn"></span> </div></label>
+</div>
+</details> <details class="group bg-white/5 rounded-[2rem] border border-white/10 overflow-hidden" onclick="openSettingsPanel('Control Center');togglePanelCapsuleBar();"> <summary class="flex items-center justify-between p-5 cursor-pointer list-none transition-all"> <span class="text-sm font-semibold flex items-center gap-3"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" stroke-width="2"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.1a2 2 0 0 1-1-1.72v-.51a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/></svg> More settings </span> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="opacity-40"><path d="m9 6 6 6-6 6"/></svg>
+</summary> 
+
+
+
+
+</details>
+<div class="pt-6 pb-2 px-2 space-y-3"> <button class="w-full py-4 bg-red-500/10 text-red-500 rounded-2xl text-xs border border-red-500/20 hover:bg-red-500/20 transition-all font-bold flex items-center justify-center gap-2"> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg> Block My Account </button> <p class="text-center text-[10px] text-white/20 font-medium">Build v4.0.2-Stable • Powered by VENTA</p> </div> </div> `; syncRadioUI(); break;
+
+
+
+
+case 'shield': body.innerHTML = `<h3 class="text-[#D4AF37] text-2xl font-bold mb-4">Security Guard</h3><div class="space-y-3"><div class="flex items-center gap-3 p-4 bg-green-500/10 rounded-2xl border border-green-500/20"><div class="w-2 h-2 rounded-full bg-green-500"></div><span class="text-sm">End-to-End Encryption: Active</span></div><div class="flex items-center gap-3 p-4 bg-green-500/10 rounded-2xl border border-green-500/20"><div class="w-2 h-2 rounded-full bg-green-500"></div><span class="text-sm">IP Masking: Enabled</span></div></div>`; break; case 'cloud': body.innerHTML = `<h3 class="text-[#D4AF37] text-2xl font-bold mb-4">Cloud Drive</h3><div class="info-card"><div class="flex justify-between text-sm mb-1 font-bold"><span>Total Usage</span><span>78%</span></div><div class="stat-bar"><div class="stat-fill" style="width: 78%"></div></div></div><div class="grid grid-cols-2 gap-3"><div class="p-4 bg-white/5 rounded-2xl border border-white/10 text-center"><p class="text-xl font-bold">1.2k</p><p class="text-[10px] text-gray-500 uppercase font-bold">Files</p></div><div class="p-4 bg-white/5 rounded-2xl border border-white/10 text-center"><p class="text-xl font-bold">85</p><p class="text-[10px] text-gray-500 uppercase font-bold">Shared</p></div></div>`; break; case 'setting': openSettingsPanel('profile'); break; case 'wallet': body.innerHTML = `<h3 class="text-[#D4AF37] text-2xl font-bold mb-4">Digital Bank</h3><div class="info-card text-center py-6"><p class="text-xs text-gray-500 uppercase font-bold mb-1">Available Balance</p><h4 class="text-4xl font-bold">$12,450.00</h4></div><p class="text-xs font-bold text-gray-500 mb-2">Recent Transactions</p><div class="space-y-2"><div class="flex justify-between text-sm p-3 bg-white/5 rounded-xl"><span>Secured Transfer</span><span class="text-green-500">+$400</span></div></div>`; break; 
+//==================================================// Case Block Section Replacement Integration//==================================================case 'attachments-gif': body.innerHTML = ` <h3 class="text-[#D4AF37] text-2xl font-bold mb-4 tracking-tight">Send Media</h3> <!-- Tab Swapper System --> <div class="flex gap-2 mb-4 border-b border-white/10 pb-2"> <button id="btn-tab-stickers" onclick="switchAttachmentTab('stickers')" class="text-xs font-bold uppercase tracking-wider px-3 py-1 text-[#D4AF37] border-b-2 border-[#D4AF37]">Stickers</button> <button id="btn-tab-gifs" onclick="switchAttachmentTab('gifs')" class="text-xs font-bold uppercase tracking-wider px-3 py-1 text-gray-400">GIFs</button> </div>
+<!-- STICKERS TAB --> <div id="tab-stickers" class="space-y-3"> <!-- New Sticker Search Engine Input Bar --> <input type="text" id="sticker-search" placeholder="Search stickers..." class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-xs focus:outline-none focus:border-[#D4AF37]" onkeyup="filterStickers(this.value)"> <!-- Dynamic Grid Layout Target Area --> <div id="sticker-grid-target" class="grid grid-cols-4 gap-3 max-h-[35vh] overflow-y-auto scroll-hide p-1"> <!-- Statically injected default layout will be populated instantly by filterStickers below --> </div> </div>
+<!-- GIF TAB --> <div id="tab-gifs" class="hidden space-y-3"> <input type="text" id="gif-search" placeholder="Search GIPHY..." class="w-full bg-white/5 border border-white/10 p-3 rounded-xl text-xs focus:outline-none focus:border-[#D4AF37]" onkeyup="searchGifs(event)"> <div id="gif-results" class="grid grid-cols-2 gap-2 max-h-[35vh] overflow-y-auto scroll-hide"> <!-- Injected instantly by searchGifs invocation --> </div> </div> `; // Instantly invoke the layout generator to display all stickers by default filterStickers('');
+// Pre-populate the 60 items immediately inside the GIF layout container searchGifs(null);
+setTimeout(() => { if (typeof loadTrendingGifs === 'function') loadTrendingGifs(); }, 50); break; case 'attachments': body.innerHTML = ` <h3 class="text-[#D4AF37] text-2xl font-bold mb-4">Share Media</h3> <div class="attachment-grid"> ${ATTACH_ICONS.map(i => { // 1. Determine the correct function call based on the ID let clickAction = ''; switch(i.id) { case 'capsule': clickAction = `openPanel('capsule', event)`; break; case 'ai': clickAction = `openAiAssistant()`; break; case 'link': clickAction = `openLinkModal()`; break; case 'settings': clickAction = `opensetting()`; break; default: // Fallback for files, image, audio, video clickAction = `openFilePicker('${i.id}')`; }
+// 2. Return the HTML string using the dynamic clickAction return ` <div class="grid-item" onclick="${clickAction}"> <div class="w-16 h-16 rounded-2xl bg-white/5 border border-white/5 flex items-center justify-center mb-1"> <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"> ${i.svg} </svg> </div> <span>${i.label}</span> </div> `; }).join('')} </div> `; break; case 'menu': body.innerHTML = `<h3 class="text-[#D4AF37] text-2xl font-bold mb-4">Chat Options</h3><div class="space-y-3"><button class="w-full p-4 bg-white/5 rounded-2xl text-left text-sm border border-white/10">Clear History</button><button class="w-full p-4 bg-white/5 rounded-2xl text-left text-sm border border-white/10">Mute Alerts</button><button class="w-full p-4 bg-red-500/10 text-red-500 rounded-2xl text-left text-sm border border-red-500/20">Block Account</button></div>`; break; case 'social': body.innerHTML = `<h3 class="text-[#D4AF37] text-2xl font-bold mb-6">Network</h3><div class="flex gap-2 mb-6"><button class="flex-1 py-3 bg-[#D4AF37] text-black rounded-xl text-[10px] font-bold uppercase" onclick="showNetwork('Explore')">Explore</button><button class="flex-1 py-3 bg-white/5 rounded-xl text-[10px] font-bold uppercase" onclick="showNetwork('Followers')">Followers</button><button class="flex-1 py-3 bg-white/5 rounded-xl text-[10px] font-bold uppercase" onclick="showNetwork('Following')">Following</button></div><div id="network-list" class="space-y-2">Loading Network...</div>`; if(typeof showNetwork === 'function') showNetwork('Explore'); break; case 'updates': body.innerHTML = `<h3 class="text-[#D4AF37] text-2xl font-bold mb-6">Updates</h3><div class="flex gap-4 mb-8 overflow-x-auto pb-2 scroll-hide"><div class="shrink-0 flex flex-col items-center gap-2"><div class="w-14 h-14 rounded-full border-2 border-[#D4AF37] p-1"><div class="w-full h-full rounded-full bg-neutral-800"></div></div><span class="text-[10px]">My Status</span></div></div><h4 class="text-xs font-bold text-gray-500 mb-4">CHANNELS</h4><div class="list-item"><div class="w-10 h-10 rounded-xl bg-orange-500/20 flex items-center justify-center text-orange-500">🔥</div><div class="flex-1 font-bold text-sm">Crypto Pulse</div><span class="text-[10px] text-gray-500">3h ago</span></div>`; break; case 'history':
+body.innerHTML = ` <h3 class="text-[#D4AF37] text-2xl font-bold mb-6"> Call History </h3>
+<div id="call-history-list" class="space-y-2"> <p class="text-gray-500 text-sm">Loading...</p> </div> `;
+loadCallHistory();
+break; default: body.innerHTML = `<h3 class="text-[#D4AF37] text-2xl font-bold capitalize mb-2">${id}</h3><div class="info-card"><p class="text-sm">The <b>${id}</b> module is currently syncing with the main Phantom Hub server.</p></div>`; } document.getElementById('content-panel').classList.add('active'); }
+
+
+
+
+
+
+
+const CONTACTS = [ { id: 1, name: "Mohammed Azam", initials: "MA", info: "Online" }, { id: 2, name: "John Doe", initials: "JD", info: "Last seen 5 min ago" }, { id: 3, name: "Sarah Khan", initials: "SK", info: "Typing..." }, { id: 4, name: "Alex Wilson", initials: "AW", info: "Offline" }];
+
+async function openCallPanel(type, e) {
+if (e) e.stopPropagation();
+const uid = currentChatUser;
+if (!uid) { console.error("No chat selected"); return; }
+const snap = await get( ref(rtdb, `global_users/${uid}`) );
+if (!snap.exists()) { console.error("User not found"); return; }
+const user = snap.val();
+console.log(user);
+// build panel UI here using: // user.username // user.profile_pic
+const isVideo = type === "video";
+const avatarHtml = contact.profile_pic ? ` <img src="${contact.profile_pic}" class="w-24 h-24 rounded-3xl object-cover mb-4 shadow-2xl" > ` : ` <div class="w-24 h-24 rounded-3xl bg-[#D4AF37] text-black text-3xl font-bold flex items-center justify-center mb-4 shadow-2xl"> ${(contact.username || "U")[0].toUpperCase()} </div> `;
+document.getElementById("panel-body").innerHTML = ` <div class="flex flex-col items-center text-center">
+${avatarHtml}
+<h3 class="text-2xl font-bold mb-1"> ${contact.username || "Unknown User"} </h3>
+<p class="text-sm text-gray-500 mb-8"> Tap below to start a ${isVideo ? "video" : "voice"} call </p>
+<button onclick="startCall('${type}')" class="w-full py-4 bg-[#D4AF37] text-black font-bold rounded-2xl flex items-center justify-center gap-3">
+${isVideo ? "Start Video Call" : "Start Voice Call"}
+</button>
+</div> `;
+document.getElementById("content-panel").classList.add("active");}
+function closePanel(e) { if(e) e.stopPropagation(); panelOpen = false; document.getElementById('content-panel').classList.remove('active'); document.body.classList.remove('panel-active'); }
+function handleGlobalClick(e) { if (panelOpen) { if (!e.target.closest('#content-panel')) closePanel(); return; } if (currentOpenHub) { const targetHubId = currentOpenHub === 'main' ? 'main-hub' : 'explore-hub'; if (!e.target.closest(`#${targetHubId}`)) { document.getElementById(targetHubId).classList.remove('expanded'); currentOpenHub = null; hubOpen = false; moveBubbleBarToBottom(); document.body.classList.remove('hub-active'); } } }
+
+function toggleChat(val) { closeChat(); document.getElementById('chat-window').classList.toggle('active', val); document.getElementById('hub-stack').style.display = "flex"; }
+/* ===== ATTACHMENT SYSTEM ===== */
+let selectedFile = null;
+
+
+
+
+
+
+
+
+
+
+/* Show preview modal */function showPreview(file) {
+const body = document.getElementById("panel-body");
+const url = URL.createObjectURL(file);
+let previewHTML = "";
+
+/* Image */ if (file.type.startsWith("image")) {
+previewHTML = ` <img src="${url}" class="rounded-xl max-w-full max-h-72 mx-auto shadow-xl"> `; }
+
+/* Video */ else if (file.type.startsWith("video")) {
+previewHTML = ` <video src="${url}" controls class="rounded-xl max-w-full max-h-72 mx-auto"></video> `; }
+
+/* Audio */ else if (file.type.startsWith("audio")) {
+previewHTML = ` <audio src="${url}" controls class="w-full"></audio> `; }
+
+/* File */ else {
+previewHTML = ` <div class="p-6 bg-white/5 rounded-xl text-center"> <p class="font-bold">${file.name}</p> <p class="text-xs text-gray-500"> ${(file.size/1024).toFixed(1)} KB </p> </div> `; }
+
+/* Inject into main panel */ body.innerHTML = `
+<h3 class="text-[#D4AF37] text-2xl font-bold mb-4"> Attachment Preview </h3>
+<div class="mb-4"> ${previewHTML} </div>
+<textarea id="attach-note" class="w-full p-3 rounded-xl bg-white/5 border border-white/10 text-sm mb-4 resize-none" placeholder="Add a note..." rows="2"></textarea>
+<button id="sendBtn" onclick="handleSendAttachment()" class="w-full py-4 bg-[#D4AF37] text-black font-bold rounded-2xl flex items-center justify-center gap-2">
+<span id="btnText">Send Attachment</span>
+<span id="btnSpinner" class="spinner hidden"></span>
+</button> `;
+
+panelOpen = true; document.getElementById("content-panel").classList.add("active");
+pushAppState({ attach: true });}
+
+
+function handleSendAttachment() {
+const btn = document.getElementById("sendBtn"); const text = document.getElementById("btnText"); const spinner = document.getElementById("btnSpinner");
+// prevent multiple clicks if (btn.disabled) return;
+btn.disabled = true;
+text.style.display = "none"; spinner.classList.remove("hidden");
+// call your original function sendAttachment();
+}
+window.handleSendAttachment = handleSendAttachment;
+
+
+
+
+
+
+
+/* Close preview */function closeAttachment() {
+closePanel(); // Close main panel
+selectedFile = null;
+document.getElementById("file-picker").value = "";}
+
+/* Auto scroll */function scrollToBottom() {
+const list = document.getElementById("msg-list");
+list.scrollTop = list.scrollHeight;}
+init(); // this function is used to hide panel and blur effect when we choose any chat to message. function exploreChat() { moveBubbleBarToBottom(); if (panelOpen) { closePanel(); return; }
+// If hub is open → close it if (currentOpenHub) { const hubId = currentOpenHub === 'main' ? 'main-hub' : 'explore-hub';
+document.getElementById(hubId).classList.remove('expanded');
+currentOpenHub = null; hubOpen = false; document.body.classList.remove('hub-active'); return; } }window.exploreChat = exploreChat; /* ===== DEVICE BACK BUTTON HANDLER ===== */
+function pushAppState(state) { history.pushState(state, "", "");}
+window.pushAppState = pushAppState;
+function handleBackNavigation() {
+
+
+if (isSettingsPanelOpen) { closeSettingsPanel(); return; } // If panel is open → close it if (panelOpen) { closePanel(); return; }
+// If hub is open → close it if (currentOpenHub) { moveBubbleBarToBottom(); const hubId = currentOpenHub === 'main' ? 'main-hub' : 'explore-hub';
+document.getElementById(hubId).classList.remove('expanded');
+currentOpenHub = null; hubOpen = false; document.body.classList.remove('hub-active'); return; }
+// If chat is open on mobile → go back to contact list if ( window.innerWidth < 768 && document.getElementById('chat-window').classList.contains('active') ) { toggleChat(false); return; } const aiPanel = document.getElementById('phantom-ai-system'); // Check if the AI panel is currently visible if (aiPanel && aiPanel.classList.contains('show-ai')) { closePhantomAI(); return; } const p2pPanel = document.getElementById('p2p-panel'); if (p2pPanel && !p2pPanel.classList.contains('hidden')) { closeP2PPanel(); return; } const p2pChat = document.getElementById('p2p-chat-panel'); if (p2pChat && !p2pChat.classList.contains('hidden')) { closeP2PChat(); return; }
+// Otherwise → allow normal browser back history.back();}
+
+// Listen for back buttonwindow.addEventListener("popstate", handleBackNavigation);</script>
+<script> function toggleSetting(id) { document.getElementById(id).classList.toggle("hidden");}
+
+function selectRadio(btn, group) {
+const parent = btn.closest(`#${group}`);
+parent.querySelectorAll(".radio-btn").forEach(b => { b.classList.remove("active"); });
+btn.classList.add("active");
+} </script> <script>/* ===== Message Action System ===== */
+const actionPanel = document.getElementById("msg-action-panel");const msgList = document.getElementById("msg-list");
+let selectedMessages = new Set();let longPressTimer = null;let longPressActive = false;
+
+/* Show Panel (Under Header) */function showActionPanel() {
+console.log("Selected Count:", selectedMessages.size);
+const header = document.getElementById("chat-header"); if (!header) return;
+const rect = header.getBoundingClientRect();
+actionPanel.style.top = rect.bottom + 6 + "px"; actionPanel.style.left = rect.left + "px";
+actionPanel.style.width = rect.width + "px"; actionPanel.style.justifyContent = "center";
+selectedMessages = new Set(selectedMessages);
+actionPanel.style.display = "flex";}
+
+/* Hide Panel */function hideActionPanel() {
+actionPanel.style.display = "none";
+selectionMode = false; longPressActive = false;
+clearTimeout(longPressTimer); longPressTimer = null;
+selectedMessages = new Set();
+document.querySelectorAll(".msg-selected") .forEach(el => el.classList.remove("msg-selected"));}
+
+/* Select Message */function selectMessage(el) {
+console.log("Current Selection:", [...selectedMessages]);console.log("Count:", selectedMessages.size);
+const id = el.dataset.id;
+console.log("Bubble Type:", el.querySelector("img") ? "sticker/gif" : "normal");
+if (!id) return;
+if (selectedMessages.has(id)) {
+selectedMessages.delete(id); el.classList.remove("msg-selected");
+} else {
+selectedMessages.add(id); el.classList.add("msg-selected"); }
+console.log("Selected Set After:", [...selectedMessages]);}
+
+/* Desktop Long Press */msgList.addEventListener("mousedown", e => {
+const bubble = e.target.closest(".message-item"); if (!bubble) return;
+longPressTimer = setTimeout(() => {
+selectionMode = true; longPressActive = true;
+selectMessage(bubble); showActionPanel();
+}, 500);});
+
+document.addEventListener("mouseup", () => { clearTimeout(longPressTimer);});
+
+/* Mobile Long Press */let touchStartY = 0;
+msgList.addEventListener("touchstart", e => {
+const bubble = e.target.closest(".message-item"); if (!bubble) return;
+touchStartY = e.touches[0].clientY;
+longPressTimer = setTimeout(() => {
+selectionMode = true; longPressActive = true;
+selectMessage(bubble); showActionPanel();
+}, 500);
+}, { passive: true });
+
+msgList.addEventListener("touchmove", e => {
+const moveY = e.touches[0].clientY;
+// If user scrolls → cancel long press if (Math.abs(moveY - touchStartY) > 10) { clearTimeout(longPressTimer); }});
+
+document.addEventListener("touchend", () => {
+clearTimeout(longPressTimer); longPressTimer = null;
+});
+
+/* Multi Select */let selectionMode = false;
+msgList.addEventListener("click", e => {
+if (!selectionMode) return;
+const bubble = e.target.closest(".message-item"); if (!bubble) return;
+selectMessage(bubble);
+e.stopPropagation();});
+
+/* Panel Buttons */actionPanel.addEventListener("click", e => {
+const btn = e.target.closest(".msg-action-btn");
+if (!btn) return;
+console.log("BUTTON CLICK:", btn.dataset.action);
+const action = btn.dataset.action;
+if (action === "copy") copyMessages(); if (action === "delete") openDeleteModal(); if (action === "forward") forwardMessages(); if (action === "select") hideActionPanel();});
+
+/* Copy */function copyMessages() {
+let text = "";
+selectedMessages.forEach(id => {
+const el = document.querySelector(`[data-id="${id}"]`); if (el) text += el.innerText + "\n\n"; });
+navigator.clipboard.writeText(text);
+hideActionPanel();}
+
+/* Delete (UI Only) */async function deleteMessages() {
+console.log("DELETE FUNCTION STARTED");
+console.log("Deleting Set:", [...selectedMessages]);
+const myUid = CURRENT_SESSION.uid;
+console.log("My UID:", myUid); console.log("Selected Messages:", selectedMessages);
+for (const messageId of selectedMessages) {
+console.log("Processing:", messageId);
+const msg = window.MESSAGE_CACHE[messageId];
+console.log("Message Data:", msg);
+if (!msg) { console.log("Message not found in cache"); continue; }
+if (msg.sender === myUid) {
+console.log("Delete For Everyone");
+await window.firebaseUpdate( window.firebaseRef( rtdb, `messages/${window.currentChatId}/${messageId}` ), { deletedForEveryone: true });
+} else {
+console.log("Delete For Me");
+await window.firebaseUpdate( window.firebaseRef( rtdb, `messages/${window.currentChatId}/${messageId}/deletedFor` ), { [myUid]: true });
+} } hideActionPanel();}
+function openDeleteModal() {
+const modal = document.getElementById("delete-modal");
+const myUid = CURRENT_SESSION.uid;
+let allMine = true;
+selectedMessages.forEach(id => {
+const msg = MESSAGE_CACHE[id];
+if (!msg) return;
+if (msg.sender !== myUid) { allMine = false; }
+});
+document.getElementById("btn-delete-everyone").style.display = allMine ? "block" : "none";
+modal.style.display = "flex";}
+
+
+// close 
+document.getElementById("btn-delete-cancel") .addEventListener("click", () => {
+document.getElementById("delete-modal").style.display = "none";
+});
+
+
+// Delete from me 
+document.getElementById("btn-delete-me") .addEventListener("click", async () => {
+await performDelete("me");
+document.getElementById("delete-modal").style.display = "none";
+});
+
+// delete from everyone 
+document.getElementById("btn-delete-everyone") .addEventListener("click", async () => {
+await performDelete("everyone");
+document.getElementById("delete-modal").style.display = "none";
+});
+
+async function performDelete(mode) {
+console.log("Selected Before Delete:", [...selectedMessages]); console.log("Total Selected:", selectedMessages.size); const myUid = CURRENT_SESSION.uid;
+for (const messageId of selectedMessages) {
+const msg = MESSAGE_CACHE[messageId];
+if (!msg) continue;
+if (mode === "everyone") {
+if (msg.sender !== myUid) continue;
+await firebaseUpdate( firebaseRef( rtdb, `messages/${currentChatId}/${messageId}` ), { deletedForEveryone: true } );
+} else {
+await firebaseUpdate( firebaseRef( rtdb, `messages/${currentChatId}/${messageId}/deletedFor` ), { [myUid]: true } );
+}
+}
+hideActionPanel();}
+
+
+
+/* Forward Placeholder */function forwardMessages() {
+alert("Forward coming soon 🚀");
+hideActionPanel();}
+
+/* Hide When Clicking Outside */document.addEventListener("click", e => {
+if (!e.target.closest(".msg-action-panel") && !e.target.closest(".message-item")) {
+hideActionPanel(); }});
+
+/* Disable Text Selection */msgList.addEventListener("selectstart", e => { e.preventDefault();});
+
+
+
+
+
+
+function switchToLightTheme() {
+// create style element let lightStyle = document.getElementById("light-theme-style");
+if (!lightStyle) {
+lightStyle = document.createElement("style"); lightStyle.id = "light-theme-style";
+lightStyle.innerHTML = `
+body{ background:#f5f6f8 !important; color:#111 !important; }
+.sidebar{ background:#ffffff !important; border-right:1px solid rgba(0,0,0,0.08) !important; }
+.chat-view{ background: #ffffff!important; }
+#chat-header{ background:#ffffff !important; border-bottom:2px solid #f7f7f9 !important; }
+.msg-them{ background:#f7f7f9 !important; color:#444444 !important; border:1px solid rgba(0,0,0,0.08); }
+.msg-me{ background:#ffc700a8 !important; color:#333333 !important; }
+.info-card{ background:#ffffff !important; border:1px solid rgba(0,0,0,0.08) !important; }
+.bg-white\\/5{ background:rgba(0,0,0,0.03) !important; }
+.bg-white\\/10{ background:rgba(0,0,0,0.06) !important; }
+.border-white\\/5{ border-color:rgba(0,0,0,0.05) !important; }
+.border-white\\/10{ border-color:rgba(0,0,0,0.08) !important; }
+.text-white\\/20, .text-white\\/30, .text-white\\/40, .text-white\\/50, .text-white\\/60, .text-white\\/70, .text-white\\/80{ color:rgba(0,0,0,0.6) !important; }
+.msg-action-panel{ background:rgba(255,255,255,0.9) !important; border:1px solid rgba(0,0,0,0.1) !important; color:#111 !important; }
+.msg-action-btn{ color:#111 !important; }
+.msg-action-btn:hover{ background:rgba(0,0,0,0.05) !important; }
+input{ color:#111 !important; } /* Panel & Sidebar Overrides */ #content-panel, #panel-body { background: #ffffff !important; color: #111 !important; }
+/* Target Tailwind background and border classes in the switch list */ .bg-white\\/5, .bg-white\\[0\\.02\\] { background: rgba(0, 0, 0, 0.04) !important; } .bg-white\\/10 { background: rgba(0, 0, 0, 0.08) !important; }
+.border-white\\/5, .border-white\\/10 { border-color: rgba(0, 0, 0, 0.1) !important; }
+/* Fix Text Visibility in Light Mode */ .text-white, .text-gray-300, .text-gray-200 { color: #111 !important; }
+/* Target the specific alpha text classes used in your settings */ .text-white\\/20, .text-white\\/30, .text-white\\/40, .text-white\\/50, .text-white\\/60, .text-white\\/70, .text-white\\/80 { color: rgba(0, 0, 0, 0.7) !important; }
+/* Details/Dropdowns inside the panel */ details { background: #fafafa !important; border: 1px solid rgba(0, 0, 0, 0.08) !important; }
+/* Radio button container background */ .radio-btn { background: #ffffff !important; } /* Hub Icon Overrides (Main & Explore) */ .grid-item { color: #111 !important; }
+/* Target the icon boxes (w-12 h-12) */ .grid-item div.bg-white\\/5 { background: rgba(0, 0, 0, 0.05) !important; border: 1px solid rgba(0, 0, 0, 0.08) !important; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02); }
+/* Target the SVGs inside the icons */ .grid-item svg { stroke: #111 !important; }
+/* Hover effect for light mode */ .grid-item:hover div.bg-white\\/5 { background: rgba(0, 0, 0, 0.08) !important; transform: translateY(-2px); transition: all 0.2s ease; }
+/* Section Titles for Hubs */ h2, .hub-title { color: #111 !important; } /* --- HUB & STACK LIGHT MODE OVERRIDES --- */
+/* The main floating buttons (when not expanded) */ .hub-btn { background: #D4AF37 !important; /* Keep the Gold */ box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1) !important; }
+/* The Expanded Hub Panel (The Glassy Card) */ .hub-btn.expanded { background: rgba(255, 255, 255, 0.9) !important; backdrop-filter: blur(25px) !important; border: 1px solid rgba(0, 0, 0, 0.08) !important; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1) !important; }
+/* Grid Items inside the Hub */ .hub-grid .grid-item { color: #444 !important; /* Darker text for readability */ }
+.hub-grid .grid-item span { color: #666 !important; font-weight: 800 !important; }
+/* The icon containers inside the Hub Grid */ .hub-grid .grid-item div { background: rgba(0, 0, 0, 0.04) !important; border: 1px solid rgba(0, 0, 0, 0.05) !important; color: #111 !important; }
+/* Hover states in Light Mode */ .hub-grid .grid-item:hover { color: #D4AF37 !important; /* Turn gold on hover */ }
+.hub-grid .grid-item:hover div { background: rgba(0, 0, 0, 0.08) !important; border-color: #D4AF37 !important; }
+/* SVG Icon color inside the Hub */ .hub-grid .grid-item svg { stroke: #111 !important; }
+.hub-grid .grid-item:hover svg { stroke: #D4AF37 !important; }
+/* Desktop specific alignment adjustment for light mode shadows */ @media (min-width: 769px) { .hub-stack { filter: drop-shadow(0 5px 15px rgba(0,0,0,0.05)); } } /* --- CHAT FILTER BUBBLES & ACTION BUTTONS --- */
+/* Generic Bubble Style (Inactive) */ .filter-bubble { background: rgba(0, 0, 0, 0.05) !important; color: #444 !important; border: 1px solid rgba(0, 0, 0, 0.05) !important; }
+/* Active Bubble (The selected one) */ .active-bubble { background: #111 !important; /* Dark contrast for the selected filter */ color: #fff !important; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important; }
+/* Phantom AI Button (Keeping the Gold Identity) */ .ai-btn-gold { background: rgba(0, 0, 0, 0.05) !important; color: #4c4c4c !important; font-weight: 800 !important; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important; }
+/* P2P / Action Button (The w-12 rounded-2xl one) */ button[onclick="openP2PPanel()"] { border-color: rgba(0, 0, 0, 0.1) !important; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important; }
+/* SVG Icon inside the P2P button */ button[onclick="openP2PPanel()"] svg { color: gray !important; /* Makes the white icon dark */ }
+/* Hover states for filter buttons */ .filter-bubble:hover { background: rgba(255, 255, 255, 0.08); }
+/* Hide Scrollbar for Light Mode */ .scroll-hide::-webkit-scrollbar { display: none; } /*wallpaper */ .chat-view { flex: 1; display: flex; flex-direction: column; z-index: 100; /* Add your image link here */ background-image: linear-gradient(rgba(10, 10, 10, 0.85), rgba(10, 10, 10, 0.45)), url('chat-wallpapper-lite.png'); /* Adjustments to make the background look perfect */ background-size: cover; background-position: center; background-repeat: no-repeat; background-attachment: fixed;} /* --- AVATAR / ICON PLACEHOLDER OVERRIDES --- */
+/* Target the w-12 h-12 container with bg-neutral-900 */ .w-12.h-12.bg-neutral-900 { background: rgba(0, 0, 0, 0.06) !important; border: 1px solid rgba(0, 0, 0, 0.08) !important; color: #111 !important; /* Forces initials like "JD" to be dark */ }
+/* Target the text-gray-500 inside that specific container */ .w-12.h-12.bg-neutral-900.text-gray-500 { color: #333 !important; font-weight: 800 !important; }
+/* If there is an image inside the rounded-2xl container */ .w-12.h-12.rounded-2xl img { border: 1px solid rgba(0, 0, 0, 0.05); }
+/* --- PHANTOM AI LIGHT MODE (FINAL OPTIMIZED) --- */
+/* Main Panel & Header */#phantom-ai-system { background: #f5f6f8 !important;}
+#phantom-ai-system .border-b.border-white\\/10 { background: #ffffff !important; border-bottom: 1px solid rgba(0, 0, 0, 0.1) !important; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03) !important;}
+#phantom-ai-system button.hover\\:bg-white\\/10 { color: #111 !important;}
+/* AI Message & Text Nodes */.ai-text-node { background: rgba(0, 0, 0, 0.03) !important; border-left: 3px solid #D4AF37 !important; padding: 15px !important; border-radius: 12px !important;}
+.ai-content-wrapper, .ai-text-node p.text-white\\/80 { color: #111 !important;}
+.user-msg-bubble { background: #D4AF37 !important; color: #000 !important;}
+/* Code Blocks */.ai-code-container { background: #fdfdfd !important; border: 1px solid rgba(0, 0, 0, 0.1) !important; overflow: hidden; border-radius: 12px;}
+.code-header { background: #f1f1f1 !important; border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;}
+.code-lang { color: #666 !important; font-weight: 800 !important; }
+.code-body-wrapper pre { background: #f8f8f8 !important; }.code-body-wrapper code { color: #222 !important; }
+/* Bottom Input Bar */#phantom-ai-system .p-4.bg-black.border-t { background: #ffffff !important; border-top: 1px solid rgba(0, 0, 0, 0.08) !important;}
+#phantom-ai-system .flex.items-center.bg-white\\/5 { background: rgba(0, 0, 0, 0.04) !important; border: 1px solid rgba(0, 0, 0, 0.1) !important;}
+#ai-query-input { color: #111 !important; }#ai-query-input::placeholder { color: rgba(0, 0, 0, 0.4) !important; }
+/* System UI Elements */.ai-heading { color: #000 !important; font-weight: 800 !important; }
+#phantom-ai-system .text-\\[10px\\] { background: rgba(212, 175, 55, 0.1) !important; color: #AA8418 !important; border-color: #D4AF37 !important;}
+.copy-btn { color: #888 !important; }.animate-pulse { color: #D4AF37 !important; }
+/* Scrollbar */#ai-viewport::-webkit-scrollbar { width: 4px; }#ai-viewport::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.1); border-radius: 10px;}
+
+
+/* Targeting the P2P / Content Panel for Light Mode *//* Update the P2P Container for Light Mode *//* --- LIGHT THEME FOR P2P SYSTEM --- */
+/* 1. Main P2P Panel & Chat Backgrounds */#p2p-content, #p2p-chat-panel, #qr-overlay > div, #p2p-request-popup > div { background-color: #f8f9fa !important; /* Soft white/light grey */ border-color: rgba(0, 0, 0, 0.1) !important; color: #1a1a1a !important;}
+/* 2. Full Screen Chat Background & Overlay */#p2p-chat-panel { background: #ffffff !important;}
+#p2p-messages { background: radial-gradient(circle at top, #f0f0f0 0%, #ffffff 100%) !important;}
+/* 3. Inner Cards and Input Boxes */#p2p-content .bg-white\/5, #p2p-interface .bg-white\/5,#p2p-chat-panel .bg-white\/5 { background-color: rgba(0, 0, 0, 0.04) !important; border-color: rgba(0, 0, 0, 0.08) !important;}
+/* 4. Text Colors (Headings, Labels, and Body) */#p2p-content p, #p2p-content h2, #p2p-content span, #p2p-chat-panel h3,#p2p-chat-panel p,#p2p-request-popup p { color: #1a1a1a !important;}
+/* 5. Input Fields */#peer-id-input, #p2p-input { color: #000000 !important;}
+#peer-id-input::placeholder, #p2p-input::placeholder { color: rgba(0, 0, 0, 0.3) !important;}
+/* 6. Console Log Area */#sync-console { background-color: black !important; border-color: rgba(0, 0, 0, 0.1) !important; color: #444 !important;}
+/* 7. Close & Action Buttons (Non-Gold) */#p2p-content button.bg-white\/5,#p2p-chat-panel button { background-color: rgba(0, 0, 0, 0.05) !important; color: #1a1a1a !important;}
+/* 8. QR Code Container */#qrcode { background-color: #ffffff !important; padding: 15px; border: 1px solid #ddd;}
+
+
+
+`;
+document.head.appendChild(lightStyle); }}
+function switchToDarkTheme(){
+const lightStyle = document.getElementById("light-theme-style");
+if(lightStyle){ lightStyle.remove(); }
+}
+
+
+
+
+// 1. MUST BE GLOBAL (Outside of any other function)window.setTheme = function(theme) { console.log("Switching to theme:", theme); localStorage.setItem("selectedTheme", theme); if (theme === "dark") { switchToDarkTheme(); // Ensure this function exists globally too } else { switchToLightTheme(); // Ensure this function exists globally too } // Keep the dot in sync syncRadioUI();};
+// 2. Your existing Sync Functionfunction syncRadioUI() { const savedTheme = localStorage.getItem("selectedTheme") || "dark"; setTimeout(() => { const radio = document.querySelector(`input[name="theme"][value="${savedTheme}"]`); if (radio) { radio.checked = true; } }, 50);}
+// 3. Your Initialization Logicdocument.addEventListener("DOMContentLoaded", function () { const savedTheme = localStorage.getItem("selectedTheme") || "dark"; // Apply theme on reload if (savedTheme === "dark") { if (typeof switchToDarkTheme === "function") switchToDarkTheme(); } else { if (typeof switchToLightTheme === "function") switchToLightTheme(); } syncRadioUI();});
+
+</script>
+
+<!-- ================================================== --><!-- ULTRA-HIGH PRIORITY CALL INTERFACE --><!-- ================================================== -->
+<script>
+</script><div id="call-overlay" class="hidden fixed inset-0 z-[99999] bg-black/100 backdrop-blur-md flex flex-col justify-between p-8 text-white overflow-hidden">
+<video id="call-bg-video" class="absolute inset-0 w-full h-full object-cover scale-90" style="filter: blur(5px);" muted playsinline> <source src="call-background-video.mp4" type="video/mp4"></video>
+
+<!-- Video Elements (Used during active WebRTC calls) --> <!-- Video Elements Inside your call-overlay --><div id="video-streams-container" class="hidden absolute inset-0 w-full h-full z-0"> <!-- The Remote User (Large Background) --> <video id="remote-video" autoplay playsinline class="w-full h-full object-cover bg-black relative z-10"></video> <!-- You (Small Floating Window - Ultra high priority so it sits on top of their video) --> <video id="local-video" autoplay muted playsinline class="absolute top-4 right-4 w-28 h-40 rounded-2xl border border-white/30 z-[100005] object-cover"></video></div>
+
+<!-- TOP SECTION: Caller/Receiver Info (Always on top) --> <div class="relative z-[100001] flex flex-col items-center mt-16 space-y-4 animate-fade-in"> <!-- Avatar Ring with Pulse Animation --> <div class="relative"> <div class="absolute inset-0 rounded-full bg-[#D4AF37]/20 animate-ping"></div> <div class="relative w-28 h-28 rounded-full bg-zinc-800 border-2 border-[#D4AF37] flex items-center justify-center overflow-hidden">
+<img id="call-avatar-image" class="hidden w-full h-full object-cover" alt="Caller Avatar">
+<span id="call-avatar-placeholder" class="text-3xl font-bold text-[#D4AF37]"> ? </span>
+</div> </div> <!-- Name & Status --> <div class="text-center"> <h2 id="call-user-name" class="text-2xl font-bold tracking-wide">User Name</h2> <p id="call-status" class="text-sm text-gray-400 mt-2 tracking-widest uppercase">Ringing...</p> </div> </div>
+<!-- MIDDLE SECTION: Aesthetic visualizer / Spacer --> <div class="relative z-[100001] flex-grow flex items-center justify-center"> <div id="call-visualizer" class="flex items-center gap-1 opacity-40"> <span class="w-1 h-8 bg-[#D4AF37] rounded-full animate-pulse"></span> <span class="w-1 h-12 bg-[#D4AF37] rounded-full animate-pulse [animation-delay:0.2s]"></span> <span class="w-1 h-6 bg-[#D4AF37] rounded-full animate-pulse [animation-delay:0.4s]"></span> </div> </div>
+<!-- BOTTOM SECTION: Call Controls (Always on bottom) --> <div class="relative z-[100001] mb-12 flex flex-col items-center w-full"> <!-- Incoming Buttons Row (Accept / Decline) --> <div id="incoming-actions" class="hidden flex justify-center items-center gap-16 w-full max-w-xs"> <!-- Decline Button --> <button id="reject-call-btn" class="flex flex-col items-center gap-2 group"> <div class="w-16 h-16 bg-red-600 hover:bg-red-700 transition-all active:scale-95 rounded-full flex items-center justify-center shadow-lg shadow-red-900/30"> <!-- Added rotate-[135deg] to invert your exact phone path --> <svg class="w-8 h-8 text-white fill-current rotate-[135deg]" viewBox="0 0 24 24"> <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/> </svg> </div> <span class="text-xs text-gray-400 group-hover:text-white transition-colors">Decline</span></button>
+
+
+
+<!-- Accept Button --> <button id="accept-call-btn" class="flex flex-col items-center gap-2 group"> <div class="w-16 h-16 bg-emerald-600 hover:bg-emerald-700 transition-all active:scale-95 rounded-full flex items-center justify-center shadow-lg shadow-emerald-900/30 animate-bounce"> <svg class="w-8 h-8 text-white fill-current" viewBox="0 0 24 24"> <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/> </svg> </div> <span class="text-xs text-gray-400 group-hover:text-white transition-colors">Accept</span> </button> </div>
+<!-- Outgoing Buttons Row (End Call & Advanced Control Panel) --><div id="outgoing-actions" class="hidden flex flex-col items-center gap-8 w-full max-w-sm mx-auto">
+<!-- Premium Glassmorphic Grid Panel (Consistent 6-button grid) --> <div id="call-extra-controls" class="w-full grid grid-cols-3 gap-y-6 gap-x-2 p-5 rounded-4xl bg-white/[0.06] backdrop-blur-xl border border-white/[0.08] shadow-2xl justify-items-center">
+<!-- 1. Mute Microphone --> <div class="flex flex-col items-center gap-1.5 w-full"> <button id="mute-call-btn" onclick="toggleMute()" class="w-12 h-12 rounded-3xl bg-white/10 border border-white/10 flex items-center justify-center text-white transition-all duration-200 hover:bg-white/20 active:scale-95" title="Toggle Microphone"> <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"> <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"/> </svg> </button> <span id="mute-call-label" class="text-[11px] text-gray-400 font-medium tracking-wide">Mute</span> </div>
+<!-- 2. Speaker Toggle --> <div class="flex flex-col items-center gap-1.5 w-full"> <button id="speaker-call-btn" onclick="toggleSpeaker()" class="w-12 h-12 rounded-3xl bg-white/10 border border-white/10 flex items-center justify-center text-white transition-all duration-200 hover:bg-white/20 active:scale-95" title="Toggle Speaker"> <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"> <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/> </svg> </button> <span id="speaker-call-label" class="text-[11px] text-gray-400 font-medium tracking-wide">Speaker</span> </div>
+<!-- 3. Hold Call --> <div class="flex flex-col items-center gap-1.5 w-full"> <button id="hold-call-btn" onclick="toggleHold()" class="w-12 h-12 rounded-3xl bg-white/10 border border-white/10 flex items-center justify-center text-white transition-all duration-200 hover:bg-white/20 active:scale-95" title="Hold Call"> <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"> <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/> </svg> </button> <span id="hold-call-label" class="text-[11px] text-gray-400 font-medium tracking-wide">Hold</span> </div>
+<!-- 4. Screen Share --> <div class="flex flex-col items-center gap-1.5 w-full"> <button id="screenshare-call-btn" onclick="toggleScreenShare()" class="w-12 h-12 rounded-3xl bg-white/10 border border-white/10 flex items-center justify-center text-white transition-all duration-200 hover:bg-white/20 active:scale-95" title="Share Screen"> <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"> <path d="M20 18c1.1 0 1.99-.9 1.99-2L22 6c0-1.11-.9-2-2-2H4c-1.11 0-2 .89-2 2v10c0 1.1.89 2 2 2H0v2h24v-2h-4zM4 6h16v10H4V6z"/> </svg> </button> <span id="screenshare-call-label" class="text-[11px] text-gray-400 font-medium tracking-wide">Share</span> </div>
+<!-- 5. Record Call --> <div class="flex flex-col items-center gap-1.5 w-full"> <button id="record-call-btn" onclick="toggleRecord()" class="w-12 h-12 rounded-3xl bg-white/10 border border-white/10 flex items-center justify-center text-white transition-all duration-200 hover:bg-white/20 active:scale-95" title="Record Call"> <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"> <circle cx="12" cy="12" r="8"/> </svg> </button> <span id="record-call-label" class="text-[11px] text-gray-400 font-medium tracking-wide">Record</span> </div>
+<!-- 6. Video/Camera Toggle (Always visible, styled dynamically via JS) --> <div id="camera-btn-container" class="flex flex-col items-center gap-1.5 w-full transition-opacity duration-300"> <button id="toggle-camera-btn" onclick="toggleCamera()" class="w-12 h-12 rounded-3xl bg-white/10 border border-white/10 flex items-center justify-center text-white transition-all duration-200 hover:bg-white/20 active:scale-95" title="Toggle Video"> <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"> <path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/> </svg> </button> <span id="toggle-camera-label" class="text-[11px] text-gray-400 font-medium tracking-wide">Video</span> </div>
+</div> <!-- End Call --> <button id="end-call-btn" class="flex flex-col items-center gap-2 group">
+<div class="w-16 h-16 bg-red-600 hover:bg-red-700 transition-all active:scale-95 rounded-full flex items-center justify-center shadow-lg shadow-red-900/30">
+<svg class="w-8 h-8 text-white fill-current rotate-[135deg]" viewBox="0 0 24 24">
+<path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+</svg>
+</div>
+<span class="text-xs text-gray-400 group-hover:text-white transition-colors">
+End Call
+</span>
+</button></div><br> 
+</div> </div></div>
+
+
+<audio id="incoming-call-ringtone" loop preload="auto"> <source src="incoming-call.mp3" type="audio/mpeg"></audio>
+<audio id="outgoing-ringback-tone" loop preload="auto"> <source src="outgoing-ring.mp3" type="audio/mpeg"></audio>
+
+
+
+
+
+</body></html>

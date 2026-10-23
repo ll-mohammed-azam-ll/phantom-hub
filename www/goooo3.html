@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Gold Hub Messenger Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script type="module" src="mess-script.js"></script>
+    
+    <style>
+        :root {
+            --gold: #D4AF37;
+            --bg-dark: #050505;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-dark);
+            color: white;
+            height: 100dvh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+               /* --- BLUR LAYERING LOGIC --- */
+        #main-app-content, .hub-btn { 
+            transition: filter 0.4s ease, transform 0.4s ease, opacity 0.4s ease, width 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), height 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+        }
+        
+        /* Level 1: Hub Active (Blur background app) */
+        body.hub-active #main-app-content { 
+            filter: blur(15px); 
+            pointer-events: none; 
+            transform: scale(0.97); 
+        }
+
+        /* Level 2: Panel Active (Blur EVERYTHING behind panel) */
+        body.panel-active #main-app-content { 
+            filter: blur(25px); 
+            pointer-events: none; 
+        }
+
+        /* Apply smooth blur and fade to the HUB STACK when any panel is open */
+        body.panel-active #hub-stack { 
+            filter: blur(10px); 
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(0.9);
+            transition: all 0.4s ease;
+        }
+
+        
+        
+     
+        /* --- CONTENT PANEL --- */
+        .content-panel {
+            position: fixed;
+            bottom: -100%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 92%;
+            max-width: 420px;
+            background: rgba(15, 15, 15, 0.98);
+            backdrop-filter: blur(40px);
+            border: 1px solid rgba(212, 175, 55, 0.5);
+            border-radius: 45px 45px 30px 30px;
+            padding: 30px;
+            z-index: 2000;
+            transition: bottom 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+        .content-panel.active { bottom: 30px; }
+
+        .panel-close-btn { position: absolute; top: 20px; right: 20px; width: 35px; height: 35px; background: rgba(255,255,255,0.05); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        .swipe-handle { width: 50px; height: 6px; background: rgba(255,255,255,0.15); border-radius: 10px; margin: -15px auto 20px; cursor: grab; }
+
+        /* --- APP LAYOUT --- */
+        .app-shell { display: flex; height: 100dvh; }
+        .sidebar { width: 380px; border-right: 1px solid rgba(255,255,255,0.05); background: #050505; }
+        .chat-view { flex: 1; display: flex; flex-direction: column; background: #0a0a0a; z-index: 100; }
+
+        @media (max-width: 768px) {
+            .sidebar { width: 100%; }
+            .chat-view { position: fixed; inset: 0; transform: translateX(100%); transition: 0.3s; }
+            .chat-view.active { transform: translateX(0); }
+        }
+
+        .msg-bubble { max-width: 80%; padding: 12px 18px; font-size: 14px; position: relative; }
+        .msg-me { background: var(--gold); color: black; border-radius: 20px 20px 4px 20px; align-self: flex-end; }
+        .msg-them { background: #1a1a1a; color: white; border-radius: 20px 20px 20px 4px; align-self: flex-start; }
+
+        .unread-badge {
+            background: var(--gold); color: black; font-size: 10px; font-weight: 800; min-width: 18px; height: 18px; border-radius: 9px;
+            display: flex; align-items: center; justify-content: center; padding: 0 5px;
+        }
+
+        .icon-btn { color: #666; transition: 0.2s; cursor: pointer; }
+        .icon-btn:hover { color: var(--gold); }
+
+        .attachment-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            padding: 20px 0;
+        }
+
+        .scroll-hide::-webkit-scrollbar { width: 0; }
+        
+        .info-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; padding: 15px; margin-bottom: 12px; }
+        .stat-bar { height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden; margin-top: 8px; }
+        .stat-fill { height: 100%; background: var(--gold); }
+        
+        
+        
+        
+       /* --- HUB BUTTONS (Bottom Right Stack) --- */
+      .hub-stack {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 50;
+            align-items: flex-end;
+        }
+
+        .hub-btn {
+            width: 60px;
+            height: 60px;
+            background: var(--gold);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
+            cursor: pointer;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .hub-btn.expanded {
+            width: 320px;
+            height: 360px;
+            border-radius: 35px;
+            background: rgba(20, 20, 20, 0.95);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            display: block;
+            padding: 24px;
+            z-index: 1001; 
+        }
+
+
+
+        .hub-grid { 
+            display: none; 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 12px; 
+            width: 100%;
+            height: 100%;
+        }
+        .hub-btn.expanded .hub-grid { display: grid; }
+        .hub-btn.expanded .hub-icon { display: none; }
+
+        .grid-item { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            color: #888; 
+            cursor: pointer; 
+            transition: all 0.2s ease;
+        }
+        .grid-item:hover { color: var(--gold); transform: translateY(-2px); }
+        .grid-item span { font-size: 9px; margin-top: 8px; font-weight: 700; text-transform: uppercase; text-align: center; }
+
+    </style>
+</head>
+<body onclick="handleGlobalClick(event)">
+
+    <div id="main-app-content" class="app-shell">
+        <aside class="sidebar flex flex-col">
+            <div class="p-8 pb-4">
+                <h1 class="text-2xl font-bold tracking-tighter">GOLD<span class="text-[#D4AF37]">HUB</span></h1>
+                <div class="mt-6 bg-white/5 p-3 rounded-2xl border border-white/10 flex items-center gap-2">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                    <input type="text" placeholder="Search" class="bg-transparent w-full focus:outline-none text-sm">
+                </div>
+            </div>
+            <div id="contacts-container" class="flex-1 overflow-y-auto px-4 pb-24 space-y-1 scroll-hide"></div>
+        </aside>
+
+        <main id="chat-window" class="chat-view">
+            <header class="h-20 px-6 border-b border-white/5 flex items-center justify-between bg-black/20 backdrop-blur-md">
+                <div class="flex items-center gap-4">
+                    <button class="md:hidden" onclick="toggleChat(false)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg></button>
+                    <div id="h-avatar" class="w-10 h-10 rounded-xl bg-[#D4AF37] text-black font-bold flex items-center justify-center">AW</div>
+                    <div>
+                        <h2 id="h-name" class="font-bold text-sm">Alexander Wright</h2>
+                        <p class="text-[10px] text-[#D4AF37] font-bold uppercase tracking-wide">Secured</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-5">
+                    <div class="icon-btn" onclick="openCallPanel('audio', event)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div>
+                    <div class="icon-btn" onclick="openCallPanel('video', event)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m22 8-6 4 6 4V8Z"/><rect width="14" height="12" x="2" y="6" rx="2" ry="2"/></svg></div>
+                    <div class="icon-btn" onclick="openPanel('menu', event)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg></div>
+                </div>
+            </header>
+            
+            <div id="msg-list" class="flex-1 overflow-y-auto p-6 flex flex-col gap-4 scroll-hide"></div>
+
+            <div class="p-6">
+                <div class="bg-white/5 border border-white/10 p-2 rounded-2xl flex items-center gap-2">
+                    <input type="text" id="chat-input" placeholder="Message..." class="flex-1 bg-transparent px-4 py-2 focus:outline-none text-sm">
+                    <button onclick="openPanel('attachments', event)" class="w-10 h-10 flex items-center justify-center text-[#D4AF37] hover:scale-110 transition-transform">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+                    </button>
+                    <button onclick="sendMessage()" class="w-10 h-10 bg-[#D4AF37] rounded-xl flex items-center justify-center text-black">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+
+
+<!-- Hub Stack -->
+    <div class="hub-stack" id="hub-stack">
+    <!-- Main Global Hub (Bottom Right) -->
+    <div id="main-hub" class="hub-btn" onclick="toggleHub('main', event)">
+            <div class="hub-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="3"><path d="M12 5v14M5 12h14"/></svg></div>
+            <div class="hub-grid" id="main-grid-icons"></div>
+        </div>
+ <!-- Explore Hub -->
+        <div id="explore-hub" class="hub-btn" onclick="toggleHub('explore', event)">
+            <div class="hub-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="m16.2 7.8-2 5.6-5.6 2 2-5.6 5.6-2z"/></svg></div>
+            <div class="hub-grid" id="explore-grid-icons"></div>
+        </div>
+    </div>
+
+
+
+    <!-- The Universal Content Panel -->
+    <div id="content-panel" class="content-panel scroll-hide">
+        <div class="swipe-handle" id="swipe-area"></div>
+        <div class="panel-close-btn" onclick="closePanel(event)">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </div>
+        <div id="panel-body"></div>
+    </div>
+    
+    
+    
+
+
+<!-- Hidden File Input -->
+<input
+    id="file-picker"
+    type="file"
+    hidden
+    onchange="handleFileSelect(event)"
+>
+
+    <script>
+        const MAIN_ICONS = [
+            { id: 'profile', label: 'User', svg: '<circle cx="12" cy="7" r="4"/><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>' },
+            { id: 'vault', label: 'Vault', svg: '<rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>' },
+            { id: 'stats', label: 'Stats', svg: '<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>' },
+            { id: 'docs', label: 'Docs', svg: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>' },
+            { id: 'shield', label: 'Guard', svg: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>' },
+            { id: 'cloud', label: 'Cloud', svg: '<path d="M17.5 19c2.5 0 4.5-2 4.5-4.5 0-2.4-1.9-4.3-4.3-4.5C17.1 6.5 13.9 4 10 4 6.1 4 3 7.1 3 11c0 .1 0 .2.1.4C1.3 12.3 0 14 0 16c0 2.2 1.8 4 4 4h13.5"/>' },
+            { id: 'media', label: 'Media', svg: '<rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>' },
+            { id: 'wallet', label: 'Bank', svg: '<path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4"/><path d="M4 6v12c0 1.1.9 2 2 2h14v-4"/><path d="M18 12a2 2 0 0 0-2 2c0 1.1.9 2 2 2h4v-4h-4z"/>' },
+            { id: 'help', label: 'Help', svg: '<circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/>' }
+        ];
+
+        const EXPLORE_ICONS = [
+            { id: 'social', label: 'Social', svg: '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>' },
+            { id: 'updates', label: 'Updates', svg: '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M12 7v5l3 3"/>' },
+            { id: 'history', label: 'Calls', svg: '<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>' }
+        ];
+
+        const ATTACH_ICONS = [
+            { id: 'files', label: 'Files', svg: '<path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/>' },
+            { id: 'image', label: 'Image', svg: '<rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>' },
+            { id: 'link', label: 'Link', svg: '<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>' },
+            { id: 'ai', label: 'AI', svg: '<path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z"/><circle cx="12" cy="12" r="3"/>' },
+            { id: 'audio', label: 'Audio', svg: '<path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/>' },
+            { id: 'video', label: 'Video', svg: '<polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>' },
+            { id: 'settings', label: 'Settings', svg: '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>' }
+        ];
+let CONTACTS = [
+  {
+    id: 1,
+    name: 'Alexander Wright',
+    initials: 'AW',
+
+    chat: [
+      { from: "them", type: "text", content: "Protocol established." }
+    ],
+
+    time: '10:45 AM',
+    unread: 0,
+    info: 'Security Lead, Sector 4'
+  },
+
+  {
+    id: 2,
+    name: 'Elena Petrova',
+    initials: 'EP',
+
+    chat: [
+      { from: "them", type: "text", content: "Ready for sync.", content: "Ready for sync." }
+    ],
+
+    time: '09:12 AM',
+    unread: 2,
+    info: 'Data Architect'
+  },
+
+  {
+    id: 3,
+    name: 'Julian Thorne',
+    initials: 'JT',
+
+    chat: [
+      { from: "them", type: "text", content: "Signal received." }
+    ],
+
+    time: 'Yesterday',
+    unread: 1,
+    info: 'Operations Coordinator'
+  }
+];
+
+        let activeId = 1, panelOpen = false, currentOpenHub = null, touchY = 0, hubOpen = false;
+
+        function init() {
+            // Render Main Hub
+            document.getElementById('main-grid-icons').innerHTML = MAIN_ICONS.map(i => `
+                <div class="grid-item" onclick="openPanel('${i.id}', event)">
+                    <div class="w-12 h-12 rounded-2xl bg-white/5 border border-white/5 flex items-center justify-center mb-1">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">${i.svg}</svg>
+                    </div>
+                    <span>${i.label}</span>
+                </div>
+            `).join('');
+            
+            // Render Explore Hub
+            document.getElementById('explore-grid-icons').innerHTML = EXPLORE_ICONS.map(i => `
+                <div class="grid-item" onclick="openPanel('${i.id}', event)">
+                    <div class="w-12 h-12 rounded-2xl bg-white/5 border border-white/5 flex items-center justify-center mb-1">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">${i.svg}</svg>
+                    </div>
+                    <span>${i.label}</span>
+                </div>
+            `).join('');
+            
+            renderContacts();
+            
+            pushAppState({ home: true });
+        }
+
+        function toggleHub(type, e) {
+            if(e) e.stopPropagation();
+            const hubs = { main: 'main-hub', explore: 'explore-hub' };
+            const target = hubs[type];
+            
+            if (currentOpenHub === type) {
+                document.getElementById(target).classList.remove('expanded');
+                pushAppState({ hub: type });
+                currentOpenHub = null;
+                hubOpen = false;
+                document.body.classList.remove('hub-active');
+            } else {
+                Object.values(hubs).forEach(h => document.getElementById(h).classList.remove('expanded'));
+                document.getElementById(target).classList.add('expanded');
+                currentOpenHub = type;
+                hubOpen = true;
+                document.body.classList.add('hub-active');
+            }
+        }
+
+       function openPanel(id, e) {
+    if(e) e.stopPropagation();
+
+    pushAppState({ panel: true }); // ✅ ADD THIS
+
+    panelOpen = true;
+    document.body.classList.add('panel-active');
+            const body = document.getElementById('panel-body');
+            
+            switch(id) {
+            
+            
+                case 'profile':
+                    body.innerHTML = `<h3 class="text-[#D4AF37] text-2xl font-bold mb-4">Account Profile</h3><div class="flex items-center gap-4 mb-6"><div class="w-20 h-20 rounded-full bg-neutral-800 border-2 border-[#D4AF37] flex items-center justify-center text-2xl font-bold">JD</div><div><h4 class="font-bold text-lg">John Doe</h4><p class="text-xs text-[#D4AF37]">Verified Alpha Member</p></div></div><div class="info-card"><p class="text-[10px] uppercase text-gray-500 font-bold mb-1">Recovery Phase</p><p class="text-sm">Enabled - 24 Word Seed</p></div><button class="w-full py-4 bg-white/5 border border-white/10 rounded-2xl text-sm font-bold">Edit Identification</button>`;
+                    break;
+                case 'vault':
+                    body.innerHTML = `<h3 class="text-[#D4AF37] text-2xl font-bold mb-4">Secure Vault</h3><div class="info-card"><div class="flex justify-between items-center mb-2"><span class="text-sm font-bold">Passwords Stored</span><span class="text-[#D4AF37] font-bold">142</span></div><div class="flex justify-between items-center"><span class="text-sm font-bold">Secret Notes</span><span class="text-[#D4AF37] font-bold">12</span></div></div><div class="bg-yellow-500/10 p-4 rounded-2xl border border-yellow-500/20 mb-4"><p class="text-xs text-yellow-500">Auto-lock is active. Vault will encrypt after 30 seconds of inactivity.</p></div><button class="w-full py-4 bg-[#D4AF37] text-black font-bold rounded-2xl">Access Credentials</button>`;
+                    break;
+                case 'stats':
+                    body.innerHTML = `<h3 class="text-[#D4AF37] text-2xl font-bold mb-4">Traffic Insights</h3><div class="info-card"><span class="text-xs text-gray-500 uppercase font-bold">Weekly Activity</span><div class="flex items-end gap-2 h-20 mt-4"><div class="flex-1 bg-white/10 h-[40%] rounded-t-sm"></div><div class="flex-1 bg-white/10 h-[60%] rounded-t-sm"></div><div class="flex-1 bg-[#D4AF37] h-[90%] rounded-t-sm"></div><div class="flex-1 bg-white/10 h-[30%] rounded-t-sm"></div><div class="flex-1 bg-white/10 h-[55%] rounded-t-sm"></div></div></div><p class="text-[10px] text-gray-500 text-center">Data packets processed: 4.2GB this session</p>`;
+                    break;
+                case 'shield':
+                    body.innerHTML = `<h3 class="text-[#D4AF37] text-2xl font-bold mb-4">Security Guard</h3><div class="space-y-3"><div class="flex items-center gap-3 p-4 bg-green-500/10 rounded-2xl border border-green-500/20"><div class="w-2 h-2 rounded-full bg-green-500"></div><span class="text-sm">End-to-End Encryption: Active</span></div><div class="flex items-center gap-3 p-4 bg-green-500/10 rounded-2xl border border-green-500/20"><div class="w-2 h-2 rounded-full bg-green-500"></div><span class="text-sm">IP Masking: Enabled</span></div></div>`;
+                    break;
+                case 'cloud':
+                    body.innerHTML = `<h3 class="text-[#D4AF37] text-2xl font-bold mb-4">Cloud Drive</h3><div class="info-card"><div class="flex justify-between text-sm mb-1 font-bold"><span>Total Usage</span><span>78%</span></div><div class="stat-bar"><div class="stat-fill" style="width: 78%"></div></div></div><div class="grid grid-cols-2 gap-3"><div class="p-4 bg-white/5 rounded-2xl border border-white/10 text-center"><p class="text-xl font-bold">1.2k</p><p class="text-[10px] text-gray-500 uppercase font-bold">Files</p></div><div class="p-4 bg-white/5 rounded-2xl border border-white/10 text-center"><p class="text-xl font-bold">85</p><p class="text-[10px] text-gray-500 uppercase font-bold">Shared</p></div></div>`;
+                    break;
+                case 'wallet':
+                    body.innerHTML = `<h3 class="text-[#D4AF37] text-2xl font-bold mb-4">Digital Bank</h3><div class="info-card text-center py-6"><p class="text-xs text-gray-500 uppercase font-bold mb-1">Available Balance</p><h4 class="text-4xl font-bold">$12,450.00</h4></div><p class="text-xs font-bold text-gray-500 mb-2">Recent Transactions</p><div class="space-y-2"><div class="flex justify-between text-sm p-3 bg-white/5 rounded-xl"><span>Secured Transfer</span><span class="text-green-500">+$400</span></div></div>`;
+                    break;
+                case 'attachments':
+
+body.innerHTML = `
+<h3 class="text-[#D4AF37] text-2xl font-bold mb-4">Share Media</h3>
+
+<div class="attachment-grid">
+
+${ATTACH_ICONS.map(i => `
+
+    <div class="grid-item" onclick="openFilePicker('${i.id}')">
+
+        <div class="w-16 h-16 rounded-2xl bg-white/5 border border-white/5
+                    flex items-center justify-center mb-1">
+
+            <svg width="24" height="24" viewBox="0 0 24 24"
+                 fill="none" stroke="currentColor" stroke-width="2">
+
+                ${i.svg}
+
+            </svg>
+
+        </div>
+
+        <span>${i.label}</span>
+
+    </div>
+
+`).join('')}
+
+</div>
+`;
+
+break;
+                case 'menu':
+                    body.innerHTML = `<h3 class="text-[#D4AF37] text-2xl font-bold mb-4">Chat Options</h3><div class="space-y-3"><button class="w-full p-4 bg-white/5 rounded-2xl text-left text-sm border border-white/10">Clear History</button><button class="w-full p-4 bg-white/5 rounded-2xl text-left text-sm border border-white/10">Mute Alerts</button><button class="w-full p-4 bg-red-500/10 text-red-500 rounded-2xl text-left text-sm border border-red-500/20">Block Account</button></div>`;
+                    break;
+                case 'social':
+                    body.innerHTML = `<h3 class="text-[#D4AF37] text-2xl font-bold mb-6">Network</h3><div class="flex gap-2 mb-6"><button class="flex-1 py-3 bg-[#D4AF37] text-black rounded-xl text-[10px] font-bold uppercase" onclick="showNetwork('Followers')">Followers</button><button class="flex-1 py-3 bg-white/5 rounded-xl text-[10px] font-bold uppercase" onclick="showNetwork('Following')">Following</button><button class="flex-1 py-3 bg-white/5 rounded-xl text-[10px] font-bold uppercase" onclick="showNetwork('Explore')">Explore</button></div><div id="network-list" class="space-y-2"><div class="list-item"><div class="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center font-bold">MK</div><div class="flex-1 text-sm font-bold">Marcus Kane</div><button class="px-4 py-1.5 bg-white/10 rounded-lg text-[10px] font-bold">Following</button></div></div>`;
+                    break;
+                case 'updates':
+                    body.innerHTML = `<h3 class="text-[#D4AF37] text-2xl font-bold mb-6">Updates</h3><div class="flex gap-4 mb-8 overflow-x-auto pb-2 scroll-hide"><div class="shrink-0 flex flex-col items-center gap-2"><div class="w-14 h-14 rounded-full border-2 border-[#D4AF37] p-1"><div class="w-full h-full rounded-full bg-neutral-800"></div></div><span class="text-[10px]">My Status</span></div></div><h4 class="text-xs font-bold text-gray-500 mb-4">CHANNELS</h4><div class="list-item"><div class="w-10 h-10 rounded-xl bg-orange-500/20 flex items-center justify-center text-orange-500">🔥</div><div class="flex-1 font-bold text-sm">Crypto Pulse</div><span class="text-[10px] text-gray-500">3h ago</span></div>`;
+                    break;
+                case 'history':
+                    body.innerHTML = `<h3 class="text-[#D4AF37] text-2xl font-bold mb-6">Call History</h3><div class="space-y-2"><div class="list-item"><div class="w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center text-green-500">↙</div><div class="flex-1"><p class="font-bold text-sm">Alexander Wright</p><p class="text-[10px] text-gray-500">Yesterday, 14:20</p></div><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div></div>`;
+                    break;
+                default:
+                    body.innerHTML = `<h3 class="text-[#D4AF37] text-2xl font-bold capitalize mb-2">${id}</h3><div class="info-card"><p class="text-sm">The <b>${id}</b> module is currently syncing with the main Gold Hub server.</p></div>`;
+            }
+            document.getElementById('content-panel').classList.add('active');
+        }
+
+
+
+
+
+
+
+
+        function openCallPanel(type, e) {
+            if(e) e.stopPropagation();
+            panelOpen = true;
+            document.body.classList.add('panel-active');
+            const contact = CONTACTS.find(c => c.id === activeId);
+            const isVideo = type === 'video';
+            document.getElementById('panel-body').innerHTML = `<div class="flex flex-col items-center text-center"><div class="w-24 h-24 rounded-3xl bg-[#D4AF37] text-black text-3xl font-bold flex items-center justify-center mb-4 shadow-2xl">${contact.initials}</div><h3 class="text-2xl font-bold mb-1">${contact.name}</h3><p class="text-sm text-gray-500 mb-8">${contact.info}</p><button class="w-full py-4 bg-[#D4AF37] text-black font-bold rounded-2xl flex items-center justify-center gap-3">${isVideo ? 'Start Video Call' : 'Start Audio Call'}</button></div>`;
+            document.getElementById('content-panel').classList.add('active');
+        }
+
+        function closePanel(e) {
+            if(e) e.stopPropagation();
+            panelOpen = false;
+            document.getElementById('content-panel').classList.remove('active');
+            document.body.classList.remove('panel-active');
+        }
+
+        function handleGlobalClick(e) {
+            if (panelOpen) {
+                if (!e.target.closest('#content-panel')) closePanel();
+                return;
+            }
+            if (currentOpenHub) {
+                const targetHubId = currentOpenHub === 'main' ? 'main-hub' : 'explore-hub';
+                if (!e.target.closest(`#${targetHubId}`)) {
+                    document.getElementById(targetHubId).classList.remove('expanded');
+                    currentOpenHub = null;
+                    hubOpen = false;
+                    document.body.classList.remove('hub-active');
+                }
+            }
+        }
+
+        function renderContacts() {
+            const container = document.getElementById('contacts-container');
+            container.innerHTML = CONTACTS.map(c => {
+                const lastMsg = c.chat[c.chat.length - 1];
+
+let preview = "Attachment";
+
+if (lastMsg.type === "text") preview = lastMsg.content;
+if (lastMsg.type !== "text") preview = "📎 Attachment";
+                return `<div onclick="selectChat(${c.id})" class="flex items-center gap-4 p-5 rounded-[2.5rem] cursor-pointer transition-all ${activeId === c.id ? 'bg-[#D4AF37]/10 border border-[#D4AF37]/20' : 'hover:bg-white/5 border border-transparent'}"><div class="w-12 h-12 rounded-2xl bg-neutral-900 border border-white/5 flex items-center justify-center font-bold text-gray-500 shrink-0">${c.initials}</div><div class="flex-1 min-w-0"><div class="flex justify-between items-start mb-0.5"><h4 class="font-bold text-sm truncate pr-2 text-white">${c.name}</h4><span class="text-[10px] text-gray-600 font-bold shrink-0 whitespace-nowrap">${c.time}</span></div><div class="flex justify-between items-center"><p class="text-xs text-gray-500 truncate italic flex-1 mr-2">${lastMsg}</p>${c.unread > 0 ? `<div class="unread-badge shrink-0">${c.unread}</div>` : '<div class="w-4 h-4"></div>'}</div></div></div>`;
+            }).join('');
+        }
+
+        function selectChat(id) {
+            activeId = id;
+            const contact = CONTACTS.find(c => c.id === id);
+            contact.unread = 0;
+            document.getElementById('h-name').innerText = contact.name;
+            document.getElementById('h-avatar').innerText = contact.initials;
+            const msgList = document.getElementById('msg-list');
+         msgList.innerHTML = contact.chat.map(m => {
+
+    /* TEXT */
+    if (m.type === "text") {
+
+        return `
+          <div class="msg-bubble ${m.from === "me" ? "msg-me" : "msg-them"}">
+              ${m.content}
+          </div>
+        `;
+    }
+
+
+    /* IMAGE */
+    if (m.type === "image") {
+
+        return `
+          <div class="msg-bubble ${m.from === "me" ? "msg-me" : "msg-them"} space-y-1">
+
+            <img src="${m.file}" class="rounded-xl max-w-[220px]">
+
+            ${m.note ? `<p class="text-xs opacity-80">${m.note}</p>` : ""}
+
+          </div>
+        `;
+    }
+
+
+    /* VIDEO */
+    if (m.type === "video") {
+
+        return `
+          <div class="msg-bubble ${m.from === "me" ? "msg-me" : "msg-them"} space-y-1">
+
+            <video src="${m.file}" controls class="rounded-xl max-w-[220px]"></video>
+
+            ${m.note ? `<p class="text-xs opacity-80">${m.note}</p>` : ""}
+
+          </div>
+        `;
+    }
+
+
+    /* AUDIO */
+    if (m.type === "audio") {
+
+        return `
+          <div class="msg-bubble ${m.from === "me" ? "msg-me" : "msg-them"} space-y-1">
+
+            <audio src="${m.file}" controls></audio>
+
+            ${m.note ? `<p class="text-xs opacity-80">${m.note}</p>` : ""}
+
+          </div>
+        `;
+    }
+
+
+    /* FILE */
+    if (m.type === "file") {
+
+        return `
+          <div class="msg-bubble ${m.from === "me" ? "msg-me" : "msg-them"} space-y-1 p-3">
+
+            <div class="flex items-center gap-2">
+              📄 <span class="text-xs">${m.name}</span>
+            </div>
+
+            ${m.note ? `<p class="text-xs opacity-80">${m.note}</p>` : ""}
+
+          </div>
+        `;
+    }
+
+}).join('');
+            if(window.innerWidth < 768) {
+            
+            pushAppState({ chat: true });
+                document.getElementById('chat-window').classList.add('active');
+                document.getElementById('hub-stack').style.display = "none";
+            }
+            renderContacts();
+            msgList.scrollTop = msgList.scrollHeight;
+        }
+
+        function toggleChat(val) { 
+            document.getElementById('chat-window').classList.toggle('active', val); 
+            document.getElementById('hub-stack').style.display = "flex";
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const text = input.value.trim();
+            if(!text) return;
+            const contact = CONTACTS.find(c => c.id === activeId);
+            contact.chat.push({
+    from: "me",
+    type: "text",
+    content: text
+});
+            contact.time = "Just now";
+            document.getElementById('msg-list').insertAdjacentHTML('beforeend', `<div class="msg-bubble msg-me">${text}</div>`);
+            input.value = '';
+            document.getElementById('msg-list').scrollTop = document.getElementById('msg-list').scrollHeight;
+            renderContacts();
+        }
+
+        const panelEl = document.getElementById('content-panel');
+        panelEl.addEventListener('touchstart', (e) => touchY = e.touches[0].clientY);
+        panelEl.addEventListener('touchmove', (e) => { if (e.touches[0].clientY - touchY > 80) closePanel(); });
+        
+        
+        /* ===== ATTACHMENT SYSTEM ===== */
+
+let selectedFile = null;
+
+
+/* Open file picker */
+function openFilePicker(type) {
+
+    const picker = document.getElementById("file-picker");
+
+    if (type === "image") {
+        picker.accept = "image/*";
+    }
+    else if (type === "video") {
+        picker.accept = "video/*";
+    }
+    else if (type === "audio") {
+        picker.accept = "audio/*";
+    }
+    else {
+        picker.accept = "*/*";
+    }
+
+    picker.click();
+}
+
+
+/* Handle file select */
+function handleFileSelect(e) {
+
+    const file = e.target.files[0];
+
+    if (!file) return;
+
+    selectedFile = file;
+
+    showPreview(file);
+}
+
+
+/* Show preview modal */
+function showPreview(file) {
+
+    const body = document.getElementById("panel-body");
+
+    const url = URL.createObjectURL(file);
+
+    let previewHTML = "";
+
+
+    /* Image */
+    if (file.type.startsWith("image")) {
+
+        previewHTML = `
+            <img src="${url}"
+                 class="rounded-xl max-w-full max-h-72 mx-auto shadow-xl">
+        `;
+    }
+
+
+    /* Video */
+    else if (file.type.startsWith("video")) {
+
+        previewHTML = `
+            <video src="${url}" controls
+                   class="rounded-xl max-w-full max-h-72 mx-auto"></video>
+        `;
+    }
+
+
+    /* Audio */
+    else if (file.type.startsWith("audio")) {
+
+        previewHTML = `
+            <audio src="${url}" controls class="w-full"></audio>
+        `;
+    }
+
+
+    /* File */
+    else {
+
+        previewHTML = `
+            <div class="p-6 bg-white/5 rounded-xl text-center">
+                <p class="font-bold">${file.name}</p>
+                <p class="text-xs text-gray-500">
+                    ${(file.size/1024).toFixed(1)} KB
+                </p>
+            </div>
+        `;
+    }
+
+
+    /* Inject into main panel */
+    body.innerHTML = `
+
+        <h3 class="text-[#D4AF37] text-2xl font-bold mb-4">
+            Attachment Preview
+        </h3>
+
+        <div class="mb-4">
+            ${previewHTML}
+        </div>
+
+        <textarea
+            id="attach-note"
+            class="w-full p-3 rounded-xl bg-white/5 border border-white/10
+                   text-sm mb-4 resize-none"
+            placeholder="Add a note..."
+            rows="2"></textarea>
+
+        <button
+            onclick="sendAttachment()"
+            class="w-full py-4 bg-[#D4AF37] text-black
+                   font-bold rounded-2xl">
+
+            Send Attachment
+
+        </button>
+    `;
+
+
+    panelOpen = true;
+    document.getElementById("content-panel").classList.add("active");
+
+    pushAppState({ attach: true });
+}
+
+
+/* Send attachment */
+function sendAttachment() {
+
+    if (!selectedFile) return;
+
+    const note = document.getElementById("attach-note").value;
+
+    const contact = CONTACTS.find(c => c.id === activeId);
+
+    const url = URL.createObjectURL(selectedFile);
+
+    let bubble = "";
+
+
+    /* Image */
+    if (selectedFile.type.startsWith("image")) {
+
+        bubble = `
+            <div class="msg-bubble msg-me space-y-1">
+                <img src="${url}" class="rounded-xl max-w-[220px]">
+                ${note ? `<p class="text-xs opacity-80">${note}</p>` : ""}
+            </div>
+        `;
+    }
+
+    /* Video */
+    else if (selectedFile.type.startsWith("video")) {
+
+        bubble = `
+            <div class="msg-bubble msg-me space-y-1">
+                <video src="${url}" controls class="rounded-xl max-w-[220px]"></video>
+                ${note ? `<p class="text-xs opacity-80">${note}</p>` : ""}
+            </div>
+        `;
+    }
+
+    /* Audio */
+    else if (selectedFile.type.startsWith("audio")) {
+
+        bubble = `
+            <div class="msg-bubble msg-me space-y-1">
+                <audio src="${url}" controls></audio>
+                ${note ? `<p class="text-xs opacity-80">${note}</p>` : ""}
+            </div>
+        `;
+    }
+
+    /* File */
+    else {
+
+        bubble = `
+            <div class="msg-bubble msg-me space-y-1 p-3">
+                <div class="flex items-center gap-2">
+                    📄 <span class="text-xs">${selectedFile.name}</span>
+                </div>
+                ${note ? `<p class="text-xs opacity-80">${note}</p>` : ""}
+            </div>
+        `;
+    }
+
+
+    document.getElementById("msg-list")
+        .insertAdjacentHTML("beforeend", bubble);
+
+
+    contact.chat.push({
+    from: "me",
+    type: selectedFile.type.startsWith("image") ? "image" :
+          selectedFile.type.startsWith("video") ? "video" :
+          selectedFile.type.startsWith("audio") ? "audio" : "file",
+
+    file: url,
+    name: selectedFile.name,
+    note: note
+});
+
+    closeAttachment();
+
+    renderContacts();
+
+    scrollToBottom();
+}
+
+
+/* Close preview */
+function closeAttachment() {
+
+    closePanel();   // Close main panel
+
+    selectedFile = null;
+
+    document.getElementById("file-picker").value = "";
+}
+
+
+/* Auto scroll */
+function scrollToBottom() {
+
+    const list = document.getElementById("msg-list");
+
+    list.scrollTop = list.scrollHeight;
+}
+
+        init();
+        
+        
+        /* ===== DEVICE BACK BUTTON HANDLER ===== */
+
+function pushAppState(state) {
+    history.pushState(state, "", "");
+}
+
+function handleBackNavigation() {
+
+    // If panel is open → close it
+    if (panelOpen) {
+        closePanel();
+        return;
+    }
+
+    // If hub is open → close it
+    if (currentOpenHub) {
+        const hubId = currentOpenHub === 'main' ? 'main-hub' : 'explore-hub';
+
+        document.getElementById(hubId).classList.remove('expanded');
+
+        currentOpenHub = null;
+        hubOpen = false;
+        document.body.classList.remove('hub-active');
+        return;
+    }
+
+    // If chat is open on mobile → go back to contact list
+    if (
+        window.innerWidth < 768 &&
+        document.getElementById('chat-window').classList.contains('active')
+    ) {
+        toggleChat(false);
+        return;
+    }
+
+    // Otherwise → allow normal browser back
+    history.back();
+}
+
+
+// Listen for back button
+window.addEventListener("popstate", handleBackNavigation);
+</script>
+    
+</body>
+</html>
+

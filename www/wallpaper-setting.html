@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Golden Luxe - Wallpaper & Theme Studio</title>
+    <!-- Tailwind CSS for speedy layout building -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons for premium UI elements -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+
+        :root {
+            --gold-primary: #D4AF37;
+            --gold-secondary: #AA7C11;
+            --gold-glow: rgba(212, 175, 55, 0.25);
+            --bg-dark: #0A0A0A;
+            --bg-card: rgba(18, 18, 18, 0.6);
+            --border-gold: rgba(212, 175, 55, 0.2);
+            --text-gold: #F3E5AB;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-dark);
+            color: #E5E7EB;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(212, 175, 55, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(170, 124, 17, 0.05) 0%, transparent 40%);
+        }
+
+        /* Glassmorphic Effects */
+        .glass-panel {
+            background: rgba(15, 15, 15, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-gold);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8), inset 0 0 12px rgba(212, 175, 55, 0.05);
+        }
+
+        .glass-card {
+            background: rgba(25, 25, 25, 0.55);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(212, 175, 55, 0.1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-card:hover {
+            border-color: var(--gold-primary);
+            box-shadow: 0 0 20px var(--gold-glow);
+            transform: translateY(-2px);
+        }
+
+        /* Golden Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(10, 10, 10, 0.5);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--gold-secondary);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--gold-primary);
+        }
+
+        /* Interactive Transitions */
+        .panel {
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+        }
+
+        .panel-hidden-right {
+            transform: translateX(100%);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .panel-active {
+            transform: translateX(0);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* Custom Animations */
+        @keyframes pulse-gold {
+            0%, 100% { box-shadow: 0 0 15px rgba(212, 175, 55, 0.2); }
+            50% { box-shadow: 0 0 25px rgba(212, 175, 55, 0.5); }
+        }
+
+        .pulse-gold-active {
+            animation: pulse-gold 3s infinite;
+        }
+
+        /* Gold Gradient Texts */
+        .text-gradient-gold {
+            background: linear-gradient(135deg, #FFF 10%, #D4AF37 50%, #AA7C11 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Mock Chat Bubbles Custom Styles */
+        .chat-bubble-incoming {
+            border-radius: 4px 16px 16px 16px;
+        }
+
+        .chat-bubble-outgoing {
+            border-radius: 16px 4px 16px 16px;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-0 md:p-6 bg-neutral-950 overflow-hidden">
+
+    <!-- Main Container Frame simulating a Premium Device / Dashboard Interface -->
+    <div class="relative w-full h-screen md:h-[850px] md:max-w-md md:rounded-3xl overflow-hidden glass-panel flex flex-col shadow-[0_0_80px_rgba(0,0,0,0.9)] border border-yellow-600/30">
+        
+        <!-- APP HEADER (Sticky) -->
+        <header class="relative p-5 border-b border-yellow-600/20 flex items-center justify-between z-40 bg-black/50">
+            <div class="flex items-center gap-3">
+                <button id="global-back-btn" class="p-2 rounded-full hover:bg-white/5 text-yellow-500 transition-colors hidden" onclick="navigateBack()">
+                    <i data-lucide="arrow-left" class="w-5 h-5"></i>
+                </button>
+                <div>
+                    <h1 class="text-lg font-bold tracking-tight text-gradient-gold" id="header-title">Wallpaper Setting</h1>
+                    <p class="text-xs text-zinc-400" id="header-subtitle">Customize your chat ambience</p>
+                </div>
+            </div>
+            <button id="global-close-btn" class="p-2 rounded-full hover:bg-white/5 text-zinc-400 hover:text-red-400 transition-colors hidden" onclick="resetToDashboard()">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+        </header>
+
+        <!-- PANEL LAYER CONTROLLER -->
+        <div class="relative flex-1 w-full overflow-hidden">
+            
+            <!-- 1. DASHBOARD PANEL (Root Panel) -->
+            <div id="panel-dashboard" class="panel absolute inset-0 p-5 overflow-y-auto space-y-6 flex flex-col">
+                
+                <!-- Current Active Wallpaper Preview Card -->
+                <div class="relative rounded-2xl overflow-hidden group border border-yellow-600/30 pulse-gold-active">
+                    <div id="dashboard-current-preview" class="h-44 w-full bg-cover bg-center relative transition-transform duration-700 group-hover:scale-105" style="background-image: radial-gradient(circle, #2a220f, #0d0b05);">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent"></div>
+                    </div>
+                    <div class="absolute bottom-0 left-0 right-0 p-4 flex justify-between items-end backdrop-blur-sm bg-black/60 border-t border-yellow-500/10">
+                        <div>
+                            <span class="text-[10px] uppercase tracking-widest text-yellow-500 font-bold">Active Ambient</span>
+                            <h3 id="active-wallpaper-name" class="font-bold text-white text-sm">Luxury Obsidian</h3>
+                        </div>
+                        <button onclick="navigateTo('panel-categories')" class="px-4 py-1.5 rounded-full text-xs font-bold bg-gradient-to-r from-yellow-600 to-yellow-400 text-black hover:from-yellow-500 hover:to-yellow-300 transition-all shadow-lg shadow-yellow-500/20 flex items-center gap-1.5">
+                            Change <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Custom Grid Quick Actions -->
+                <div class="grid grid-cols-2 gap-3">
+                    <div onclick="navigateTo('panel-categories')" class="glass-card p-4 rounded-xl cursor-pointer flex flex-col items-center justify-center text-center gap-2 group">
+                        <div class="w-10 h-10 rounded-full bg-yellow-500/10 flex items-center justify-center text-yellow-500 group-hover:bg-yellow-500 group-hover:text-black transition-all">
+                            <i data-lucide="palette" class="w-5 h-5"></i>
+                        </div>
+                        <span class="font-medium text-xs text-zinc-300">Browse Wallpapers</span>
+                    </div>
+
+                    <div onclick="navigateTo('panel-theme-settings')" class="glass-card p-4 rounded-xl cursor-pointer flex flex-col items-center justify-center text-center gap-2 group">
+                        <div class="w-10 h-10 rounded-full bg-yellow-500/10 flex items-center justify-center text-yellow-500 group-hover:bg-yellow-500 group-hover:text-black transition-all">
+                            <i data-lucide="moon" class="w-5 h-5"></i>
+                        </div>
+                        <span class="font-medium text-xs text-zinc-300">Theme Modes</span>
+                    </div>
+                </div>
+
+                <!-- Three New Quick Action Buttons -->
+                <div class="space-y-2">
+                    <button onclick="showToast('About Wallpaper', 'Learn more about the artistic style of this ambient design.')" class="w-full glass-card p-3 rounded-xl flex items-center justify-between group">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full bg-yellow-500/10 flex items-center justify-center text-yellow-500">
+                                <i data-lucide="info" class="w-4 h-4"></i>
+                            </div>
+                            <span class="font-medium text-xs text-zinc-300">About Wallpaper</span>
+                        </div>
+                        <i data-lucide="chevron-right" class="w-4 h-4 text-zinc-500 group-hover:text-yellow-500 transition-colors"></i>
+                    </button>
+
+                    <button onclick="showToast('Auto-Schedule', 'Wallpaper auto-rotation feature coming soon!')" class="w-full glass-card p-3 rounded-xl flex items-center justify-between group">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full bg-yellow-500/10 flex items-center justify-center text-yellow-500">
+                                <i data-lucide="clock" class="w-4 h-4"></i>
+                            </div>
+                            <span class="font-medium text-xs text-zinc-300">Auto-Change Schedule</span>
+                        </div>
+                        <i data-lucide="chevron-right" class="w-4 h-4 text-zinc-500 group-hover:text-yellow-500 transition-colors"></i>
+                    </button>
+
+                    <button onclick="showToast('Restored', 'System defaults have been restored.')" class="w-full glass-card p-3 rounded-xl flex items-center justify-between group">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full bg-yellow-500/10 flex items-center justify-center text-yellow-500">
+                                <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                            </div>
+                            <span class="font-medium text-xs text-zinc-300">Restore Defaults</span>
+                        </div>
+                        <i data-lucide="chevron-right" class="w-4 h-4 text-zinc-500 group-hover:text-yellow-500 transition-colors"></i>
+                    </button>
+                </div>
+
+                <!-- Footer details -->
+                <p class="text-[10px] text-center text-zinc-600 mt-auto">Designed with Glassmorphic effects & Golden highlights</p>
+            </div>
+
+            <!-- 2. CATEGORIES SELECTOR PANEL -->
+            <div id="panel-categories" class="panel absolute inset-0 p-5 overflow-y-auto space-y-4 panel-hidden-right flex flex-col">
+                <span class="text-xs uppercase tracking-wider text-yellow-500 font-bold">Select Collection</span>
+                
+                <div class="grid grid-cols-1 gap-3">
+                    <!-- Bright Collection -->
+                    <div onclick="openGallery('bright')" class="glass-card p-4 rounded-xl cursor-pointer flex items-center justify-between group">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-lg bg-yellow-500/10 flex items-center justify-center text-yellow-500">
+                                <i data-lucide="sun" class="w-6 h-6"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-sm text-white group-hover:text-yellow-400 transition-colors">Bright Moods</h3>
+                                <p class="text-xs text-zinc-400">Radiant, golden, clean visual backdrops</p>
+                            </div>
+                        </div>
+                        <i data-lucide="chevron-right" class="w-5 h-5 text-zinc-500 group-hover:text-yellow-500 transition-colors"></i>
+                    </div>
+
+                    <!-- Dark Collection -->
+                    <div onclick="openGallery('dark')" class="glass-card p-4 rounded-xl cursor-pointer flex items-center justify-between group">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-lg bg-zinc-800 flex items-center justify-center text-yellow-500 border border-yellow-500/15">
+                                <i data-lucide="moon" class="w-6 h-6"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-sm text-white group-hover:text-yellow-400 transition-colors">Dark Elegance</h3>
+                                <p class="text-xs text-zinc-400">Deep obsidian, starry luxury shades</p>
+                            </div>
+                        </div>
+                        <i data-lucide="chevron-right" class="w-5 h-5 text-zinc-500 group-hover:text-yellow-500 transition-colors"></i>
+                    </div>
+
+                    <!-- Solid Colors -->
+                    <div onclick="openGallery('solid')" class="glass-card p-4 rounded-xl cursor-pointer flex items-center justify-between group">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-neutral-800 to-yellow-900 flex items-center justify-center text-yellow-400 border border-yellow-500/10">
+                                <i data-lucide="droplet" class="w-6 h-6"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-sm text-white group-hover:text-yellow-400 transition-colors">Solid Colors</h3>
+                                <p class="text-xs text-zinc-400">Minimalistic solid matte backdrops</p>
+                            </div>
+                        </div>
+                        <i data-lucide="chevron-right" class="w-5 h-5 text-zinc-500 group-hover:text-yellow-500 transition-colors"></i>
+                    </div>
+
+                    <!-- Custom Gallery Upload (Dynamic Theme Creator) -->
+                    <div class="glass-card p-4 rounded-xl relative group">
+                        <input type="file" id="custom-image-upload" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20" onchange="handleCustomUpload(event)">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 rounded-lg bg-yellow-500/20 flex items-center justify-center text-yellow-400 border border-yellow-500/30 pulse-gold-active">
+                                    <i data-lucide="image-plus" class="w-6 h-6"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-sm text-white group-hover:text-yellow-400 transition-colors">Custom Photo</h3>
+                                    <p class="text-xs text-zinc-400">Upload your photo & auto-generate chat themes</p>
+                                </div>
+                            </div>
+                            <i data-lucide="upload-cloud" class="w-5 h-5 text-yellow-500 transition-colors"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Custom theme creator explanation -->
+                <div class="p-4 rounded-xl bg-yellow-500/5 border border-yellow-500/10 text-xs text-zinc-400 space-y-2">
+                    <span class="font-semibold text-yellow-500 flex items-center gap-1">
+                        <i data-lucide="wand-2" class="w-3.5 h-3.5"></i> Custom Ambient Color Matching
+                    </span>
+                    <p>Our intelligent engine scans uploaded images to auto-generate responsive chat bubble gradients, background tints, and system highlights that compliment your photo flawlessly.</p>
+                </div>
+            </div>
+
+            <!-- 3. WALLPAPER GALLERY GRID PANEL -->
+            <div id="panel-gallery" class="panel absolute inset-0 p-5 overflow-y-auto panel-hidden-right flex flex-col space-y-4">
+                <div class="flex justify-between items-center">
+                    <span id="gallery-category-title" class="text-xs uppercase tracking-wider text-yellow-500 font-bold">Bright Moods</span>
+                    <span id="gallery-item-count" class="text-[10px] text-zinc-500">6 wallpapers available</span>
+                </div>
+
+                <!-- Grid wrapper -->
+                <div id="gallery-grid" class="grid grid-cols-2 gap-3 pb-8">
+                    <!-- Cards injected dynamically via Javascript -->
+                </div>
+            </div>
+
+            <!-- 4. FULL WALLPAPER PREVIEW PANEL -->
+            <div id="panel-preview" class="panel absolute inset-0 panel-hidden-right flex flex-col bg-neutral-950">
+                <!-- Preview Canvas Structure (Simulating Smartphone Chat Room) -->
+                <div class="flex-1 relative flex flex-col justify-between overflow-hidden">
+                    
+                    <!-- Background Layers -->
+                    <div id="preview-canvas-bg" class="absolute inset-0 bg-cover bg-center transition-all duration-300"></div>
+                    <div id="preview-canvas-dimmer" class="absolute inset-0 bg-black/20 transition-all duration-300"></div>
+
+                    <!-- Mock Chat Room Header -->
+                    <div class="relative z-10 p-3 bg-black/60 backdrop-blur-md border-b border-white/10 flex items-center gap-3" id="mock-header">
+                        <div class="w-9 h-9 rounded-full bg-gradient-to-r from-yellow-600 to-yellow-400 p-[1.5px]">
+                            <div class="w-full h-full rounded-full bg-neutral-900 flex items-center justify-center text-xs font-bold text-yellow-400">AM</div>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="text-xs font-bold text-white">Auric Muse</h4>
+                            <p class="text-[10px] text-yellow-500/80">Online & Designing</p>
+                        </div>
+                        <div class="flex gap-3 text-zinc-400">
+                            <i data-lucide="phone" class="w-4 h-4"></i>
+                            <i data-lucide="video" class="w-4 h-4"></i>
+                        </div>
+                    </div>
+
+                    <!-- Mock Chat Messages -->
+                    <div class="relative z-10 flex-1 p-4 flex flex-col justify-end gap-3 overflow-y-auto">
+                        <!-- Date Indicator -->
+                        <div class="self-center bg-black/40 backdrop-blur-md border border-white/5 text-[9px] text-zinc-400 px-3 py-1 rounded-full uppercase tracking-wider">
+                            Today
+                        </div>
+
+                        <!-- Message Left -->
+                        <div class="chat-bubble-incoming bg-neutral-900/95 text-zinc-100 p-3 max-w-[85%] self-start border border-white/10 shadow-lg flex flex-col gap-1" id="preview-bubble-inc">
+                            <p class="text-xs leading-relaxed">How does the background look with custom matching bubble styling?</p>
+                            <span class="text-[9px] text-zinc-400 self-end">09:12 AM</span>
+                        </div>
+
+                        <!-- Message Right -->
+                        <div class="chat-bubble-outgoing bg-yellow-500/20 text-yellow-100 p-3 max-w-[85%] self-end border border-yellow-500/30 shadow-lg flex flex-col gap-1" id="preview-bubble-out">
+                            <p class="text-xs leading-relaxed">It is stunningly tailored! The golden highlights fit perfectly inside our dark dashboard system.</p>
+                            <span class="text-[9px] text-yellow-500/60 self-end">09:15 AM</span>
+                        </div>
+                    </div>
+
+                    <!-- Mock Input Bar -->
+                    <div class="relative z-10 p-3 bg-black/60 backdrop-blur-md border-t border-white/10 flex items-center gap-2" id="mock-footer">
+                        <button class="p-1.5 text-yellow-500/80 hover:text-yellow-400"><i data-lucide="plus" class="w-5 h-5"></i></button>
+                        <div class="flex-1 bg-neutral-900/90 border border-white/10 rounded-full px-3 py-1.5 flex items-center justify-between text-xs text-zinc-500" id="mock-input-bar">
+                            <span>Type elegant words...</span>
+                            <i data-lucide="smile" class="w-4 h-4 text-zinc-400"></i>
+                        </div>
+                        <button class="p-2 rounded-full bg-yellow-500 text-black flex items-center justify-center shadow-lg shadow-yellow-500/20" id="mock-send-btn">
+                            <i data-lucide="send" class="w-3.5 h-3.5"></i>
+                        </button>
+                    </div>
+
+                    <!-- Interactive Config Drawer (Floating over Preview) -->
+                    <div class="absolute bottom-[72px] inset-x-3 z-20 glass-panel rounded-xl p-4 space-y-3">
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center gap-1.5">
+                                <i data-lucide="sliders" class="w-4 h-4 text-yellow-500"></i>
+                                <span class="text-xs font-bold text-white">Interactive Settings</span>
+                            </div>
+                            <span class="text-[10px] text-zinc-400" id="selected-wall-title">Gold Marble</span>
+                        </div>
+
+                        <!-- Dimmer Slider (WhatsApp Styled) -->
+                        <div class="space-y-1">
+                            <div class="flex justify-between text-[10px] text-zinc-400">
+                                <span>Wallpaper Dimming</span>
+                                <span id="dimmer-percentage">20%</span>
+                            </div>
+                            <input type="range" id="dimmer-slider" min="0" max="90" value="20" class="w-full h-1 bg-neutral-800 rounded-lg appearance-none cursor-pointer accent-yellow-500" oninput="adjustDimming(this.value)">
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="grid grid-cols-2 gap-2 pt-1">
+                            <button onclick="navigateBack()" class="px-4 py-2 border border-yellow-500/30 text-yellow-500 hover:bg-yellow-500/5 rounded-lg text-xs font-semibold transition-all">Cancel</button>
+                            <button onclick="applyWallpaper()" class="px-4 py-2 bg-gradient-to-r from-yellow-600 to-yellow-400 hover:from-yellow-500 hover:to-yellow-300 text-black rounded-lg text-xs font-bold transition-all shadow-lg shadow-yellow-500/20">Set Wallpaper</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- 5. THEME SETTINGS PANEL -->
+            <div id="panel-theme-settings" class="panel absolute inset-0 p-5 overflow-y-auto space-y-6 panel-hidden-right flex flex-col">
+                <span class="text-xs uppercase tracking-wider text-yellow-500 font-bold">Theme & System Behavior</span>
+
+                <div class="space-y-3">
+                    <!-- Auto Theme Mode -->
+                    <div onclick="selectThemeMode('auto')" class="glass-card p-4 rounded-xl cursor-pointer flex justify-between items-center border border-yellow-500/25 relative" id="theme-card-auto">
+                        <div class="flex items-center gap-3">
+                            <i data-lucide="sparkles" class="w-5 h-5 text-yellow-500"></i>
+                            <div>
+                                <h4 class="text-xs font-bold text-white">Automatic Adapt Mode</h4>
+                                <p class="text-[10px] text-zinc-400">Syncs chat theme and bubbles with active wallpaper styles</p>
+                            </div>
+                        </div>
+                        <div class="w-4 h-4 rounded-full border border-yellow-500 flex items-center justify-center bg-yellow-500/10" id="theme-check-auto">
+                            <div class="w-2 h-2 rounded-full bg-yellow-500"></div>
+                        </div>
+                    </div>
+
+                    <!-- Force Dark theme -->
+                    <div onclick="selectThemeMode('dark')" class="glass-card p-4 rounded-xl cursor-pointer flex justify-between items-center" id="theme-card-dark">
+                        <div class="flex items-center gap-3">
+                            <i data-lucide="moon" class="w-5 h-5 text-yellow-500"></i>
+                            <div>
+                                <h4 class="text-xs font-bold text-white">Pure Night Theme</h4>
+                                <p class="text-[10px] text-zinc-400">Locks bubbles and panels to deep dark golden tones</p>
+                            </div>
+                        </div>
+                        <div class="w-4 h-4 rounded-full border border-zinc-600 flex items-center justify-center" id="theme-check-dark">
+                            <div class="w-2 h-2 rounded-full bg-transparent"></div>
+                        </div>
+                    </div>
+
+                    <!-- Force Bright Theme -->
+                    <div onclick="selectThemeMode('bright')" class="glass-card p-4 rounded-xl cursor-pointer flex justify-between items-center" id="theme-card-bright">
+                        <div class="flex items-center gap-3">
+                            <i data-lucide="sun" class="w-5 h-5 text-yellow-500"></i>
+                            <div>
+                                <h4 class="text-xs font-bold text-white">Classic Bright Theme</h4>
+                                <p class="text-[10px] text-zinc-400">Locks system bubbles to bright gold palettes</p>
+                            </div>
+                        </div>
+                        <div class="w-4 h-4 rounded-full border border-zinc-600 flex items-center justify-center" id="theme-check-bright">
+                            <div class="w-2 h-2 rounded-full bg-transparent"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-4 rounded-xl bg-yellow-500/5 border border-yellow-500/10 text-xs text-zinc-400 space-y-2">
+                    <span class="font-semibold text-yellow-500 flex items-center gap-1">
+                        <i data-lucide="info" class="w-3.5 h-3.5"></i> Custom Color Extraction
+                    </span>
+                    <p>When custom images are uploaded, the Automatic Adapt option uses dynamic CSS variable injection to adjust chat contrast ratios on-the-fly, ensuring gorgeous aesthetics and text readability.</p>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- User-friendly Non-intrusive Toast Notification element -->
+    <div id="toast-notification" class="fixed bottom-6 right-6 glass-panel px-5 py-3 rounded-xl border border-yellow-500/50 flex items-center gap-3 translate-y-20 opacity-0 transition-all duration-300 shadow-2xl shadow-yellow-500/10 z-50">
+        <div class="w-8 h-8 rounded-full bg-yellow-500/20 flex items-center justify-center text-yellow-500">
+            <i data-lucide="check-circle" class="w-5 h-5"></i>
+        </div>
+        <div>
+            <h4 class="text-xs font-bold text-white" id="toast-title">Success</h4>
+            <p class="text-[10px] text-zinc-400" id="toast-desc">Settings updated successfully</p>
+        </div>
+    </div>
+
+    <script>
+        // STACK-BASED NAVIGATION SYSTEM
+        // Simulated application routes
+        const navigationStack = ['panel-dashboard'];
+
+        // PRELOADED/CSS GRADIENT ASSETS (To satisfy self-contained requirement with premium aesthetics)
+        const wallpapers = {
+            bright: [
+                { id: 'b1', name: 'Golden Minimalist Grid', value: 'radial-gradient(circle, #FCFBF7 0%, #E8E2D0 100%)', isSolid: false, dominantColor: '#E8E2D0', accentColor: '#AA7C11' },
+                { id: 'b2', name: 'Desert Oasis Warmth', value: 'linear-gradient(135deg, #FFE8C5 0%, #FFD194 100%)', isSolid: false, dominantColor: '#FFD194', accentColor: '#C47B2E' },
+                { id: 'b3', name: 'Champagne Silk Gradient', value: 'linear-gradient(45deg, #F9F1E0 0%, #E4CE9F 100%)', isSolid: false, dominantColor: '#E4CE9F', accentColor: '#8C6C26' },
+                { id: 'b4', name: 'Golden Hour Sky', value: 'linear-gradient(to top, #ff9068, #ffbe94)', isSolid: false, dominantColor: '#ffbe94', accentColor: '#D35400' }
+            ],
+            dark: [
+                { id: 'd1', name: 'Luxury Obsidian Grid', value: 'radial-gradient(circle, #1a160d 0%, #060502 100%)', isSolid: false, dominantColor: '#1a160d', accentColor: '#D4AF37' },
+                { id: 'd2', name: 'Cosmic Gold Nebula', value: 'radial-gradient(circle, #2C220E 0%, #0F0D06 70%, #050402 100%)', isSolid: false, dominantColor: '#1E1504', accentColor: '#E6C65A' },
+                { id: 'd3', name: 'Starry Midnight Desert', value: 'linear-gradient(180deg, #0f0c20 0%, #15102a 50%, #060210 100%)', isSolid: false, dominantColor: '#15102a', accentColor: '#9B5DE5' },
+                { id: 'd4', name: 'Cyberpunk Aurum Grid', value: 'linear-gradient(135deg, #000000 0%, #201300 100%)', isSolid: false, dominantColor: '#201300', accentColor: '#FFB800' }
+            ],
+            solid: [
+                { id: 's1', name: 'Pure Midnight Matte', value: '#080808', isSolid: true, dominantColor: '#080808', accentColor: '#D4AF37' },
+                { id: 's2', name: 'Brushed Golden Slate', value: '#1A1813', isSolid: true, dominantColor: '#1A1813', accentColor: '#FFD700' },
+                { id: 's3', name: 'Raw Ochre Earth', value: '#483C25', isSolid: true, dominantColor: '#483C25', accentColor: '#F3E5AB' },
+                { id: 's4', name: 'Cool Charcoal Matte', value: '#1E1F22', isSolid: true, dominantColor: '#1E1F22', accentColor: '#E5E7EB' }
+            ]
+        };
+
+        // Application State Management
+        let currentThemeMode = 'auto'; // 'auto', 'dark', 'bright'
+        let selectedWallpaper = wallpapers.dark[0]; // Active selection in preview (pre-applied is d1)
+        let activeAppliedWallpaper = wallpapers.dark[0];
+        let wallpaperDimming = 20; // range (0-90)
+        let customUploadedDataUrl = null;
+        let customExtractedColors = null;
+
+        // On document launch
+        window.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            
+            // Build the standard Back navigation support for Device buttons
+            window.history.replaceState({ panelId: 'panel-dashboard' }, '');
+            window.onpopstate = function (event) {
+                if (event.state && event.state.panelId) {
+                    processNavigationPop(event.state.panelId);
+                }
+            };
+
+            // Setup Default Visual state
+            refreshAppliedBackgrounds();
+        });
+
+        // Navigation Controller
+        function navigateTo(panelId, customTitle = null) {
+            const currentPanelId = navigationStack[navigationStack.length - 1];
+            
+            // Hide the active panel smoothly by translating it off-screen
+            const currentPanelEl = document.getElementById(currentPanelId);
+            currentPanelEl.classList.add('panel-hidden-right');
+            currentPanelEl.classList.remove('panel-active');
+
+            // Show new panel
+            const targetPanelEl = document.getElementById(panelId);
+            targetPanelEl.classList.remove('panel-hidden-right');
+            targetPanelEl.classList.add('panel-active');
+
+            // Add navigation path to standard stack
+            navigationStack.push(panelId);
+            window.history.pushState({ panelId: panelId }, '');
+
+            // Update Headers automatically
+            updateHeaderDetails(panelId, customTitle);
+        }
+
+        function navigateBack() {
+            if (navigationStack.length > 1) {
+                window.history.back();
+            }
+        }
+
+        function processNavigationPop(targetPanelId) {
+            const activePanelId = navigationStack.pop();
+            const activePanelEl = document.getElementById(activePanelId);
+            
+            // Slide current panel out to the right
+            activePanelEl.classList.add('panel-hidden-right');
+            activePanelEl.classList.remove('panel-active');
+
+            // Find previous panel
+            const prevPanelId = navigationStack[navigationStack.length - 1];
+            const prevPanelEl = document.getElementById(prevPanelId);
+            prevPanelEl.classList.remove('panel-hidden-right');
+            prevPanelEl.classList.add('panel-active');
+
+            updateHeaderDetails(prevPanelId);
+        }
+
+        function resetToDashboard() {
+            // Keep popping navigation back to source
+            while (navigationStack.length > 1) {
+                window.history.back();
+            }
+        }
+
+        function updateHeaderDetails(panelId, customTitle = null) {
+            const headerTitle = document.getElementById('header-title');
+            const headerSubtitle = document.getElementById('header-subtitle');
+            const backBtn = document.getElementById('global-back-btn');
+            const closeBtn = document.getElementById('global-close-btn');
+
+            // Set buttons visibility
+            if (panelId === 'panel-dashboard') {
+                backBtn.classList.add('hidden');
+                closeBtn.classList.add('hidden');
+                headerTitle.textContent = "Wallpaper Studio";
+                headerSubtitle.textContent = "Customize your chat ambience";
+            } else {
+                backBtn.classList.remove('hidden');
+                closeBtn.classList.remove('hidden');
+                
+                if (panelId === 'panel-categories') {
+                    headerTitle.textContent = "Collections";
+                    headerSubtitle.textContent = "Browse standard premium art";
+                } else if (panelId === 'panel-gallery') {
+                    headerTitle.textContent = customTitle || "Gallery";
+                    headerSubtitle.textContent = "Tap on any wallpaper to preview";
+                } else if (panelId === 'panel-preview') {
+                    headerTitle.textContent = "Ambient Preview";
+                    headerSubtitle.textContent = "Refine styles on-screen";
+                } else if (panelId === 'panel-theme-settings') {
+                    headerTitle.textContent = "System Theme";
+                    headerSubtitle.textContent = "Configure adaptive aesthetics";
+                }
+            }
+        }
+
+        // Gallery Dynamic population
+        function openGallery(category) {
+            const grid = document.getElementById('gallery-grid');
+            grid.innerHTML = ''; // clear grid
+
+            const items = wallpapers[category];
+            document.getElementById('gallery-category-title').textContent = `${category.charAt(0).toUpperCase() + category.slice(1)} Collections`;
+            document.getElementById('gallery-item-count').textContent = `${items.length} designs ready`;
+
+            items.forEach(wallpaper => {
+                const card = document.createElement('div');
+                card.className = "glass-card rounded-xl overflow-hidden cursor-pointer flex flex-col group p-1 border border-yellow-500/5";
+                card.onclick = () => openPreview(wallpaper);
+
+                // Preview wrapper
+                const previewThumb = document.createElement('div');
+                previewThumb.className = "h-28 w-full rounded-lg bg-cover bg-center transition-all duration-300 group-hover:scale-95";
+                
+                if (wallpaper.isSolid) {
+                    previewThumb.style.backgroundColor = wallpaper.value;
+                } else {
+                    previewThumb.style.backgroundImage = wallpaper.value;
+                }
+
+                const labelContainer = document.createElement('div');
+                labelContainer.className = "p-2 flex flex-col text-[11px]";
+                
+                const title = document.createElement('span');
+                title.className = "font-bold text-white group-hover:text-yellow-400 truncate";
+                title.textContent = wallpaper.name;
+
+                const tag = document.createElement('span');
+                tag.className = "text-[9px] text-zinc-500";
+                tag.textContent = wallpaper.isSolid ? "Solid Matte" : "Scenic Flow";
+
+                labelContainer.appendChild(title);
+                labelContainer.appendChild(tag);
+                card.appendChild(previewThumb);
+                card.appendChild(labelContainer);
+
+                grid.appendChild(card);
+            });
+
+            navigateTo('panel-gallery', `${category.charAt(0).toUpperCase() + category.slice(1)} Moods`);
+        }
+
+        // Custom File Upload Handlers (Adaptive Theme Creator)
+        function handleCustomUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                customUploadedDataUrl = e.target.result;
+                
+                // Perform fast custom color extract utilizing hidden HTML Canvas
+                extractDominantColors(customUploadedDataUrl, (colors) => {
+                    customExtractedColors = colors;
+                    
+                    const customWallpaperObj = {
+                        id: 'custom-file',
+                        name: file.name.substring(0, 15) + '...',
+                        value: `url(${customUploadedDataUrl})`,
+                        isSolid: false,
+                        dominantColor: colors.primary,
+                        accentColor: colors.accent,
+                        lightValue: colors.lightText,
+                        isCustom: true
+                    };
+
+                    // Switch straight to customization screen
+                    openPreview(customWallpaperObj);
+                });
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Canvas-based RGB Pixel Extractor
+        function extractDominantColors(dataUrl, callback) {
+            const img = new Image();
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                canvas.width = 50;
+                canvas.height = 50;
+                ctx.drawImage(img, 0, 0, 50, 50);
+
+                const imgData = ctx.getImageData(0, 0, 50, 50).data;
+                let rSum = 0, gSum = 0, bSum = 0;
+                let pixelCount = imgData.length / 4;
+
+                for (let i = 0; i < imgData.length; i += 4) {
+                    rSum += imgData[i];
+                    gSum += imgData[i+1];
+                    bSum += imgData[i+2];
+                }
+
+                // Average rgb values
+                const rAvg = Math.round(rSum / pixelCount);
+                const gAvg = Math.round(gSum / pixelCount);
+                const bAvg = Math.round(bSum / pixelCount);
+
+                const primaryHex = rgbToHex(rAvg, gAvg, bAvg);
+                
+                // Calculate contrast-appropriate complementary accent and text brightness
+                const brightness = (rAvg * 299 + gAvg * 587 + bAvg * 114) / 1000;
+                const accentHex = rgbToHex(Math.min(255, rAvg + 40), Math.min(255, gAvg + 30), Math.max(0, bAvg - 40));
+                const lightTextHex = brightness > 130 ? '#121212' : '#FFFFFF';
+
+                callback({
+                    primary: primaryHex,
+                    accent: accentHex,
+                    brightness: brightness,
+                    lightText: lightTextHex
+                });
+            };
+            img.src = dataUrl;
+        }
+
+        function rgbToHex(r, g, b) {
+            return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+        }
+
+        // Live Chat room customization preview
+        function openPreview(wallpaper = null) {
+            if (wallpaper) {
+                selectedWallpaper = wallpaper;
+            }
+
+            // Apply style dynamically on preview components
+            const canvasBg = document.getElementById('preview-canvas-bg');
+            const wallTitle = document.getElementById('selected-wall-title');
+            
+            wallTitle.textContent = selectedWallpaper.name;
+
+            if (selectedWallpaper.isSolid) {
+                canvasBg.style.backgroundImage = 'none';
+                canvasBg.style.backgroundColor = selectedWallpaper.value;
+            } else {
+                canvasBg.style.backgroundImage = selectedWallpaper.isCustom ? selectedWallpaper.value : selectedWallpaper.value;
+            }
+
+            // Sync dynamic adaptive bubble coloring based on active modes
+            updatePreviewBubblesStyle(selectedWallpaper);
+
+            navigateTo('panel-preview');
+        }
+
+        // Dynamically style bubbles on active preview based on chosen theme profile
+        function updatePreviewBubblesStyle(wallpaper) {
+            const incomingBubble = document.getElementById('preview-bubble-inc');
+            const outgoingBubble = document.getElementById('preview-bubble-out');
+            const inputBar = document.getElementById('mock-input-bar');
+            const header = document.getElementById('mock-header');
+            const footer = document.getElementById('mock-footer');
+
+            if (currentThemeMode === 'auto') {
+                // Read properties of active wallpaper to adjust bubble gradients dynamically
+                if (wallpaper.isCustom && customExtractedColors) {
+                    const extracted = customExtractedColors;
+                    // Format bubbles based on extracted tone brightness
+                    incomingBubble.style.background = `rgba(${hexToRgb(extracted.primary)}, 0.9)`;
+                    incomingBubble.style.backgroundColor = extracted.primary;
+                    incomingBubble.style.color = extracted.brightness > 130 ? '#111827' : '#FFFFFF';
+                    incomingBubble.style.borderColor = `rgba(255,255,255,0.15)`;
+
+                    outgoingBubble.style.background = `rgba(${hexToRgb(extracted.accent)}, 0.45)`;
+                    outgoingBubble.style.backgroundColor = extracted.accent;
+                    outgoingBubble.style.color = '#FFFFFF';
+                    outgoingBubble.style.borderColor = extracted.accent;
+
+                    header.style.backgroundColor = `rgba(15, 15, 15, 0.75)`;
+                    footer.style.backgroundColor = `rgba(15, 15, 15, 0.75)`;
+                } else {
+                    // Standard system auto styling
+                    if (wallpaper.id.startsWith('b')) {
+                        // Light design aesthetics
+                        incomingBubble.style.backgroundColor = '#FFFFFF';
+                        incomingBubble.style.color = '#111827';
+                        incomingBubble.style.borderColor = 'rgba(0,0,0,0.05)';
+
+                        outgoingBubble.style.backgroundColor = '#FEF08A'; // Tailwind yellow-100
+                        outgoingBubble.style.color = '#713F12'; // Tailwind yellow-900
+                        outgoingBubble.style.borderColor = 'rgba(212,175,55,0.3)';
+                    } else {
+                        // Dark design aesthetics
+                        incomingBubble.style.backgroundColor = 'rgba(38, 38, 38, 0.9)';
+                        incomingBubble.style.color = '#F3F4F6';
+                        incomingBubble.style.borderColor = 'rgba(255,255,255,0.05)';
+
+                        outgoingBubble.style.backgroundColor = 'rgba(212, 175, 55, 0.25)';
+                        outgoingBubble.style.color = '#FEF08A';
+                        outgoingBubble.style.borderColor = 'rgba(212,175,55,0.3)';
+                    }
+                }
+            } else if (currentThemeMode === 'bright') {
+                incomingBubble.style.backgroundColor = '#FFFFFF';
+                incomingBubble.style.color = '#111827';
+                incomingBubble.style.borderColor = 'rgba(0,0,0,0.05)';
+
+                outgoingBubble.style.backgroundColor = '#FEF08A';
+                outgoingBubble.style.color = '#713F12';
+                outgoingBubble.style.borderColor = 'rgba(212,175,55,0.3)';
+            } else if (currentThemeMode === 'dark') {
+                incomingBubble.style.backgroundColor = 'rgba(38, 38, 38, 0.9)';
+                incomingBubble.style.color = '#F3F4F6';
+                incomingBubble.style.borderColor = 'rgba(255,255,255,0.05)';
+
+                outgoingBubble.style.backgroundColor = 'rgba(212, 175, 55, 0.25)';
+                outgoingBubble.style.color = '#FEF08A';
+                outgoingBubble.style.borderColor = 'rgba(212,175,55,0.3)';
+            }
+        }
+
+        // Utility to map Hex colors for RGB transparencies
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : '0,0,0';
+        }
+
+        // Dimming slider update handler
+        function adjustDimming(val) {
+            wallpaperDimming = val;
+            document.getElementById('dimmer-percentage').textContent = `${val}%`;
+            document.getElementById('preview-canvas-dimmer').style.backgroundColor = `rgba(0, 0, 0, ${val / 100})`;
+        }
+
+        // Apply changes globally
+        function applyWallpaper() {
+            activeAppliedWallpaper = selectedWallpaper;
+            
+            // Sync with home layout dashboard previews
+            refreshAppliedBackgrounds();
+
+            // Fire premium custom notification toast
+            showToast("Success", "Elegance Applied Perfectly!");
+
+            // Slide clean back to dashboard root
+            resetToDashboard();
+        }
+
+        function refreshAppliedBackgrounds() {
+            const dashboardThumb = document.getElementById('dashboard-current-preview');
+            const activeTitleName = document.getElementById('active-wallpaper-name');
+
+            // Apply values to the main dashboard thumbnail ONLY
+            // (Removed the mini-preview sync logic to prevent script breaking)
+            if (activeAppliedWallpaper.isSolid) {
+                dashboardThumb.style.backgroundImage = 'none';
+                dashboardThumb.style.backgroundColor = activeAppliedWallpaper.value;
+            } else {
+                dashboardThumb.style.backgroundImage = activeAppliedWallpaper.isCustom ? activeAppliedWallpaper.value : activeAppliedWallpaper.value;
+            }
+
+            activeTitleName.textContent = activeAppliedWallpaper.name;
+        }
+
+        // Theme management panel
+        function selectThemeMode(mode) {
+            currentThemeMode = mode;
+            
+            // Uncheck other elements
+            ['auto', 'dark', 'bright'].forEach(item => {
+                const card = document.getElementById(`theme-card-${item}`);
+                const check = document.getElementById(`theme-check-${item}`);
+                
+                if (item === mode) {
+                    card.classList.add('border-yellow-500/25');
+                    card.classList.remove('border-transparent');
+                    check.innerHTML = '<div class="w-2 h-2 rounded-full bg-yellow-500"></div>';
+                    check.style.borderColor = '#D4AF37';
+                } else {
+                    card.classList.remove('border-yellow-500/25');
+                    card.classList.add('border-transparent');
+                    check.innerHTML = '';
+                    check.style.borderColor = '#52525b';
+                }
+            });
+
+            showToast("System Setting Active", `Switched design rules to ${mode.toUpperCase()} adapt mode.`);
+        }
+
+        // Customized Toast Display logic
+        function showToast(title, description) {
+            const toast = document.getElementById('toast-notification');
+            document.getElementById('toast-title').textContent = title;
+            document.getElementById('toast-desc').textContent = description;
+
+            // Animate on stage
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

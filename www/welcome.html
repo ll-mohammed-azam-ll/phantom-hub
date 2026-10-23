@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Phantom Hub | Powered by VENTA</title>
+    
+    <link rel="manifest" href="/manifest.json">
+    
+    <script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/service-Worker.js');
+  }
+</script>
+
+
+
+
+    
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+    <style>
+        :root { 
+            --gold: #D4AF37; 
+            --gold-muted: rgba(212, 175, 55, 0.15);
+            --bg-dark: #000000; 
+        }
+        
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-dark);
+            color: white;
+            margin: 0;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* --- THEME BACKGROUND (Gold to Black Gradient) --- */
+        .theme-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% -20%, var(--gold-muted) 0%, var(--bg-dark) 70%);
+            z-index: -2;
+        }
+
+        .bg-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: linear-gradient(rgba(212, 175, 55, 0.03) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(212, 175, 55, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            z-index: -1;
+            mask-image: radial-gradient(ellipse at center, black, transparent 90%);
+        }
+
+        /* --- BLOCK & ICON ANIMATIONS --- */
+        .reveal-block {
+            opacity: 0;
+            transform: translateY(50px) scale(0.95);
+            transition: all 1s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .reveal-block.active {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        .animated-icon {
+            transition: all 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transform: scale(0.2) rotate(-180deg);
+            opacity: 0;
+        }
+
+        .reveal-block.active .animated-icon {
+            transform: scale(1) rotate(0deg);
+            opacity: 1;
+        }
+
+        /* --- STYLES --- */
+        .glass-card {
+            background: rgba(15, 15, 15, 0.7);
+            border: 1px solid rgba(212, 175, 55, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 45px;
+            transition: all 0.5s ease;
+        }
+
+        .glass-card:hover {
+            border-color: var(--gold);
+            background: rgba(212, 175, 55, 0.05);
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+
+        .icon-container {
+            width: 90px;
+            height: 90px;
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(0,0,0,0));
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            border-radius: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gold);
+            margin-bottom: 2rem;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.1);
+        }
+
+        .btn-gold {
+            background: var(--gold);
+            color: black;
+            font-weight: 800;
+            padding: 1.2rem 3rem;
+            border-radius: 9999px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.2);
+        }
+
+        .btn-gold:hover {
+            transform: scale(1.05) translateY(-2px);
+            box-shadow: 0 15px 40px rgba(212, 175, 55, 0.4);
+        }
+
+        /* --- TERMINAL STYLES --- */
+        .terminal-window {
+            background: #080808;
+            border: 1px solid var(--gold);
+            border-radius: 35px;
+            box-shadow: 0 0 50px rgba(212, 175, 55, 0.1);
+            font-family: 'Fira Code', monospace;
+        }
+
+        #welcome-screen {
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .hidden-transition {
+            opacity: 0;
+            transform: scale(1.05);
+            pointer-events: none;
+        }
+
+        .logo-glow {
+            background: gold;
+            box-shadow: 0 0 25px rgba(212, 175, 55, 0.4);
+            border: 1.5px solid rgba(212, 175, 55, 0.8);
+        }
+        
+        
+        
+        
+        
+        
+        
+        
+            :root { 
+            --gold: #D4AF37; 
+            --gold-bright: #FFD700;
+            --gold-muted: rgba(212, 175, 55, 0.15);
+            --bg-dark: #020202; 
+        }
+        
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-dark);
+            color: white;
+            margin: 0;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* --- THEME BACKGROUND --- */
+        .theme-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% -20%, var(--gold-muted) 0%, var(--bg-dark) 80%);
+            z-index: -2;
+        }
+
+        .bg-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: linear-gradient(rgba(212, 175, 55, 0.05) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(212, 175, 55, 0.05) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: -1;
+            mask-image: radial-gradient(ellipse at center, black, transparent 80%);
+        }
+
+        /* --- GLASS MORPHISM HEADER --- */
+        .glass-header {
+            background: rgba(10, 10, 10, 0.6);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.15);
+            z-index: 100;
+        }
+
+        /* --- ANIMATIONS --- */
+        .reveal-block {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 1s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .reveal-block.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* --- BUTTONS --- */
+        .btn-gold {
+            background: linear-gradient(135deg, var(--gold), #B8860B);
+            color: #000;
+            font-weight: 800;
+            padding: 1rem 2.5rem;
+            border-radius: 40px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 10px 20px rgba(212, 175, 55, 0.2);
+        }
+
+        .btn-gold:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(212, 175, 55, 0.4);
+            filter: brightness(1.1);
+        }
+
+        .btn-outline {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            color: var(--gold);
+            padding: 1rem 1rem;
+            border-radius: 40px;
+            
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline:hover {
+            background: rgba(212, 175, 55, 0.1);
+            border-color: var(--gold);
+        }
+
+        /* --- COMMAND BLOCK CONTAINER --- */
+        .command-container {
+            background: rgba(20, 20, 20, 0.4);
+            border: 1px solid rgba(212, 175, 55, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 40px;
+            padding: 4rem 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* --- STORE CARD STYLE --- */
+        .store-card {
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 32px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            
+            border-color: var(--gold);
+            background: rgba(212, 175, 55, 0.05);
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+
+        .store-install-btn {
+            background: #01875f; /* Play Store Green */
+            color: white;
+            padding: 0.6rem 2.5rem;
+            border-radius: 30px;
+            font-weight: 600;
+            transition: opacity 0.2s;
+        }
+
+        .store-install-btn:hover {
+            opacity: 0.9;
+        }
+
+        .logo-glow {
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+        }
+
+        #main-app {
+            background: #000;
+            z-index: 200;
+        }
+        
+        
+           .btn-group {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border-radius: 30px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn-primary {
+            background: #fff;
+            color: #000;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent);
+            transform: scale(1.03);
+        }
+
+        .btn-link {
+        background: #fff;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-link:hover {
+            text-decoration: underline;
+        }
+       
+       
+       
+       /* 1. The classic falling/fading keyframe */
+@keyframes elementFall {
+    from {
+        opacity: 0;
+        transform: translateY(-8px); /* Subtle shift so it doesn't look chaotic */
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 2. Target every element inside the welcome screen */
+#welcome-screen * {
+    animation: elementFall 1.0s ease-out forwards;
+}
+
+    </style>
+</head>
+<body>
+
+    <div class="theme-bg"></div>
+    <div class="bg-grid"></div>
+    
+    
+
+    <!-- WELCOME PAGE -->
+    <div id="welcome-screen" class="relative z-10">
+        <!-- Header -->
+        <header class="max-w-7xl mx-auto px-8 py-12 flex justify-between items-center">
+            <div class="flex items-center gap-5">
+                <div class="w-12 h-12 bg-gold rounded-2xl flex items-center justify-center logo-glow">
+                    
+                    <img src="Phantom-logo-v2.png" alt="logo">
+                </div>
+                <h3 class="text-2xl font-black tracking-tighter">PHANTOM<span class="text-gold">HUB</span></h3>
+            </div>
+            <div class="hidden md:flex items-center gap-2 px-5 py-2 rounded-full border border-gold/30 bg-gold/10">
+                <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse shadow-[0_0_8px_#4ade80]"></div>
+                <span class="text-[11px] font-black uppercase tracking-widest text-gold">Neural Node Active</span>
+            </div>
+        </header>
+
+        <!-- Hero -->
+        <section class="max-w-7xl mx-auto text-center pt-5 pb-40 px-6">
+            <h3 style="display: flex; flex-direction: column; align-items: center; font-weight: 600; margin-bottom: 2.5rem; line-height: 1.15; letter-spacing: -0.025em; font-size: clamp(3rem, 10vw, 6rem);">
+    <span>Welcome to</span>
+    <span style="color: #0; margin-top: 0.5rem;">Phantom Messaging</span>
+</h3>
+
+<p style="color: #9CA3AF; font-size: clamp(1.125rem, 4vw, 1.5rem); max-width: 48rem; margin-left: auto; margin-right: auto; margin-bottom: 4rem; line-height: 1.625; text-align: center; transition-delay: 200ms;">
+    Secure, private, and powerful communication platform built just for you.
+   <!--  <span style="display: inline-block;">with decentralized communication support.</span>  -->
+</p>
+
+            
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-6">
+                    <button onclick="launchApp()" class="btn-gold w-full sm:w-auto">
+                        Let's start 
+                    </button>
+                    <button onclick="document.getElementById('store-section').scrollIntoView({behavior:'smooth'})" class="btn-outline w-full sm:w-auto flex items-center justify-center gap-3">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        Get the App
+                    </button>
+                </div>
+            
+            
+            
+            
+            <!-- CENTRAL COMMAND BLOCK -->
+        
+          
+        </section>
+
+
+
+
+        
+         
+        
+        
+        
+        
+        
+        
+        
+        <section class="px-6 mb-1 reveal-block active" style="transition-delay: 300ms;">
+            <div class="command-container text-center">
+                <p class="text-gold font-bold text-sm uppercase tracking-[0.1em] mb-8">
+                    What Makes Phantom Different
+                </p>
+                
+            
+
+                <p class="mt-8 text-gray-500 text-[10px] font-medium tracking-[0.1em]">
+                    Discover the features that set a new standard for privacy and communication.
+                </p>
+            </div>
+        </section>
+        
+        <!-- 6 EXPLORATION BLOCKS -->
+        <div class="max-w-7xl mx-auto px-8 py-20 grid grid-cols-1 md:grid-cols-3 gap-10">
+            
+            
+            <!-- Card 1 -->
+            <div class="glass-card p-12 reveal-block">
+                <div class="icon-container animated-icon">
+                    <svg width="45" height="45" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                </div>
+                <h3 class="text-2xl font-bold mb-5">Neural Encryption</h3>
+                <p class="text-gray-500 text-sm leading-relaxed mb-10">Advanced biometric-linked encryption keys that adapt to user behavioral patterns for ultimate access security.</p>
+                <button class="text-gold font-black text-xs uppercase tracking-widest border-b-2 border-gold/20 pb-2 hover:border-gold transition-all">Explore Security</button>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="glass-card p-12 reveal-block">
+                <div class="icon-container animated-icon">
+                    <svg width="45" height="45" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20"/></svg>
+                </div>
+                <h3 class="text-2xl font-bold mb-5">Ghost Sharding</h3>
+                <p class="text-gray-500 text-sm leading-relaxed mb-10">Distribute your data into thousands of immutable shards across global sovereign nodes for zero-risk storage.</p>
+                <button class="text-gold font-black text-xs uppercase tracking-widest border-b-2 border-gold/20 pb-2 hover:border-gold transition-all">View Mesh</button>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="glass-card p-12 reveal-block">
+                <div class="icon-container animated-icon">
+                    <svg width="45" height="45" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                </div>
+                <h3 class="text-2xl font-bold mb-5">Phantom Sync</h3>
+                <p class="text-gray-500 text-sm leading-relaxed mb-10">Real-time metadata-free communication channels that leave no trace in the digital ecosystem.</p>
+                <button class="text-gold font-black text-xs uppercase tracking-widest border-b-2 border-gold/20 pb-2 hover:border-gold transition-all">Initialize Chat</button>
+            </div>
+
+            <!-- Card 4 -->
+            <div class="glass-card p-12 reveal-block">
+                <div class="icon-container animated-icon">
+                    <svg width="45" height="45" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+                </div>
+                <h3 class="text-2xl font-bold mb-5">Sovereign Cloud</h3>
+                <p class="text-gray-500 text-sm leading-relaxed mb-10">Bypass public gateways with institutional-grade hardware VPNs built directly into your Phantom Hub  terminal.</p>
+                <button class="text-gold font-black text-xs uppercase tracking-widest border-b-2 border-gold/20 pb-2 hover:border-gold transition-all">Cloud Config</button>
+            </div>
+
+            <!-- Card 5 -->
+            <div class="glass-card p-12 reveal-block">
+                <div class="icon-container animated-icon">
+                    <svg width="45" height="45" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+                </div>
+                <h3 class="text-2xl font-bold mb-5">AI Sentinel</h3>
+                <p class="text-gray-500 text-sm leading-relaxed mb-10">Our neural AI engine monitors every bit and byte, automatically isolating threats before they reach your network edge.</p>
+                <button class="text-gold font-black text-xs uppercase tracking-widest border-b-2 border-gold/20 pb-2 hover:border-gold transition-all">AI Audit</button>
+            </div>
+
+            <!-- Card 6 -->
+            <div class="glass-card p-12 reveal-block">
+                <div class="icon-container animated-icon">
+                    <svg width="45" height="45" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect width="20" height="14" x="2" y="5" rx="2"/><path d="M2 10h20M7 15h.01M11 15h.01"/></svg>
+                </div>
+                <h3 class="text-2xl font-bold mb-5">Post-Quantum Ops</h3>
+                <p class="text-gray-500 text-sm leading-relaxed mb-10">Built with the future in mind, Phantom Hub  uses PQC-hardened protocols that withstand next-gen decryption attacks.</p>
+                <button class="text-gold font-black text-xs uppercase tracking-widest border-b-2 border-gold/20 pb-2 hover:border-gold transition-all">PQC Docs</button>
+            </div>
+        </div>
+
+
+<!-- STORE PANEL SECTION -->
+        <section id="store-section" class="max-w-4xl mx-auto px-6 py-24 reveal-block">
+            <div class="store-card p-8 md:p-12">
+                <div class="flex flex-col md:flex-row items-start md:items-center gap-8 mb-10">
+                    <!-- App Icon -->
+                    <div style="
+    width: 96px; 
+    height: 96px; 
+    background: linear-gradient(to bottom right, #1f2937, #000000); 
+    border-radius: 22px; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    border: 1px solid rgba(255, 255, 255, 0.1); 
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); 
+    overflow: hidden;">
+
+    <img 
+        src="logo512.png" 
+        alt="Profile or Icon" 
+        class="w-full h-full object-cover"
+    />
+</div>
+
+                    
+                    <!-- App Info Header -->
+                    <div class="flex-1">
+                        <h3 class="text-3xl font-bold mb-1">Phantom Hub Mobile</h3>
+                        <p class="text-green-500 font-semibold text-sm mb-4">Sovereign Protocol Ltd.</p>
+                        
+                        <div class="flex flex-wrap items-center gap-2 text-xs text-gray-400 font-medium">
+                            <div class="flex flex-col">
+                                <span class="text-white font-bold text-base">4.9 ★</span>
+                                <span>12K Reviews</span>
+                            </div>
+                            <div class="w-[1px] h-8 bg-white/10"></div>
+                            <div class="flex flex-col">
+                                <span class="text-white font-bold text-base">52 MB</span>
+                                <span>Verified Secure</span>
+                            </div>
+                            <div class="w-[1px] h-8 bg-white/10"></div>
+                            <div class="flex flex-col">
+                                <span class="text-white font-bold text-base">1M+</span>
+                                <span>Downloads</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col gap-4 mb-10">
+                    <button class="store-install-btn text-lg py-3">Install</button>
+                    
+                    
+
+                    <p class="text-[11px] text-gray-500 text-center italic">
+                        By installing, you agree to the Sovereign End-User Encryption Agreement.
+                    </p>
+                </div>
+
+                <!-- Screenshots Mockup -->
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+    <div class="relative w-full bg-white bg-opacity-5 rounded-xl border border-white border-opacity-10 flex items-end p-4" 
+     style="height: 0; padding-bottom: 182%; background-image: url('slide-1.jpg'); background-size: cover; background-position: center;">
+    
+    <div class="absolute inset-x-4 bottom-4 h-1/2 bg-gold bg-opacity-10 rounded-lg animate-pulse"></div>
+</div>
+
+    
+    <div class="relative w-full bg-white bg-opacity-5 rounded-xl border border-white border-opacity-10 flex items-end p-4" 
+     style="height: 0; padding-bottom: 182%; background-image: url('slide-2.jpg'); background-size: cover; background-position: center;">
+    
+    <div class="absolute inset-x-4 bottom-4 h-1/2 bg-gold bg-opacity-10 rounded-lg animate-pulse"></div>
+</div>
+
+    <div class="relative w-full bg-white bg-opacity-5 rounded-xl border border-white border-opacity-10 flex items-end p-4" 
+     style="height: 0; padding-bottom: 182%; background-image: url('slide-3.jpg'); background-size: cover; background-position: center;">
+    
+    <div class="absolute inset-x-4 bottom-4 h-1/2 bg-gold bg-opacity-10 rounded-lg animate-pulse"></div>
+</div>
+
+<div class="relative w-full bg-white bg-opacity-5 rounded-xl border border-white border-opacity-10 flex items-end p-4" 
+     style="height: 0; padding-bottom: 182%; background-image: url('slide-4.jpg'); background-size: cover; background-position: center;">
+    
+    <div class="absolute inset-x-4 bottom-4 h-1/2 bg-gold bg-opacity-10 rounded-lg animate-pulse"></div>
+</div>
+
+    <div class="hidden md:flex relative w-full bg-white bg-opacity-5 rounded-xl border border-white border-opacity-10 flex items-end p-4" style="height: 0; padding-bottom: 177%;">
+        <div class="absolute inset-x-4 bottom-4 h-1/3 bg-gold bg-opacity-10 rounded-lg animate-pulse"></div>
+    </div>
+</div>
+
+        </section>
+        
+        
+        <!-- INFO SECTION -->
+        <section style="max-width: 896px; margin: 0 auto; padding: 128px 32px; text-align: center;">
+    <h3 style="font-size: 36px; font-weight: 900; margin-bottom: 32px; text-transform: uppercase; letter-spacing: -0.05em;">
+        Engineered for <span style="color: #D4AF37;">Sovereignty.</span>
+    </h3>
+    <p style="color: #6b7280; font-size: 18px; line-height: 1.625; margin-bottom: 64px;">
+        In a world where data is a commodity, Phantom Hub  turns your information into a fortress. We don't just provide security; we provide absolute digital autonomy for the modern communication.
+    </p>
+    <div style="
+    border-radius: 60px; 
+    overflow: hidden; 
+    border: 1px solid rgba(212, 175, 55, 0.3); /* Subtle Gold border */
+    box-shadow: 0 0 100px rgba(212, 175, 55, 0.15); /* Gold glow */
+    background-color: #000000;
+    transition: box-shadow 1s ease;
+    "
+    onmouseover="this.style.boxShadow='0 0 120px rgba(212, 175, 55, 0.25)'"
+    onmouseout="this.style.boxShadow='0 0 100px rgba(212, 175, 55, 0.15)'"
+>
+    <img src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&q=80&w=1600" 
+         style="
+            width: 100%; 
+            height: auto; 
+            opacity: 0.5; /* Slightly darker default state */
+            filter: grayscale(100%) brightness(80%); 
+            transition: all 1s ease-in-out;
+            display: block; /* Removes any tiny bottom gaps */
+         " 
+         alt="Phantom Neural Network Connection"
+         onmouseover="
+            this.style.filter='grayscale(0%) brightness(100%)';
+            this.style.opacity='0.8';
+         " 
+         onmouseout="
+            this.style.filter='grayscale(100%) brightness(80%)';
+            this.style.opacity='0.5';
+         "
+    >
+</div>
+
+</section>
+
+<footer class="relative bg-black text-gray-300 pt-16 pb-8 border-t border-white/10">
+  <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+    
+    <div class="space-y-4">
+      <h2 class="text-2xl font-bold tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-yellow-500 to-yellow-200">
+        PHANTOM
+      </h2>
+      <p class="text-sm leading-relaxed text-gray-400">
+        The next generation of decentralized communication. Secure, neural, and end-to-end encrypted messaging for the modern era.
+      </p>
+      <div class="flex space-x-4 pt-2">
+        <a href="#" class="hover:text-yellow-500 transition-colors"><i class="fab fa-github"></i></a>
+        <a href="#" class="hover:text-yellow-500 transition-colors"><i class="fab fa-discord"></i></a>
+        <a href="#" class="hover:text-yellow-500 transition-colors"><i class="fab fa-linkedin"></i></a>
+      </div>
+    </div>
+
+    <div class="space-y-4">
+      <h3 class="text-sm font-semibold uppercase tracking-widest text-yellow-500">Platform</h3>
+      <ul class="space-y-2 text-sm">
+        <li><a href="#" class="hover:text-white transition-colors">Download PWA</a></li>
+        <li><a href="#" class="hover:text-white transition-colors">Desktop Beta</a></li>
+        <li><a href="#" class="hover:text-white transition-colors">Venta Changelog</a></li>
+        <li class="flex items-center space-x-2">
+            <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+            <span class="text-xs text-gray-500">All Systems Operational</span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="space-y-4">
+      <h3 class="text-sm font-semibold uppercase tracking-widest text-yellow-500">Resources</h3>
+      <ul class="space-y-2 text-sm">
+        <li><a href="#" class="hover:text-white transition-colors">API Documentation</a></li>
+        <li><a href="#" class="hover:text-white transition-colors">Security Whitepaper</a></li>
+        <li><a href="#" class="hover:text-white transition-colors">Academic Verification</a></li>
+        <li><a href="#" class="hover:text-white transition-colors">Community Forum</a></li>
+      </ul>
+    </div>
+
+    <div class="space-y-4">
+      <h3 class="text-sm font-semibold uppercase tracking-widest text-yellow-500">Stay Updated</h3>
+      <div class="relative">
+        <input type="email" placeholder="Enter email..." 
+               class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-yellow-500 transition-all">
+        <button class="absolute right-2 top-1.5 text-xs bg-yellow-600 hover:bg-yellow-500 text-black font-bold py-1 px-2 rounded transition-all">
+          Join
+        </button>
+      </div>
+      <ul class="space-y-2 text-xs pt-4 text-gray-500">
+        <li><a href="#" class="hover:text-gray-300">Privacy Policy (Zero-Log)</a></li>
+        <li><a href="#" class="hover:text-gray-300">Terms of Service</a></li>
+      </ul>
+    </div>
+
+  </div>
+
+  <div class="max-w-7xl mx-auto px-6 mt-16 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center text-xs text-gray-600">
+    <p>© 2026 Mohammed Azam. Designed with VENTA Neural Framework.</p>
+    <div class="mt-4 md:mt-0 flex items-center space-x-4">
+      <span class="flex items-center"><i class="fas fa-shield-alt mr-1"></i> 256-bit AES</span>
+      <span>Ballari, India</span>
+    </div>
+  </div>
+</footer>
+
+
+
+    </div>
+
+    <!-- MAIN APP INTERFACE -->
+    <div id="main-app" class="hidden h-screen w-full flex flex-col items-center bg-black">
+        <header class="w-full px-12 py-10 flex justify-between items-center">
+            <div class="text-left">
+                <h1 class="text-2xl font-black tracking-tighter">GOLD<span class="text-gold">HUB</span></h1>
+                <p class="text-[9px] font-bold text-gray-600 uppercase tracking-widest">Sovereign Terminal v2.0</p>
+            </div>
+            <div class="flex gap-4">
+                <div class="w-12 h-12 bg-white/5 rounded-2xl border border-gold/20 flex items-center justify-center cursor-pointer hover:bg-gold/10"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg></div>
+            </div>
+        </header>
+
+        <div class="w-[92%] max-w-[1100px] flex-1 mb-12">
+            <div class="terminal-window h-full p-10 flex flex-col overflow-hidden">
+                <div class="flex-1 overflow-y-auto pr-4 mb-4" id="terminal-output">
+                    <div class="text-gold mb-2 font-bold uppercase text-xs tracking-widest">// INITIALIZING SECURE HANDSHAKE...</div>
+                    <div class="text-gray-500 mb-6 text-xs leading-relaxed">
+                        Establishing encrypted tunnel to Node-771...<br>
+                        Verification successful. [AES-GCM-256]<br>
+                        Neural-layer active.
+                    </div>
+                </div>
+                <div class="flex items-center gap-4 border-t border-gold/10 pt-6">
+                    <span class="text-gold font-black text-sm">root@sovereign:~$</span>
+                    <input type="text" id="term-input" class="bg-transparent border-none outline-none text-white flex-1 text-sm font-mono p-0" autocomplete="off" onkeydown="handleCommand(event)">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* --- INTERSECTION OBSERVER (SCROLL ANIMATION) --- */
+        const observerOptions = {
+            threshold: 0.15,
+            rootMargin: "0px 0px -50px 0px"
+        };
+
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                } else {
+                    entry.target.classList.remove('active');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.reveal-block').forEach(el => revealObserver.observe(el));
+
+        /* --- NAVIGATION & TRANSITIONS --- */
+        function launchApp() {
+    // Replace 'your-page.html' with the actual filename or URL
+    window.location.href = 'ooooo1.html';
+}
+
+
+        /* --- TERMINAL COMMANDS --- */
+        function handleCommand(e) {
+            if(e.key === 'Enter') {
+                const input = e.target;
+                const cmd = input.value.trim().toLowerCase();
+                const out = document.getElementById('terminal-output');
+                
+                out.innerHTML += `<div class="mb-2"><span class="text-gold font-bold">root@sovereign:~$</span> ${input.value}</div>`;
+                
+                let response = "";
+                if(cmd === 'help') response = "Available protocols: status, scan, purge, map, exit";
+                else if(cmd === 'status') response = "All systems NOMINAL. Proxy rotating in 42s.";
+                else if(cmd === 'scan') response = "Scanning local subnet... 0 threats detected.";
+                else if(cmd === 'purge') { out.innerHTML = ''; input.value = ''; return; }
+                else if(cmd === '') response = "";
+                else response = `ERROR: '${cmd}' is not a recognized protocol.`;
+
+                if(response) out.innerHTML += `<div class="text-gray-500 mb-6 text-xs italic">// ${response}</div>`;
+                
+                input.value = '';
+                out.scrollTop = out.scrollHeight;
+            }
+        }
+    </script>
+    
+    <script>
+  // 1. Variable to store the "Install Event"
+  let deferredPrompt;
+  
+  // Select your button using the class you provided
+  const installBtn = document.querySelector('.store-install-btn');
+
+  // Initially hide the button until the browser says it's ready to install
+  if (installBtn) {
+    installBtn.style.display = 'none';
+  }
+
+  // 2. Listen for the browser's "Ready to Install" signal
+  window.addEventListener('beforeinstallprompt', (e) => {
+    // Prevent the default mini-bar from showing automatically
+    e.preventDefault();
+    // Save the event so we can trigger it later
+    deferredPrompt = e;
+    
+    // Now that we know the app is installable, show the button
+    if (installBtn) {
+      installBtn.style.display = 'block'; 
+      // Note: You can also use 'inline-block' or 'flex' depending on your layout
+    }
+  });
+
+  // 3. Handle the click on your Install button
+  if (installBtn) {
+    installBtn.addEventListener('click', async () => {
+      if (!deferredPrompt) {
+        // If the prompt isn't available, the app might already be installed
+        return;
+      }
+
+      // Show the native browser install dialog
+      deferredPrompt.prompt();
+
+      // Wait for the user to click "Install" or "Cancel"
+      const { outcome } = await deferredPrompt.userChoice;
+      console.log(`User response: ${outcome}`);
+
+      // Reset the prompt variable (it can only be used once)
+      deferredPrompt = null;
+
+      // Hide the button again
+      installBtn.style.display = 'none';
+    });
+  }
+
+  // 4. Optional: Hide button if the app is already installed
+  window.addEventListener('appinstalled', () => {
+    console.log('PWA was successfully installed');
+    if (installBtn) {
+      installBtn.style.display = 'none';
+    }
+  });
+</script>
+
+</body>
+</html>
+

@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VENTA CLI Presentation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* 1. CORE SETUP - ADAPTED FOR 3:4 INSTAGRAM RATIO */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #f5f5f7; /* Apple-style light gray */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 40px;
+            padding: 40px 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* 3:4 Aspect Ratio Container (1080x1440) */
+        .slide-container {
+            width: 1080px;
+            height: 1440px;
+            background-color: #ffffff;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            padding: 80px;
+            z-index: 1;
+        }
+
+        /* 2. BACKGROUND DESIGN ELEMENTS (Apple/Google Style) */
+        .slide-container::before {
+            content: '';
+            position: absolute;
+            top: -20%;
+            right: -20%;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(0, 122, 255, 0.03) 0%, rgba(255, 255, 255, 0) 70%);
+            z-index: -1;
+        }
+
+        .slide-container::after {
+            content: '';
+            position: absolute;
+            bottom: 40px;
+            left: 80px;
+            width: 200px;
+            height: 2px;
+            background: #000;
+            opacity: 0.1;
+        }
+
+        /* 3. TYPOGRAPHY & BRANDING */
+        h1, h2, h3 {
+            color: #1d1d1f;
+            font-weight: 700;
+            line-height: 1.1;
+        }
+
+        h1 { font-size: 110px; margin-bottom: 20px; letter-spacing: -2px; }
+        .slide-title { font-size: 72px; margin-bottom: 40px; width: 100%; text-align: left; }
+        
+        p, li {
+            color: #424245;
+            font-size: 32px;
+            line-height: 1.5;
+            font-weight: 400;
+        }
+
+        .brand-logo {
+            font-weight: 700;
+            font-size: 24px;
+            letter-spacing: 2px;
+            color: #1d1d1f;
+            text-transform: uppercase;
+            position: absolute;
+            top: 60px;
+            left: 80px;
+        }
+
+        .subtitle {
+            font-size: 40px;
+            color: #86868b;
+            margin-top: 20px;
+        }
+
+        .content-area {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            width: 100%;
+        }
+
+        /* 4. LAYOUT COMPONENTS */
+        
+        /* Code Blocks */
+        code {
+            font-family: 'JetBrains+Mono', monospace;
+            background: #f5f5f7;
+            padding: 20px 30px;
+            border-radius: 16px;
+            display: block;
+            font-size: 28px;
+            color: #007aff;
+            margin: 20px 0;
+            border-left: 8px solid #007aff;
+        }
+
+        /* Grid Layouts */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 40px;
+            width: 100%;
+        }
+
+        .tile {
+            background: #fbfbfd;
+            border: 1px solid #d2d2d7;
+            border-radius: 32px;
+            padding: 50px;
+            transition: transform 0.3s ease;
+        }
+
+        .tile i {
+            font-size: 60px;
+            color: #007aff;
+            margin-bottom: 30px;
+        }
+
+        .tile h3 { font-size: 44px; margin-bottom: 15px; }
+
+        /* Images */
+        .image-wrapper {
+            border-radius: 40px;
+            overflow: hidden;
+            width: 100%;
+            height: 500px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+
+        .image-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Lists */
+        .bullet-list {
+            list-style: none;
+        }
+
+        .bullet-list li {
+            position: relative;
+            padding-left: 60px;
+            margin-bottom: 30px;
+        }
+
+        .bullet-list li::before {
+            content: "\f058";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            position: absolute;
+            left: 0;
+            color: #34c759;
+            font-size: 36px;
+        }
+
+        /* Charts & Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 40px;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 30px;
+            border-bottom: 1px solid #d2d2d7;
+            font-size: 28px;
+        }
+
+        th { font-weight: 600; color: #1d1d1f; background: #fbfbfd; }
+
+        /* Highlight Numbers */
+        .big-number {
+            font-size: 200px;
+            font-weight: 700;
+            color: #007aff;
+            line-height: 1;
+        }
+
+        /* Bleed Image Layout Adjustment for 3:4 */
+        .bleed-image-layout {
+            padding: 0 !important;
+            display: flex !important;
+            flex-direction: column !important;
+        }
+        .bleed-image-layout .text-part {
+            padding: 80px;
+            order: 2;
+        }
+        .bleed-image-layout .img-part {
+            height: 600px;
+            width: 100%;
+            order: 1;
+        }
+        .bleed-image-layout .img-part img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .footer {
+            position: absolute;
+            bottom: 60px;
+            right: 80px;
+            font-size: 20px;
+            color: #86868b;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Slide 1: Title_Slide -->
+<div class="slide-container" id="slide1">
+    <div class="brand-logo">Venta Corporation</div>
+    <div class="content-area">
+        <h1>Introducing <br><span style="color: #007aff;">VENTA CLI</span></h1>
+        <p class="subtitle">The Universal Engine for Database Architecture & Engineering.</p>
+    </div>
+    <div class="footer">© 2026 Venta Corporation • Document VENTA-CLI-MULTI-102</div>
+</div>
+
+<!-- Slide 2: Image_Right_Text_Left (What is VENTA CLI?) -->
+<div class="slide-container" id="slide2">
+    <div class="brand-logo">Venta Corporation</div>
+    <h2 class="slide-title">Beyond a Command Line Tool.</h2>
+    <div class="content-area">
+        <div class="image-wrapper">
+            <img src="http://googleusercontent.com/image_collection/image_retrieval/15586381398612900044" alt="Minimalist CLI Mockup">
+        </div>
+        <p>VENTA CLI is a sophisticated engine used to <strong>analyze, modify, and architect</strong> database systems. From high-level research to ground-level production, it manages the entire Venta ecosystem.</p>
+    </div>
+</div>
+
+<!-- Slide 3: Tiled_Text_With_Icons (Capabilities) -->
+<div class="slide-container" id="slide3">
+    <div class="brand-logo">Venta Corporation</div>
+    <h2 class="slide-title">Engineered Intelligence.</h2>
+    <div class="content-area">
+        <div class="grid-2">
+            <div class="tile">
+                <i class="fa-solid fa-brain"></i>
+                <h3>AI Support</h3>
+                <p>Integrated artificial intelligence to assist in project research and data modeling.</p>
+            </div>
+            <div class="tile">
+                <i class="fa-solid fa-diagram-project"></i>
+                <h3>Architect</h3>
+                <p>Design new projects with persistent database associations automatically managed.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 4: Two_Column_Tiled_Text (Cross Platform) -->
+<div class="slide-container" id="slide4">
+    <div class="brand-logo">Venta Corporation</div>
+    <h2 class="slide-title">Universal Installation.</h2>
+    <div class="content-area">
+        <p style="margin-bottom: 40px;">Seamlessly integrate VENTA CLI across your entire tech stack with one command.</p>
+        <div class="tile" style="margin-bottom: 30px;">
+            <h3>Windows & Linux</h3>
+            <code>pip install git+https://github.com/Venta-Corporation/venta-cli.git</code>
+        </div>
+        <div class="tile">
+            <h3>Termux (Android)</h3>
+            <p style="font-size: 24px; margin-bottom: 10px;">Full engine power on your mobile device.</p>
+            <code>pkg update && pkg install python git -y && ...</code>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 5: Rounded_Image_and_Text (Database Ops) -->
+<div class="slide-container" id="slide5">
+    <div class="brand-logo">Venta Corporation</div>
+    <h2 class="slide-title">Real-time Data Rendering.</h2>
+    <div class="content-area">
+        <div class="image-wrapper" style="border-radius: 50%; width: 400px; height: 400px; margin: 0 auto 40px;">
+            <img src="http://googleusercontent.com/image_collection/image_retrieval/3610792978360291663" alt="Database Architecture">
+        </div>
+        <p style="text-align: center;">Execute <code>venta db get</code> to instantly fetch and render JSON data. The engine automatically persists URLs for future queries, simplifying your workflow.</p>
+    </div>
+</div>
+
+<!-- Slide 6: Highlighted_Numbers (Platform Support) -->
+<div class="slide-container" id="slide6">
+    <div class="brand-logo">Venta Corporation</div>
+    <h2 class="slide-title">Modern Foundation.</h2>
+    <div class="content-area" style="text-align: center;">
+        <div class="big-number">3.8+</div>
+        <p style="font-size: 40px; color: #1d1d1f; font-weight: 600;">Python Version Required</p>
+        <p style="margin-top: 40px;">Built on the latest standards of Python and Git to ensure high-performance execution on Windows, Linux, and Android.</p>
+    </div>
+</div>
+
+<!-- Slide 7: Table (Core Commands) -->
+<div class="slide-container" id="slide7">
+    <div class="brand-logo">Venta Corporation</div>
+    <h2 class="slide-title">Command Reference.</h2>
+    <div class="content-area">
+        <table>
+            <thead>
+                <tr>
+                    <th>Command</th>
+                    <th>Module Purpose</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>venta auth</code></td>
+                    <td>Identity & Session Management</td>
+                </tr>
+                <tr>
+                    <td><code>venta db</code></td>
+                    <td>Realtime Database CRUD</td>
+                </tr>
+                <tr>
+                    <td><code>venta --help</code></td>
+                    <td>Platform Overview Banner</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Slide 8: Tiled_Text_With_Icons (Auth Module) -->
+<div class="slide-container" id="slide8">
+    <div class="brand-logo">Venta Corporation</div>
+    <h2 class="slide-title">Secure Authentication.</h2>
+    <div class="content-area">
+        <div class="tile" style="background-color: #f5f5f7;">
+            <i class="fa-solid fa-shield-halved"></i>
+            <h3>venta auth login</h3>
+            <p>Binds your user identity with Firebase REST Auth. Exchanges credentials for a persistent ID token stored locally in JSON configuration.</p>
+        </div>
+        <div style="margin-top: 40px; padding: 0 40px;">
+            <p style="font-size: 24px; color: #86868b;">Config Path: <code>~/.venta/config.json</code></p>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 9: Styled_Bullet_Points (Data Modification) -->
+<div class="slide-container" id="slide9">
+    <div class="brand-logo">Venta Corporation</div>
+    <h2 class="slide-title">Data Control Modules.</h2>
+    <div class="content-area">
+        <ul class="bullet-list">
+            <li><strong>PUSH:</strong> Append records with unique keys.</li>
+            <li><strong>SET:</strong> Overwrite nodes with JSON payloads.</li>
+            <li><strong>DELETE:</strong> Permanently remove node paths.</li>
+            <li><strong>STATUS:</strong> Inspect active tokens and UID.</li>
+        </ul>
+    </div>
+</div>
+
+<!-- Slide 10: Bleed_Image_Right (Maintenance) -->
+<div class="slide-container bleed-image-layout" id="slide10">
+    <div class="img-part">
+        <img src="http://googleusercontent.com/image_collection/image_retrieval/12137533614055239035" alt="Abstract Clean Tech Lines">
+    </div>
+    <div class="text-part">
+        <h2 class="slide-title" style="font-size: 60px;">Continuous Evolution.</h2>
+        <p>Keep your engine running at peak performance. Upgrade instantly to the latest commits from the VENTA Corporation repository.</p>
+        <code>pip install --upgrade --no-cache-dir git+...</code>
+    </div>
+    <div class="brand-logo" style="top: auto; bottom: 80px; left: 80px;">Venta Maintenance</div>
+</div>
+
+<!-- Slide 11: Full_Background_Image (Research & Ecosystem) -->
+<div class="slide-container" id="slide11" style="background-image: linear-gradient(rgba(255,255,255,0.85), rgba(255,255,255,0.85)), url('http://googleusercontent.com/image_collection/image_retrieval/16593824002295416549'); background-size: cover;">
+    <div class="brand-logo">Venta Corporation</div>
+    <div class="content-area" style="text-align: center; padding: 0 60px;">
+        <h2 style="font-size: 80px;">The Venta <br>Ecosystem</h2>
+        <p style="font-size: 36px; margin-top: 30px;">A specialized toolset for Venta developers to manage, research, and architect the future of our data infrastructure.</p>
+    </div>
+</div>
+
+<!-- Slide 12: Q&A / Closing -->
+<div class="slide-container" id="slide12">
+    <div class="content-area" style="text-align: center;">
+        <i class="fa-solid fa-code" style="font-size: 100px; color: #007aff; margin-bottom: 40px;"></i>
+        <h1>Ready to Deploy.</h1>
+        <p class="subtitle">Join the elite engineering circle at Venta Corporation.</p>
+        <p style="margin-top: 60px; font-weight: 600;">Confidential Technical Documentation</p>
+        <p style="font-size: 24px; color: #86868b;">2026 VENTA CORPORATION. All rights reserved.</p>
+    </div>
+</div>
+
+</body>
+</html>
